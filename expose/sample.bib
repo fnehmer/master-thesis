@@ -1,0 +1,151 @@
+@inproceedings{Fett2016,
+author = {Fett, Daniel and K\"{u}sters, Ralf and Schmitz, Guido},
+title = {A Comprehensive Formal Security Analysis of OAuth 2.0},
+year = {2016},
+isbn = {9781450341394},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/2976749.2978385},
+doi = {10.1145/2976749.2978385},
+abstract = {The OAuth 2.0 protocol is one of the most widely deployed authorization/single sign-on (SSO) protocols and also serves as the foundation for the new SSO standard OpenID Connect. Despite the popularity of OAuth, so far analysis efforts were mostly targeted at finding bugs in specific implementations and were based on formal models which abstract from many web features or did not provide a formal treatment at all. In this paper, we carry out the first extensive formal analysis of the OAuth 2.0 standard in an expressive web model. Our analysis aims at establishing strong authorization, authentication, and session integrity guarantees, for which we provide formal definitions. In our formal analysis, all four OAuth grant types (authorization code grant, implicit grant, resource owner password credentials grant, and the client credentials grant) are covered. They may even run simultaneously in the same and different relying parties and identity providers, where malicious relying parties, identity providers, and browsers are considered as well. Our modeling and analysis of the OAuth 2.0 standard assumes that security recommendations and best practices are followed in order to avoid obvious and known attacks.When proving the security of OAuth in our model, we discovered four attacks which break the security of OAuth. The vulnerabilities can be exploited in practice and are present also in OpenID Connect.We propose fixes for the identified vulnerabilities, and then, for the first time, actually prove the security of OAuth in an expressive web model. In particular, we show that the fixed version of OAuth (with security recommendations and best practices in place) provides the authorization, authentication, and session integrity properties we specify.},
+booktitle = {Proceedings of the 2016 ACM SIGSAC Conference on Computer and Communications Security},
+pages = {1204–1215},
+numpages = {12},
+location = {Vienna, Austria},
+series = {CCS '16}
+}
+
+@InProceedings{Wanpeng2014,
+author="Li, Wanpeng
+and Mitchell, Chris J.",
+editor="Chow, Sherman S. M.
+and Camenisch, Jan
+and Hui, Lucas C. K.
+and Yiu, Siu Ming",
+title="Security Issues in OAuth 2.0 SSO Implementations",
+booktitle="Information Security",
+year="2014",
+publisher="Springer International Publishing",
+address="Cham",
+pages="529--541",
+abstract="Many Chinese websites (relying parties) use OAuth 2.0 as the basis of a single sign-on service to ease password management for users. Many sites support five or more different OAuth 2.0 identity providers, giving users choice in their trust point. However, although OAuth 2.0 has been widely implemented (particularly in China), little attention has been paid to security in practice. In this paper we report on a detailed study of OAuth 2.0 implementation security for ten major identity providers and 60 relying parties, all based in China. This study reveals two critical vulnerabilities present in many implementations, both allowing an attacker to control a victim user's accounts at a relying party without knowing the user's account name or password. We provide simple, practical recommendations for identity providers and relying parties to enable them to mitigate these vulnerabilities. The vulnerabilities have been reported to the parties concerned.",
+isbn="978-3-319-13257-0"
+}
+
+@InProceedings{Shernan2015,
+author="Shernan, Ethan
+and Carter, Henry
+and Tian, Dave
+and Traynor, Patrick
+and Butler, Kevin",
+editor="Almgren, Magnus
+and Gulisano, Vincenzo
+and Maggi, Federico",
+title="More Guidelines Than Rules: CSRF Vulnerabilities from Noncompliant OAuth 2.0 Implementations",
+booktitle="Detection of Intrusions and Malware, and Vulnerability Assessment",
+year="2015",
+publisher="Springer International Publishing",
+address="Cham",
+pages="239--260",
+abstract="OAuth 2.0 provides an open framework for the authorization of users across the web. While the standard enumerates mandatory security protections for a variety of attacks, many embodiments of this standard allow these protections to be optionally implemented. In this paper, we analyze the extent to which one particularly dangerous vulnerability, Cross Site Request Forgery, exists in real-world deployments. We crawl the Alexa Top 10,000 domains, and conservatively identify that 25 {\%} of websites using OAuth appear vulnerable to CSRF attacks. We then perform an in-depth analysis of four high-profile case studies, which reveal not only weaknesses in sample code provided in SDKs, but also inconsistent implementation of protections among services provided by the same company. From these data points, we argue that protection against known and sometimes subtle security vulnerabilities can not simply be thrust upon developers as an option, but instead must be strongly enforced by Identity Providers before allowing web applications to connect.",
+isbn="978-3-319-20550-2"
+}
+
+@misc{rfc6749,
+    series =    {Request for Comments},
+    number =    6749,
+    howpublished =  {RFC 6749},
+    publisher = {RFC Editor},
+    doi =       {10.17487/RFC6749},
+    url =       {https://www.rfc-editor.org/info/rfc6749},
+        author =    {Dick Hardt},
+    title =     {{The OAuth 2.0 Authorization Framework}},
+    pagetotal = 76,
+    year =      2012,
+    month =     oct,
+    abstract =  {The OAuth 2.0 authorization framework enables a third-party application to obtain limited access to an HTTP service, either on behalf of a resource owner by orchestrating an approval interaction between the resource owner and the HTTP service, or by allowing the third-party application to obtain access on its own behalf. This specification replaces and obsoletes the OAuth 1.0 protocol described in RFC 5849. {[}STANDARDS-TRACK{]}},
+}
+
+@misc{rfc8252,
+    series =    {Request for Comments},
+    number =    8252,
+    howpublished =  {RFC 8252},
+    publisher = {RFC Editor},
+    doi =       {10.17487/RFC8252},
+    url =       {https://www.rfc-editor.org/info/rfc8252},
+        author =    {William Denniss and John Bradley},
+    title =     {{OAuth 2.0 for Native Apps}},
+    pagetotal = 21,
+    year =      2017,
+    month =     oct,
+    abstract =  {OAuth 2.0 authorization requests from native apps should only be made through external user-agents, primarily the user's browser. This specification details the security and usability reasons why this is the case and how native apps and authorization servers can implement this best practice.},
+}
+
+@techreport{sakimura2014,
+   AUTHOR="Sakimura, Nat
+and Bradley, John
+and Jones, Michael B.
+and de Medeiros, Breno
+and Mortimore, Chuck",
+   TITLE = "{OpenID Connect Core 1.0 incorporating errata set 1}",
+   YEAR = {2014},
+   INSTITUTION = {OpenId},
+   URL={https://openid.net/specs/openid-connect-core-1_0.html}
+}
+
+@INPROCEEDINGS{sperotto2011,
+  author={Sperotto, Anna and Pras, Aiko},
+  booktitle={12th IFIP/IEEE International Symposium on Integrated Network Management (IM 2011) and Workshops}, 
+  title={Flow-based intrusion detection}, 
+  year={2011},
+  volume={},
+  number={},
+  pages={958-963},
+  doi={10.1109/INM.2011.5990529}}
+
+@inproceedings{Li2019,
+author = {Li, Wanpeng and Mitchell, Chris J. and Chen, Thomas},
+title = {OAuthGuard: Protecting User Security and Privacy with OAuth 2.0 and OpenID Connect},
+year = {2019},
+isbn = {9781450368322},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3338500.3360331},
+doi = {10.1145/3338500.3360331},
+booktitle = {Proceedings of the 5th ACM Workshop on Security Standardisation Research Workshop},
+pages = {35–44},
+numpages = {10},
+keywords = {openid connect, oauth 2.0, identity management},
+location = {London, United Kingdom},
+series = {SSR'19}
+}
+
+
+@article{kim2020,
+	title = {{AI}-{IDS}: Application of Deep Learning to Real-Time Web Intrusion Detection},
+	volume = {8},
+	doi = {10.1109/ACCESS.2020.2986882},
+	pages = {70245--70261},
+	journaltitle = {{IEEE} Access},
+	author = {Kim, Aechan and Park, Mohyun and Lee, Dong Hoon},
+	date = {2020},
+	file = {Kim et al. - 2020 - AI-IDS Application of Deep Learning to Real-Time .pdf:/Users/remhen/Zotero/storage/WDSMUGDW/Kim et al. - 2020 - AI-IDS Application of Deep Learning to Real-Time .pdf:application/pdf},
+}
+
+
+@Article{Liu2019,
+AUTHOR = {Liu, Hongyu and Lang, Bo},
+TITLE = {Machine Learning and Deep Learning Methods for Intrusion Detection Systems: A Survey},
+JOURNAL = {Applied Sciences},
+VOLUME = {9},
+YEAR = {2019},
+NUMBER = {20},
+ARTICLE-NUMBER = {4396},
+URL = {https://www.mdpi.com/2076-3417/9/20/4396},
+ISSN = {2076-3417},
+DOI = {10.3390/app9204396}
+}
+
+
+
+

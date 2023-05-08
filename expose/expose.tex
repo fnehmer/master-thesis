@@ -1,0 +1,84 @@
+\documentclass{article}
+
+% Language setting
+% Replace `english' with e.g. `spanish' to change the document language
+\usepackage[english]{babel}
+
+% Set page size and margins
+% Replace `letterpaper' with `a4paper' for UK/EU standard size
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+
+\title{Context-aware Intrusion Detection in OAuth Protocol Flows}
+\author{Florian Nehmer}
+
+\begin{document}
+\maketitle
+
+\section{Background \& Motivation}
+The OAuth 2.0 protocol \cite{rfc6749} (refered to as OAuth) nowadays is used in several different contexts like Social Logins, Single Sign On services for companies, or for sharing of specific resources for mobile apps like calendars, etc. All these contexts have one thing in common, namely that they are utilised to access sensitive data. Therefore it is important that the authentication and authorization mechanisms the OAuth standard offers are securly implemented. Unfortunatly time has shown, that often this is not the case \cite{Li2019}. As the OAuth standard offers a variety of possibilities for different use cases it makes the implemtation of OAuth for a specific use case a complex task and misconfigurations appear. Attackers try to exploit those misconfigurations by misusing the OAuth protocol in malicious ways. In order to detect those attacks, intrusion detection systems can be utilised to analyse network traffic in real-time by flow analysis or packet inspection \cite{Liu2019}. This has at least two benefits: The first one being detection of the attack so further exploitation can be prevented and the second benefit being the gathering of intelligence of the attacks for validating, if the current implementation of the OAuth service in use is hardened against such attacks.
+
+\section{Objectives}
+In my work I want to pursue the following research goals:
+
+\begin{enumerate}
+    \item Implement and investigate the viability of anomaly-based intrusion detection using (Hidden-)Markov-chains in the context of OAuth like it was applied in this reference work to other contexts \cite{sperotto2011}
+    \item Implement and investigate the viability of specification-based intrusion detection in the context of OAuth.
+    \begin{itemize}
+        \item The main challenge is to specifiy patterns/rules for this approach given the complexity of the OAuth specification. 
+    \end{itemize}
+    \item Compare the anomaly-based and Specification-based approach to each other regarding yield and accuracy.
+\end{enumerate}
+
+ 
+\section{Methodology}
+In order to investigate intrusion detection on OAuth using the anomaly-based and specification-based approach a lab environment gets implemented, which generates data, which afterwards gets analysed.
+\subsection{Lab environment}
+The Lab environment consists of different entites.
+
+\subsubsection{OAuth Provider}
+The OAuth provider is a web service, which offers users the creation of an account for authentication at the provider. It also offers OAuth capabilities to provide authorization to the users account data to other web services, if the user is allowing it. It offers all OAuth authorization flows at the same time (authorization code, client credentials, resource owner password, implicit). The OAuth Provider will be implemented in Python using the libraries \emph{flask} and \emph{authlib}.
+
+\subsubsection{Dummy Web Service}
+The dummy web service, is utilising the different OAuth capabilities of the OAuth provider. It is implemented in Python using the \emph{flask} library.
+
+\subsubsection{Intrusion Detection System}
+The intrusion detection system is intercepting the traffic entering the lab and exports the traffic as a network log file. It offers functionality to analyse the traffic using two methods:
+\begin{itemize}
+    \item Anomaly-based using Markov-chains implemented with the Python library \emph{markovify}
+    \item Specification-based, by implementing rules and patterns for the usage of the OAuth protocol.
+\end{itemize}
+The open-source IDS ``zeek'' and its Python connector ``zat'' are used to load the network data into a Python ``pandas'' dataframe. This data then can be fed into different detection models and methods to produce the alerts.
+
+\subsubsection{Generator}
+The Generator is executing valid OAuth interactions aswell as malicious ones, to generate traffic to be analysed by the IDS. For the malicious interactions different attack approaches on OAuth are getting implemented. The Generator is implemented in Python utilising the \emph{requests} library. After running an experiment the detection methods are getting fine-tuned and the experiments are ran again.
+
+
+\section{Experiments}
+The experiments are ran with the following recipe:
+\begin{enumerate}
+    \item The Generator runs attacks at random over a fixed period of time and produces logs of which attack it executed at which time
+    \item The IDS meanwhile will produce network logs, which include the attack traffic
+    \item The traffic logs are analysed by the IDS with the implemented detection methods
+    \item The IDS produces alerts for attacks it recognised
+    \item The alerts are getting compared with the logs of the generator
+\end{enumerate}
+
+Every experiment is analyzed regarding yield and accuracy on the detection of the different types of attacks on the OAuth protocol.
+
+\section{Novelty}
+
+The novelty is to contribute to the field of context aware intrusion detection, regarding protocols at application layer.
+\begin{itemize}
+    \item A suitable method to better detect attacks on OAuth in networks.
+    \item Data on how well different anomaly-based and specification-based detection methods for attacks on OAuth perform.
+\end{itemize}
+
+\bibliographystyle{acm}
+\bibliography{sample}
+
+\end{document}
