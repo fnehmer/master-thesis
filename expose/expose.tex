@@ -26,7 +26,7 @@ The OAuth 2.0 protocol \cite{rfc6749} (referred to as OAuth) is widely used in v
 In my work, I aim to pursue the following research goals:
 
 \begin{enumerate}
-    \item Create a comprehensive overview of currently known attack methodologies on OAuth to provide an understanding of the potential threats
+    \item Create a comprehensive overview of currently known attack methodologies on OAuth to provide an understanding of the potential threats.
     \item Implement and investigate the viability of anomaly-based intrusion detection using (Hidden-)Markov-chains in the context of OAuth, as applied in this reference work to other contexts \cite{sperotto2011}.
     \item Implement and investigate the viability of specification-based intrusion detection in the context of OAuth.
     \begin{itemize}
@@ -39,25 +39,25 @@ In my work, I aim to pursue the following research goals:
 To investigate intrusion detection on OAuth using the anomaly-based and specification-based approaches, a lab environment is implemented to generate data for analysis.
 
 \subsection{Lab environment}
-The lab environment consists of an OAuth Provider a dummy web service an Intrusion Detection System and a Traffic Generator.
+The lab environment consists of an OAuth Provider, a dummy web service, an Intrusion Detection System, and a Traffic Generator.
 
 \subsubsection{OAuth Provider}
-The OAuth provider is a web service that offers users the creation of an account for authentication at the provider. It also offers OAuth capabilities to provide authorization to the user's account data to other web services, if the user allows it. It offers all OAuth authorization flows at the same time (authorization code, client credentials, resource owner password, implicit). The OAuth Provider is implemented in Python using the libraries \emph{flask} and \emph{authlib}.
+The OAuth provider is a web service that offers users the creation of an account for authentication at the provider. It also offers OAuth capabilities to provide authorization to the user's account data to other web services, if the user allows it. It offers all OAuth authorization flows at the same time (authorization code, client credentials, resource owner password, implicit). The OAuth Provider is implemented in Python using the libraries \emph{flask}\footnote{\url{https://flask.palletsprojects.com/en/2.3.x/}} and \emph{authlib}\footnote{\url{https://docs.authlib.org/en/latest/}}.
 
 \subsubsection{Dummy Web Service}
 The dummy web service utilizes the different OAuth capabilities of the OAuth provider. It is implemented in Python using the \emph{flask} library.
 
 \subsubsection{Intrusion Detection System}
-The intrusion detection system intercepts the traffic entering the lab and exports the traffic as a network log file. It offers functionality to analyze the traffic using two methods:
+The intrusion detection system intercepts the traffic entering the lab and exports the traffic as a network log file. It offers functionality to analyze the traffic using at least the following two methods:
 
 \begin{itemize}
-    \item Anomaly-based using Markov-chains implemented with the Python library \emph{markovify}.
+    \item Anomaly-based using Markov-chains implemented with the Python library \emph{markovify}\footnote{\url{https://pypi.org/project/markovify/}}.
     \item Specification-based, by implementing rules and patterns for the usage of the OAuth protocol.
 \end{itemize}
-The open-source IDS \emph{zeek} and its Python connector \emph{zat} are used to load the network data into a Python \emph{pandas} dataframe. This data can then be fed into different detection models and methods to produce the alerts.
+The open-source IDS \emph{zeek}\footnote{\url{https://zeek.org/}} and its Python connector \emph{zat}\footnote{\url{https://pypi.org/project/zat/}} are used to load the network data into a Python \emph{pandas}\footnote{\url{https://pandas.pydata.org/}} dataframe. This data can then be fed into different detection models and methods to produce the alerts.
 
 \subsubsection{Generator}
-The generator executes valid OAuth interactions as well as malicious ones to generate traffic to be analyzed by the IDS. For the malicious interactions, different attack approaches on OAuth are implemented. The generator is implemented in Python utilizing the \emph{requests} library. After running an experiment, the detection methods are fine-tuned, and the experiments are run again.
+The generator executes valid OAuth interactions as well as malicious ones to generate traffic to be analyzed by the IDS. For the malicious interactions, different attack approaches on OAuth are implemented. The generator is implemented in Python utilizing the \emph{requests}\footnote{\url{https://pypi.org/project/requests/}} library. After running an experiment, the detection methods are fine-tuned, and the experiments are run again.
 
 \section{Experiments}
 The experiments are run with the following recipe:
