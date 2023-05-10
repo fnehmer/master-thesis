@@ -19,13 +19,14 @@
 \begin{document}
 \maketitle
 
-\section{Background \& Motivation}
+\section{Motivation}
 The OAuth 2.0 protocol \cite{rfc6749} (referred to as OAuth) is widely used in various contexts, such as social logins, single sign-on services for companies, and sharing specific resources for mobile apps like calendars. All these contexts share a common feature: they involve accessing sensitive data. Consequently, it is crucial that the authentication and authorization mechanisms provided by the OAuth standard are securely implemented. Unfortunately, experience has shown that this is often not the case \cite{Li2019}. The OAuth standard offers a range of possibilities for different use cases, making the implementation of OAuth for a specific use case a complex task, and misconfigurations may occur. Attackers attempt to exploit these misconfigurations by misusing the OAuth protocol in malicious ways. To detect such attacks, intrusion detection systems can be employed to analyze network traffic in real-time through flow analysis or packet inspection \cite{Liu2019}. This approach offers at least two benefits: first, it enables the detection of attacks, preventing further exploitation; second, it facilitates the gathering of intelligence on the attacks, allowing for the validation of whether the current implementation of the OAuth service in use is adequately hardened against such threats.
 
 \section{Objectives}
 In my work, I aim to pursue the following research goals:
 
 \begin{enumerate}
+    \item Create a comprehensive overview of currently known attack methodologies on OAuth to provide an understanding of the potential threats
     \item Implement and investigate the viability of anomaly-based intrusion detection using (Hidden-)Markov-chains in the context of OAuth, as applied in this reference work to other contexts \cite{sperotto2011}.
     \item Implement and investigate the viability of specification-based intrusion detection in the context of OAuth.
     \begin{itemize}
@@ -38,7 +39,7 @@ In my work, I aim to pursue the following research goals:
 To investigate intrusion detection on OAuth using the anomaly-based and specification-based approaches, a lab environment is implemented to generate data for analysis.
 
 \subsection{Lab environment}
-The lab environment consists of different entities.
+The lab environment consists of an OAuth Provider a dummy web service an Intrusion Detection System and a Traffic Generator.
 
 \subsubsection{OAuth Provider}
 The OAuth provider is a web service that offers users the creation of an account for authentication at the provider. It also offers OAuth capabilities to provide authorization to the user's account data to other web services, if the user allows it. It offers all OAuth authorization flows at the same time (authorization code, client credentials, resource owner password, implicit). The OAuth Provider is implemented in Python using the libraries \emph{flask} and \emph{authlib}.
