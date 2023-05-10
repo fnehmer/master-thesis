@@ -24,47 +24,60 @@ The OAuth 2.0 protocol \cite{rfc6749} (referred to as OAuth) is widely used in v
 
 \section{Objectives}
 In my work, I aim to pursue the following research goals:
+
 \begin{enumerate}
-\item Implement and investigate the viability of anomaly-based intrusion detection using (Hidden-)Markov-chains in the context of OAuth, as applied in this reference work to other contexts \cite{sperotto2011}.
-\item Implement and investigate the viability of specification-based intrusion detection in the context of OAuth.
-\begin{itemize}
-\item The main challenge is to specify patterns/rules for this approach given the complexity of the OAuth specification.
-\end{itemize}
-\item Compare the anomaly-based and specification-based approaches to each other regarding yield and accuracy.
+    \item Implement and investigate the viability of anomaly-based intrusion detection using (Hidden-)Markov-chains in the context of OAuth, as applied in this reference work to other contexts \cite{sperotto2011}.
+    \item Implement and investigate the viability of specification-based intrusion detection in the context of OAuth.
+    \begin{itemize}
+        \item The main challenge is to specify patterns/rules for this approach given the complexity of the OAuth specification.
+    \end{itemize}
+    \item Compare the anomaly-based and specification-based approaches to each other regarding yield and accuracy.
 \end{enumerate}
+
 \section{Methodology}
 To investigate intrusion detection on OAuth using the anomaly-based and specification-based approaches, a lab environment is implemented to generate data for analysis.
+
 \subsection{Lab environment}
 The lab environment consists of different entities.
+
 \subsubsection{OAuth Provider}
 The OAuth provider is a web service that offers users the creation of an account for authentication at the provider. It also offers OAuth capabilities to provide authorization to the user's account data to other web services, if the user allows it. It offers all OAuth authorization flows at the same time (authorization code, client credentials, resource owner password, implicit). The OAuth Provider is implemented in Python using the libraries \emph{flask} and \emph{authlib}.
+
 \subsubsection{Dummy Web Service}
 The dummy web service utilizes the different OAuth capabilities of the OAuth provider. It is implemented in Python using the \emph{flask} library.
+
 \subsubsection{Intrusion Detection System}
 The intrusion detection system intercepts the traffic entering the lab and exports the traffic as a network log file. It offers functionality to analyze the traffic using two methods:
+
 \begin{itemize}
-\item Anomaly-based using Markov-chains implemented with the Python library \emph{markovify}.
-\item Specification-based, by implementing rules and patterns for the usage of the OAuth protocol.
+    \item Anomaly-based using Markov-chains implemented with the Python library \emph{markovify}.
+    \item Specification-based, by implementing rules and patterns for the usage of the OAuth protocol.
 \end{itemize}
-The open-source IDS "Zeek" and its Python connector "zat" are used to load the network data into a Python "pandas" dataframe. This data can then be fed into different detection models and methods to produce the alerts.
+The open-source IDS \emph{zeek} and its Python connector \emph{zat} are used to load the network data into a Python \emph{pandas} dataframe. This data can then be fed into different detection models and methods to produce the alerts.
+
 \subsubsection{Generator}
 The generator executes valid OAuth interactions as well as malicious ones to generate traffic to be analyzed by the IDS. For the malicious interactions, different attack approaches on OAuth are implemented. The generator is implemented in Python utilizing the \emph{requests} library. After running an experiment, the detection methods are fine-tuned, and the experiments are run again.
+
 \section{Experiments}
 The experiments are run with the following recipe:
 \begin{enumerate}
-\item The generator runs attacks at random over a fixed period of time and produces logs of which attack it executed at which time.
-\item The IDS meanwhile produces network logs, which include the attack traffic.
-\item The traffic logs are analyzed by the IDS with the implemented detection methods.
-\item The IDS produces alerts for attacks it recognized.
-\item The alerts are compared with the logs of the generator.
+    \item The generator runs attacks at random over a fixed period of time and produces logs of which attack it executed at which time.
+    \item The IDS meanwhile produces network logs, which include the attack traffic.
+    \item The traffic logs are analyzed by the IDS with the implemented detection methods.
+    \item The IDS produces alerts for attacks it recognized.
+    \item The alerts are compared with the logs of the generator.
 \end{enumerate}
 Every experiment is analyzed regarding yield and accuracy on the detection of the different types of attacks on the OAuth protocol.
+
 \section{Novelty}
 The novelty is to contribute to the field of context-aware intrusion detection regarding protocols at the application layer.
 \begin{itemize}
-\item A suitable method to better detect attacks on OAuth in networks.
-\item Data on how well different anomaly-based and specification-based detection methods for attacks on OAuth perform.
+    \item A suitable method to better detect attacks on OAuth in networks.
+    \item Data on how well different anomaly-based and specification-based detection methods for attacks on OAuth perform.
 \end{itemize}
+
 \bibliographystyle{acm}
+
 \bibliography{sample}
+
 \end{document}
