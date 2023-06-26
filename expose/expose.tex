@@ -13,7 +13,7 @@
 \usepackage{graphicx}
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
 
-\title{Context-aware Intrusion Detection in OAuth Protocol Flows}
+\title{Intrusion Detection in OAuth Protocol Flows}
 \author{Florian Nehmer}
 
 \begin{document}
@@ -27,7 +27,7 @@ In my work, I aim to pursue the following research goals:
 
 \begin{enumerate}
     \item Create a comprehensive overview of currently known attack methodologies on OAuth to provide an understanding of the potential threats.
-    \item Implement and investigate the viability of anomaly-based intrusion detection using (Hidden-)Markov-chains in the context of OAuth, as applied in this reference work to other contexts \cite{sperotto2011}.
+    \item Implement and investigate the viability of anomaly-based intrusion detection using (Hidden-)Markov-chains in the context of OAuth, as applied in this reference work to other contexts \cite{sperotto2011} \cite{chen2016} \cite{amato2018}.
     \item Implement and investigate the viability of specification-based intrusion detection in the context of OAuth.
     \begin{itemize}
         \item The main challenge is to specify patterns/rules for this approach given the complexity of the OAuth specification.
@@ -36,9 +36,15 @@ In my work, I aim to pursue the following research goals:
 \end{enumerate}
 
 \section{Methodology}
+
+\subsection{Literature research: Known attacks on OAuth}
+In order to gain a comprehensive understanding of the landscape of attacks on OAuth, a literature review will be conducted with the objective of creating a taxonomy that categorizes the various types of attacks. To facilitate this classification, threat and attacker models will be defined, serving as a foundation for organizing the vulnerabilities within the proposed taxonomy.
+
+
+
+\subsection{OAuth Intrusion Detection: Lab environment}
 To investigate intrusion detection on OAuth using the anomaly-based and specification-based approaches, a lab environment is implemented to generate data for analysis.
 
-\subsection{Lab environment}
 The lab environment consists of an OAuth Provider, a dummy web service, an Intrusion Detection System, and a Traffic Generator.
 
 \subsubsection{OAuth Provider}
