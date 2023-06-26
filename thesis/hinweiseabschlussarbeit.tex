@@ -1,0 +1,787 @@
+%!TEX encoding = UTF-8 Unicode
+% ================================================================================
+\documentclass[
+    fontsize=12pt,
+    headings=small,
+    parskip=half,           % Ersetzt manuelles Setzen von parskip/parindent.
+    bibliography=totoc,
+    numbers=noenddot,       % Entfernt den letzten Punkt der Kapitelnummern.
+    open=any,               % Kapitel kann auf jeder Seite beginnen.
+%   final                   % Entfernt alle todonotes und den Entwurfstempel.
+    ]{scrreprt}
+% ===================================Praeambel==================================
+\include{stylesvs}
+% ===================================Dokument===================================
+
+\title{Hinweise für das Erscheinungsbild von Seminar-, Studien- und Bachelor-,
+    Master- und Diplomarbeiten}
+\author{Hannes Federrath}
+% \date{01.01.2015} % Falls ein bestimmtes Datum eingesetzt werden soll, einfach
+                    %  diese Zeile aktivieren.
+
+\begin{document}
+
+\begin{titlepage}
+\includegraphics[width=6.8cm]{./pic/up-uhh-logo-u-2010-u-farbe-u-rgb.pdf}
+\begin{center}\Large
+    % Universität Hamburg \par
+    % Fachbereich Informatik
+    \vfill
+    \makeatletter
+    {\Large\textsf{\textbf{\@title}}\par}
+    \makeatother
+    \bigskip
+    am Arbeitsbereich Sicherheit in Verteilten Systemen (SVS) \par
+    \bigskip
+    \makeatletter
+    {\@author} \par
+    \makeatother
+    \bigskip
+    \makeatletter
+    {\@date}
+    \makeatother
+    \vfill
+    \vfill
+    (Muster für das Deckblatt: siehe Anhang dieser Hinweise)
+\end{center}
+\end{titlepage}
+
+\chapter*{Aufgabenstellung}
+
+Nur Studien-, Bachelor-, Master- und Diplomarbeiten: Soweit eine ausformulierte Aufgabenstellung mit der Betreuerin bzw. dem Betreuer vereinbart wurde, diese bitte hier einfügen.
+
+\chapter*{Zusammenfassung}
+
+Für die eilige Leserin bzw. den eiligen Leser sollen auf etwa einer halben, maximal einer Seite die wichtigsten Inhalte, Erkenntnisse, Neuerungen bzw. Ergebnisse der Arbeit beschrieben werden.
+
+Durch eine solche Zusammenfassung (im Engl. auch Abstract genannt) am Anfang der Arbeit wird die Arbeit deutlich aufgewertet. Hier sollte vermittelt werden, warum man die Arbeit lesen sollte.
+
+\tableofcontents
+
+\chapter{Vorbemerkung}
+
+Um auf die wiederholten Fragen von Studierenden nach dem Umfang, formalen Aufbau und Erscheinungsbild, das bei Seminar-, Studien-, Bachelor-, Master- und Diplomarbeiten erwartet wird, einheitlich zu antworten, wird dieses Dokument bereitgestellt.
+
+Diese Hinweise haben Empfehlungscharakter. Bei Unklarheiten geben die Mitarbeiterinnen und Mitarbeiter der Arbeitsgruppe gerne weitere Auskünfte. Als Muster steht auch eine große Anzahl abgeschlossener Arbeiten zur Ansicht zur Verfügung.
+
+\chapter{Inhalt}
+\label{sec.inhalt}
+
+Eine Seminar-, Studien-, Bachelor-, Master- und Diplomarbeit ist eine längere wissenschaftliche Abhandlung, mit der die Studierenden zeigen sollen, dass sie in einem vorgegebenen Zeitrahmen in der Lage sind, wissenschaftlich zu arbeiten.
+
+\section{Anforderungen an eine Arbeit}
+\label{sec.anforderungen}
+
+Eine Seminar-, Studien-, Bachelor-, Master- und Diplomarbeit trägt inhaltlich normalerweise zu einem aktuell am Arbeitsbereich bearbeiteten Forschungsthema bzw. -projekt bei oder leistet einen Beitrag in der Lehre (z.\,B. Erstellung eines Lehrmittels).
+
+Normalerweise besteht eine Arbeit aus einem darstellenden und einem konstruktiven Teil. Im darstellenden Teil wird gezeigt, dass mit wissenschaftlicher Literatur umgegangen, Wichtiges von Unwichtigem getrennt werden kann und die relevanten Aspekte etwaiger Vorarbeiten erfasst und dargestellt werden können. Im konstruktiven Teil werden dann eigene Lösungen erarbeitet und bewertet.
+
+Um den inhaltlichen und sprachlichen Stil einer wissenschaftlichen Arbeit zu treffen, ist es sehr empfehlenswert, beim Lesen wissenschaftlicher Publikationen auf deren „Klang“ \cite{Tolk2003} zu achten. Die Ich-Form bzw. die Wir-Form sollte im Übrigen vermieden werden.
+
+\section{Aufbau der Arbeit}
+\label{sec.aufbau}
+
+Eine wissenschaftliche Arbeit sollte -- wie nahezu jede schriftliche Arbeit -- aus einer Einleitung, einem Hauptteil und einem Schluss bestehen. Der Einleitung ist ein Deckblatt, eine Zusammenfassung und ein Inhaltsverzeichnis voranzustellen. Tabellen- und Abbildungsverzeichnisse sind optional.
+
+Als Muster kann dieses Dokument herangezogen werden.
+
+In der Einleitung wird die Problemstellung und deren Relevanz geschildert. Außerdem werden die Methoden genannt, mit der die Problemstellung bearbeitet wird.
+
+Der Hauptteil sollte mit einem Kapitel zum Stand der Wissenschaft bzgl. des zu bearbeitenden Problems beginnen und das eigene Problem einordnen. Soweit erforderlich, können in einem weiteren Kapitel Grundlagen gelegt werden, z.\,B. Grundverfahren beschrieben werden, die in den folgenden Kapiteln benutzt, ausgebaut oder verändert werden.
+
+Der Schluss fasst die Ergebnisse noch einmal zusammen, bewertet die eigenen Ergebnisse kritisch und benennt die offenen Fragen. Es ist völlig normal, dass im Verlauf der Bearbeitung neue Problemstellungen und Forschungsfragen entstehen, die dann wieder der Ausgangspunkt für weitere Arbeiten sein können.
+
+Ein Literaturverzeichnis am Ende ist obligatorisch. Man sollte sich stets auf die besten Quellen stützen. In abnehmender Qualität:
+
+\begin{enumerate}
+	\item Fachbücher, Standards,
+	\item Wiss. Zeitschriftenartikel, Survey-Artikel,
+	\item Konferenzbeiträge,
+	\item Technical Reports, graue Literatur,
+	\item Online-Material, Arbeitspapiere, Firmenmaterial, Ausarbeitungen.
+\end{enumerate}
+
+Im Internet können zur Feststellung der Qualität und Recherche von Publikationen
+
+\begin{itemize}
+	\item Google Scholar (\url{http://scholar.google.com}),
+	\item Microsoft Academic (\url{https://academic.microsoft.com/}),
+		% alt: Microsoft Academic Search (\href{http://academic.research.microsoft.com/?SearchDomain=2&SubDomain=2&entitytype=2}{http://academic.research.microsoft.com}) $\to$ computer science $\to$ security \& privacy,
+	\item Computer Science Bibliography (\url{http://dblp.uni-trier.de/}) und die
+	\item CiteSeerX
+		%ehemals Scientific Literature Digital Library 
+		(\url{https://citeseerx.ist.psu.edu/})
+\end{itemize}
+
+herangezogen werden.
+
+Bei Bedarf kann auch ein Index und Abkürzungsverzeichnis beigefügt werden. Bei Seminar-, Studien-, Bachelor-, Master- und Diplomarbeiten ist dies jedoch normalerweise wegen des überschaubaren Umfangs nicht sinnvoll.
+
+Bei umfangreichen Quelltexten (mehr als 2 Seiten) sollten diese nicht im Fließtext wiedergegeben werden, sondern im Anhang oder (mit Verweis in der schriftlichen Arbeit) auf dem beigelegten Datenträger erscheinen. Dies gilt auch für andere den Lesefluss störende Informationen größeren Umfangs.
+
+Für Studien-, Bachelor-, Master- und Diplomarbeiten ist wichtig: Eigenhändig unterschriebene Selbständigkeitserklärung am Anfang oder Ende des Textes nicht vergessen (siehe Muster am Ende dieser Hinweise). Bei Seminararbeiten kann diese entfallen.
+
+\chapter{Form}
+\label{sec.form}
+
+Abgesehen von inhaltlichen Anforderungen kann eine klare, gut strukturierte Form den Gesamteindruck der schriftlichen Ausarbeitung steigern. Obwohl die Form keine neuen Inhalte einführt, kann sie sich doch stark auf das Leseverständnis und die Informationsaufnahme der Lesenden auswirken. 
+
+\section{Umfang der schriftlichen Ausarbeitung}
+\label{sec.umfang}
+
+Generell gilt: Je weniger Text, umso besser. Auf klare Formulierungen ist in jedem Fall zu achten. Für Studien-, Bachelor-, Master- und Diplomarbeiten ist der Richtwert 40--50 Seiten. 20~Seiten sind zu wenig, 100 sind zuviel. Bei Seminararbeiten genügen 10--15 Seiten.
+
+Insbesondere für Bachelor-, Master- und Diplomarbeiten gilt: Wo immer möglich, sollte auf andere relevante Veröffentlichungen verwiesen werden, anstatt deren Inhalt noch einmal wiederzugeben. Für alle Aussagen und Darstellungen, die aus Veröffentlichungen stammen, sind Quellenangaben zu machen. Bei Inhalten aus fremden Quellen, die paraphrasiert oder wörtlich übernommen werden, ist die Quellenangabe an der Textstelle zu machen. Es genügt nicht, die Quelle ins Literaturverzeichnis aufzunehmen. Wörtliche Übernahmen von längeren Wortgruppen und ganzen Sätzen sind in Anführungszeichen zu setzen.
+
+Viele Studierende haben zu Beginn der Bearbeitung Sorge, dass sie womöglich nicht auf die „übliche“ Seitenzahl kommen. Diese Sorge ist meist unbegründet. Es sollte möglichst früh mit dem Schreiben begonnen werden: Dokumentieren Sie, was Sie gelesen und neu erarbeitet haben.
+
+\section{Gestaltung}
+
+Wissenschaftliche Arbeiten, die am Arbeitsbereich betreut werden, sollen mit LaTeX gesetzt sein. Ausnahmen von dieser Regel (etwa die Verwendung von Open Office oder Word) können in Absprache mit der Betreuerin bzw. dem Betreuer getroffen werden.
+
+Als Hauptschriftart sollte eine mit Serifen verwendet werden, z.\,B. Times (wie dieser Text). In LaTeX kann auch Latin Modern (\textbackslash usepackage\{lmodern\}) verwendet werden oder besser, falls möglich, die Postscript-Schrift Times (\textbackslash usepackage\{mathptmx\}). Bitte verwenden Sie keine \textsf{Helvetica} oder \textsf{Arial}, da diese Schriften bei längeren Texten schwerer lesbar sind. In Überschriften ist eine serifenlose Schrift jedoch in \textsf{\textbf{Bold}} erlaubt, wie in diesem Beispiel.
+
+Die Schriftgröße sollte 12pt (wie dieser Text), zur Not auch 11pt sein. Eine Größe von 10pt ist zu klein! Als Zeilenabstand sollten möglichst 15pt oder 14pt verwendet werden. 1,5-zeilig entspricht etwa 18pt und ist zuviel. Bei LaTeX sind keine benutzerdefinierten Abstände nötig. Der Text ist im Blocksatz zu setzen. Ränder bei A4-Papier: ca. 2,5--3cm rundherum. In LaTeX erzeugt beispielsweise \textbackslash usepackage[a4paper, margin=2.54cm, marginparwidth=2.0cm, footskip=1.0cm]\{geometry\} einen geeigneten Satzspiegel (wie dieses Dokument).
+
+Es sollten möglichst nicht mehr als drei Gliederungsebenen verwendet werden. Die Nummerierung einer Überschrift erfolgt stets \emph{ohne} nachgestellten Punkt. Weiterhin sollte eine Überschrift nie allein für sich stehen, sondern von einem Text begleitet werden. Folgt auf eine Hauptüberschrift direkt eine Unterüberschrift, könnte zwischen den beiden Überschriften beispielsweise eine Einführung zum jeweiligen thematischen Abschnitt oder ein Überblick über die darauffolgenden Unterabschnitte gegeben werden. In diesem Dokument sind dies beispielsweise zwischen den Überschriften zu Kapitel~\ref{sec.form} und Abschnitt~\ref{sec.umfang} zwei Sätze, die das Kapitel einleiten.
+
+Innerhalb eines Kapitels sollte eine Untergliederung immer dann verwendet werden, wenn es deutlich mehr als 2 Seiten Text umfasst. Bei der Untergliederung ist zu beachten, dass stets wenigstens zwei Unterabschnitte vorhanden sein sollten. Das Kapitel~\ref{sec.inhalt} dieses Textes hat beispielsweise die Unterabschnitte~\ref{sec.anforderungen} und \ref{sec.aufbau}, und es wäre eigenartig, wenn ein Kapitel~x nur den Unterabschnitt~x.1 hätte und kein weiterer folgen würde. Dann ist es besser, auf eine Untergliederung zu verzichten.  
+
+Eine Kopfzeile kann verwendet werden, muss aber nicht. Hier wird oft unnötig Zeit verschwendet. 
+
+Bitte benutzen Sie nur einen Absatztyp (wie in diesem Dokument; wird in LaTeX durch mindestens eine Leerzeile zwischen den Absätzen erzeugt). Es ist weit verbreitet, Gedanken, die irgendwie zusammenhängen, aber aus Sicht des Autors noch keinen neuen Absatz rechtfertigen, auf einer neuen Zeile zu beginnen -- in LaTeX meist durch {\textbackslash\textbackslash} erzeugt.\\ Dies ist zu vermeiden, weil es das Textbild uneinheitlich und unruhig macht. Man soll zwar keine Negativbeispiele bringen, aber der Zeilenwechsel vor dem vorherigen Satz ist eines.
+
+Dieses Dokument wurde mit LaTeX erstellt und steht übrigens auch im Quelltext (.tex-File) zur Verfügung und kann für eigene Zwecke weiterverwendet werden. Die Befehlsfolge zum Erzeugen eines PDF aus diesem Dokument lautet etwa:
+
+\begin{lstlisting}[numbers=none,xleftmargin=6pt]
+pdflatex hinweiseabschlussarbeit.tex
+biber hinweiseabschlussarbeit.bcf
+pdflatex hinweiseabschlussarbeit.tex
+pdflatex hinweiseabschlussarbeit.tex
+\end{lstlisting}
+
+Weiterführende Literatur zum Schreiben wissenschaftlicher Arbeiten mit LaTeX findet sich beispielsweise in \cite{Schl2013}.
+
+Für detaillierte Informationen zu typographischen Regeln sowie Beispiele der korrekten Umsetzung dieser Regeln sei auf die kompakte und sehr hilfreiche Arbeit „typokurz -- Einige wichtige typographische Regeln“ von Christoph Bier verwiesen \cite{Bier2009}.
+
+Häufig werden die Regeln zum Setzen von Text in Anführungszeichen missachtet. Im Deutschen sollten nur die „Gänsefüßchen“ (links nach unten und rechts nach oben geschwungen) verwendet werden. Genaues Hinschauen ermöglicht hier die korrekte Verwendung: Weder „dies” noch {\verb#"#}das{\verb#"#} noch “jenes” ist korrekt.
+
+Bei der Kommasetzung bietet es sich an, noch einmal die Regeln unter \url{https://www.duden.de/sprachwissen/rechtschreibregeln/komma} anzuschauen. Sehr häufig werden notwendige Kommas weggelassen, etwa beim erweiterten Infinitiv mit zu (genauer: bei satzwertigen Infinitivgruppen, vgl. Duden, Regel D117). Dagegen werden Kommas leider immer wieder dort gesetzt, wo sie nicht hingehören, z.B. werden keine Kommas vor „etc.“ und „sowie“ gesetzt.
+
+Beim Verwenden von zusammengesetzten Substantiven und anderen Aneinanderreihungen, wie sie in informatischen Texten sehr häufig vorkommen, gilt im Deutschen die Regel, dass diese üblicherweise mit einem Bindestrich verbunden werden. Man schreibt etwa DES-Verschlüsselung, IP-Adresse und Public-Key-Verfahren. Näheres zum Nachlesen findet sich in den deutschen Rechtschreibregeln. Eine E-Mail ist eine elektronisch übermittelte Nachricht, während Email ein Keramiküberzug ist. Man schreibt im Deutschen selten „Netzwerk“, wenn man ein Kommunikationsnetz oder Rechnernetz meint. Als Kurzform für das Englische \emph{computer network} verwendet man den Begriff Netz.
+
+Wenn es möglich ist, ein zusammengesetztes Wort ohne Bindestrich zu schreiben, dann sollte davon Gebrauch gemacht werden. So sollte beispielsweise besser „IT-Sicherheitsmanagement“ anstelle von „IT-Sicherheits-Management“ geschrieben werden.
+
+Zwar mögen solche Formfragen aus Sicht des wissenschaftlichen Gehalts eines Textes eher nachrangig sein, allerdings verhilft eine saubere, fehlerfreie und konsistente Form zu einem positiven Gesamteindruck. Dagegen kann eine hohe Rate an Rechtschreib- und Interpunktionsfehlern einen inhaltlich guten Text eigentlich nur schwächen. 
+
+Weniger kann übrigens manchmal mehr und Besseres bewirken. Spiegel Online berichtete in \cite{textwahrnehmung} beispielsweise, dass einfache, klare Sprache und eine gut lesbare Standardschrift die Textwahrnehmung verbessern kann: „Schreib so einfach und deutlich wie möglich, dann hält man dich eher für intelligent.“
+
+Eine interessante Regel für klares Schreiben ist die „Daumenregel“, die durchaus wörtlich zu nehmen ist: Wenn ein Satz durch Weglassen (mit dem Daumen Verdecken) eines Wortes oder einer Wortgruppe noch immer den gewünschten Sinn ergibt, dann sollte dieses Wort bzw. die Wortgruppe gestrichen werden. Diese Regel kann auch auf ganze Sätze oder gar Abschnitte erweitert werden.
+
+Darüber hinaus sollten beim Schreiben unbestimmte Aussagen vermieden werden. Wenn etwa in einem Text die Rede davon ist, dass es „verschiedene Verfahren zur Angriffserkennung gibt“, dann ist es für die positive Wahrnehmung der entsprechenden Textstelle hilfreich, entweder eine Quellenangabe zu machen, bei der diese verschiedenen Verfahren zur Angriffserkennung genannt und näher erläutert werden, oder kurz und unmittelbar die konkreten Verfahren zu nennen, um die Leserinnen und Leser nicht im Unklaren zu lassen. Wenn öfter von „unterschiedlichen“, „verschiedenen“ oder „mehreren“ Dingen geschrieben wird, sollte ernsthaft die Anwendung der vorangegangenen Daumenregel in Betracht gezogen werden. 
+
+Tipps und Textbausteine sowie die Grundlagen des wissenschaftlichen Schreibens sind in \cite{Küht2021} sehr ansprechend und mit zahlreichen Beispielen und Gegenbeispielen zu finden.
+
+\section{Abbildungen, Tabellen und Listings}
+
+Abbildungen sollten möglichst schlicht, in schwarzweiß und als Strichzeichnungen gestaltet sein. Wenn schon Farben verwendet werden, dann bitte in \emph{allen} Abbildungen das gleiche Farbschema verwenden. Farben sind nur dann sinnvoll, wenn sie einen Sachverhalt deutlich unterstreichen oder veranschaulichen. Es ist zu beachten, dass die Aussagekraft auch in einem Schwarzweiß-Ausdruck erhalten bleiben muss.
+
+Die Auflösung muss ausreichend groß gewählt werden, damit im fertigen Dokument weder Pixel noch Treppen oder Unschärfe erkennbar sind. Deshalb möglichst Vektorgrafiken verwenden.
+
+Gleitobjekte (sog. Floats) wie Abbildungen und Tabellen müssen eine Unterschrift erhalten. Auf diese muss zudem im Text eindeutig verwiesen werden, da durch das automatische Setzen unter Umständen nicht ersichtlich ist, zu welchem Textabschnitt eine Abbildung gehört. Wie das aussehen kann, ist anhand von Abbildung~\ref{fig:bsp} ersichtlich.
+
+\begin{figure}[ht]
+\sffamily\footnotesize
+%\includegraphics[width=0.6\textwidth]{abb.pdf}
+\unitlength=0.75mm
+\special{em:linewidth 0.4pt}
+\linethickness{0.4pt}
+\begin{picture}(111,73)(0,0)
+	\put(21,59){\makebox(0,0)[cc]{}}
+	\put(1,55){\line(1,0){40}}
+	\put(1,55){\line(0,1){8}}
+	\put(41,55){\line(0,1){8}}
+	\put(1,63){\line(1,0){40}}
+	\put(91,59){\makebox(0,0)[cc]{}}
+	\put(71,55){\line(1,0){40}}
+	\put(71,55){\line(0,1){8}}
+	\put(111,55){\line(0,1){8}}
+	\put(71,63){\line(1,0){40}}
+	\put(21,19){\makebox(0,0)[cc]{}}
+	\put(1,15){\line(1,0){40}}
+	\put(1,15){\line(0,1){8}}
+	\put(41,15){\line(0,1){8}}
+	\put(1,23){\line(1,0){40}}
+	\put(91,19){\makebox(0,0)[cc]{}}
+	\put(71,15){\line(1,0){40}}
+	\put(71,15){\line(0,1){8}}
+	\put(111,15){\line(0,1){8}}
+	\put(71,23){\line(1,0){40}}
+	\put(31,43){\makebox(0,0)[cc]{F}}
+	\put(24,38){\line(1,0){14}}
+	\put(24,38){\line(0,1){10}}
+	\put(38,38){\line(0,1){10}}
+	\put(24,48){\line(1,0){14}}
+	\put(81,43){\makebox(0,0)[cc]{F}}
+	\put(74,38){\line(1,0){14}}
+	\put(74,38){\line(0,1){10}}
+	\put(88,38){\line(0,1){10}}
+	\put(74,48){\line(1,0){14}}
+	\put(31,30){\circle{6}}
+	\put(81,30){\circle{6}}
+	\put(79,30){\line(1,0){4}}
+	\put(81,28){\line(0,1){4}}
+	\put(29,30){\line(1,0){4}}
+	\put(31,28){\line(0,1){4}}
+	\put(21,63){\line(0,1){7}}
+	\put(21,63){\vector(0,-1){0.12}}
+	\put(31,48){\line(0,1){7}}
+	\put(31,48){\vector(0,-1){0.12}}
+	\put(31,33){\line(0,1){5}}
+	\put(31,33){\vector(0,-1){0.12}}
+	\put(31,23){\line(0,1){4}}
+	\put(31,23){\vector(0,-1){0.12}}
+	\put(21,8){\line(0,1){7}}
+	\put(21,8){\vector(0,-1){0.12}}
+	\put(11,30){\line(1,0){17}}
+	\put(28,30){\vector(1,0){0.12}}
+	\put(91,63){\line(0,1){7}}
+	\put(91,63){\vector(0,-1){0.12}}
+	\put(81,48){\line(0,1){7}}
+	\put(81,48){\vector(0,-1){0.12}}
+	\put(81,33){\line(0,1){5}}
+	\put(81,33){\vector(0,-1){0.12}}
+	\put(81,23){\line(0,1){4}}
+	\put(81,23){\vector(0,-1){0.12}}
+	\put(91,8){\line(0,1){7}}
+	\put(91,8){\vector(0,-1){0.12}}
+	\put(84,30){\line(1,0){17}}
+	\put(84,30){\vector(-1,0){0.12}}
+	\put(11,30){\line(0,1){25}}
+	\put(101,30){\line(0,1){25}}
+	\put(21,73){\makebox(0,0)[cc]{Klartext M}}
+	\put(91,73){\makebox(0,0)[cc]{Chiffretext C}}
+	\put(21,3){\makebox(0,0)[cc]{Chiffretext C}}
+	\put(91,3){\makebox(0,0)[cc]{Klartext M}}
+	\put(56,43){\makebox(0,0)[cc]{K}}
+	\put(56,48){\makebox(0,0)[cc]{Schlüssel}}
+	\put(38,43){\line(1,0){13}}
+	\put(38,43){\vector(-1,0){0.12}}
+	\put(61,43){\line(1,0){13}}
+	\put(74,43){\vector(1,0){0.12}}
+	\put(21,55){\line(0,1){8}}
+	\put(21,15){\line(0,1){8}}
+	\put(91,55){\line(0,1){8}}
+	\put(91,15){\line(0,1){8}}
+	\put(11,59){\makebox(0,0)[cc]{L}}
+	\put(31,59){\makebox(0,0)[cc]{R}}
+	\put(81,59){\makebox(0,0)[cc]{R}}
+	\put(11,19){\makebox(0,0)[cc]{R}}
+	\put(81,19){\makebox(0,0)[cc]{L}}
+	\put(101,19){\makebox(0,0)[cc]{R}}
+	\put(13,52){\line(1,0){18}}
+	\put(81,52){\line(1,0){18}}
+	\put(99,23){\line(0,1){29}}
+	\put(99,23){\vector(0,-1){0.12}}
+	\put(13,23){\line(0,1){29}}
+	\put(13,23){\vector(0,-1){0.12}}
+	\put(31,19){\makebox(0,0)[cc]{L'}}
+	\put(101,59){\makebox(0,0)[cc]{L'}}
+\end{picture}
+\caption{Ein Beispiel für eine Abbildung}
+\label{fig:bsp}
+\end{figure}
+
+Ein Abbildungsverzeichnis ist nicht unbedingt erforderlich, kann aber bei einer Vielzahl von verwendeten Abbildungen für Übersichtlichkeit sorgen.
+
+Längere Listings sollten wie Abbildungen in einer Float-Umgebung untergebracht werden, d.h. eine Über- bzw. Unterschrift haben. Ein Beispiel zeigt Listing~\ref{lst:ggt}.
+
+\begin{lstlisting}[float,caption={Berechnung des größten gemeinsamen Teilers zweier ganzer Zahlen a und b},label={lst:ggt}]
+int getGGTOf(int a, int b) {
+    // requires ((a > 0) && (b > 0)); ensures return > 0;
+    int h;
+    while (b != 0) {
+        h = b;
+        b = a % b; // % is the modulo operator. This line is long enough to show how line breaks in lstlisting are handled.
+        a = h;
+    }
+    return a;
+}
+\end{lstlisting}
+
+\section{Literaturverzeichnis}
+\label{sec:literaturhowto}
+
+Nachfolgend werden einige Hinweise für die Angaben im Literatur- bzw. Quellenverzeichnis gegeben. Es ist wichtig, dass alle für den jeweiligen Quellentyp relevanten Informationen angegeben werden. Zudem sollte darauf geachtet werden, dass die Quellenangaben stets einheitlich erfolgen, also beispielsweise die Autoren konsequent zuerst mit Vorname und dann mit Nachname genannt werden. In den folgenden Syntaxbeschreibungen sind optionale Angaben in eckigen Klammern angegeben.
+
+\begin{description}
+
+	\item[Zitierweise für Fachbücher:] \mbox{}\\[1ex]
+	Syntax: Vorname Nachname. Buchtitel. {[}Auflage,{]} Erscheinungsort: Verlag, Jahr. \\[1ex]
+	Beispiele: \cite{Beut2009,ScWe2007,Pfit90}
+
+	\item[Zitierweise für Zeitschriften:] \mbox{}\\[1ex]
+	Syntax: Vorname Nachname. Artikeltitel. Zeitschrift Jahrgang/Volume (Jahr), Seiten. \\[1ex]
+	Beispiele: \cite{Kili2006,Lamp1981,ThKZ2002,Chau81,Chau88}
+
+	\item[Zitierweise für Konferenzbeiträge:] \mbox{}\\[1ex]
+    Syntax: Vorname Nachname. Beitragstitel. {[}Herausgeber/Editoren.{]}
+    Konferenzband. {[}Volume. Buchserie.{]} Ort{[: Verlag]}, Datum, Seiten. \\[1ex]
+	Beispiele: \cite{InBr2009,WWPK2010,HSFN2009,GoRS99,WaMS2008}
+
+	\item[Zitierweise für Onlinequellen:] \mbox{}\\[1ex]
+    Syntax: Vorname Nachname. Titel. {[}Quelle.{]} Datum. URL (Zugriffszeitpunkt). \\[1ex]
+	Beispiele: \cite{CCC2009,Heise2011,textwahrnehmung}
+
+\end{description}
+
+Die Literatur sollte im Text durch alphanumerische Kürzel mit Erscheinungsjahr in eckigen Klammern angegeben werden.
+%
+% ----- Der nachfolgende Text ist obsolet geworden durch die konsequente Verwendung von Bibtex:
+% Bei einem Autor werden meist die ersten drei Buchstaben des Nachnamens % % verwendet (Beispiel: \cite{Beut2009}), bei zwei oder drei Autoren werden die % Anfangsbuchstaben der Nachnamen verwendet (Beispiel: \cite{InBr2009}). Bei % vier oder mehr Autoren werden die ersten drei Buchstaben des Nachnamens des % ersten Autors gefolgt von einem Pluszeichen verwendet (Beispiel: \cite{HSFN2009}).
+
+In diesem Dokument wurde für die Erzeugung des Literaturverzeichnisses BibLaTeX verwendet. Im Literaturverzeichnis auf Seite~\pageref{sec:literaturverzeichnis} können Beispiele angeschaut werden. Solange die Angaben zu einer Quelle vollständig sind, erzeugt BibTeX automatisch eine korrekte Quellenangabe, die allerdings je nach verwendetem Bibstyle (hier: alphabetic) von den o.a. Hinweisen abweichen kann, was in Ordnung ist, solange die Angaben vollständig und einheitlich sind.
+
+Teilweise wird in den Seminaren die Erstellung einer Literaturliste mit den fünf wichtigsten und besten Quellen gefordert. Im Anhang findet sich auf Seite~\pageref{sec:literaturliste} ein Beispiel für eine solche Literaturliste.
+
+\section{Wikipedia als Quellenangabe}
+
+Grundsätzlich sollte bei der Literaturarbeit darauf geachtet werden, dass die Originalquelle
+%für eine Information oder einen Sachverhalt
+referenziert wird. Referenzen auf Wikipedia und Sekundärliteratur sollten daher möglichst vermieden werden. Im wissenschaftlichen Kontext kann aber etwa aus didaktischen Gründen eine Referenz auf Inhalte aus Wikipedia, Lehrbücher und Sekundärliteratur trotzdem sinnvoll sein. Bei der Referenz auf einen Eintrag der Wikipedia ist es wichtig, auf eine spezielle Version des Dokuments (in der Regel die zum Abrufzeitpunkt aktuellste) zu verweisen. Dies wird innerhalb von Wikipedia mittels der sog. \emph{oldid} realisiert. Ein Beispiel hierfür ist \cite{Wiki}.
+
+\section{Angabe von Literaturreferenzen im Fließtext}
+\label{sec:literaturfliesstext}
+
+Beispiele für die korrekte Angabe von Referenzen im Fließtext finden sich an vielen Stellen in diesem Dokument. Im Fließtext sollen Quellenangaben immer möglichst dicht an der jeweiligen Paraphrasierung genannt werden. Die nachfolgenden Satzbeispiele zeigen, wie so etwas gehen kann:
+
+Das Mix-Netz \cite{Chau81} und das DC-Netz \cite{Chau88} bilden die Grundlage vieler moderner Verfahren zum Schutz vor Beobachtung im Internet. In \cite[S.~13]{Beut2009} wird ein Algorithmus zur statistischen Analyse der Cäsar-Chriffre angegeben. Soll bei einer Quellenangabe auch eine konkrete Seitenangabe gemacht werden, gelingt dies mit \textbackslash cite[S.\textasciitilde 13]\{XYZ\}, siehe das Beispiel zuvor.
+
+Manchmal möchte man, dass der Namen der Autorin bzw. des Autors einer zitierten Quelle im Fließtext erscheint, wie das nachfolgende Textbeispiel zeigt. So stellte etwa \textcite{Chau81} das Mix-Netz vor und hat mit dieser und weiteren bahnbrechenden Arbeiten das neue Teilgebiet der Privacy Enhancing Technologies (PET) innerhalb der IT-Sicherheitsforschung etabliert.
+
+Gelegentlich sieht man auch die Quellenangabe am Ende eines Satzes. Wenn diese Form der Quellenangabe genutzt wird, dann bitte die Quellenangabe \emph{vor} das Satzzeichen setzen, wie in diesem Satz \cite{XYZ}. Danach kann es im Absatz mit weiteren Aussagen weitergehen, die sich auf andere Quellen beziehen können.
+
+Die Übernahme längerer paraphrasierter Passagen aus bereits veröffentlichten Texten ist eher unerwünscht. Gelegentlich sieht man die Quellenangabe bei solchen aus mehreren Sätzen bestehenden paraphrasierten Passagen am Ende des Absatzes, wie hier in diesem Absatz demonstriert. Dann sollten sich innerhalb dieses Absatzes nur Aussagen finden, die sich auf diese eine Quelle beziehen, die dann \emph{nach} das letzte Satzzeichen des Absatzes gestellt wird. \cite{XYZ}
+
+Bei Übernahme längerer paraphrasierter Inhalte sollte anstelle der nach dem letzten Satzzeichen gestellten Quellenangabe besser der jeweilige Absatz bzw. der jeweilige Abschnitt zu Beginn im Fließtext explizit darauf hinweisen, dass sich die nachfolgenden Bemerkungen auf die Quelle \cite{XYZ} beziehen. Eine wörtliche Übernahme aus Fremdtexten ist aber auch dann nicht erlaubt, abgesehen von kurzen Zitaten, die stets in Gänsefüßchen zu setzen sind.
+
+\section{Vor der Abgabe}
+
+Vor der Abgabe sollten die Funktionen zur Rechtschreibprüfung und Silbentrennung genutzt werden. In LaTeX können dazu spezielle Entwicklungsumgebungen verwendet werden, die für jedes gängige Betriebssystem verfügbar sind. TeXworks \url{http://www.tug.org/texworks/} ist beispielsweise ein kostenloser plattformunabhängiger LaTeX-Editor.
+
+Zusätzlich lohnt es sich, den Text vor Abgabe von jemandem lesen zu lassen (Freund, Freundin, Bekannte, Haustier), damit er auch sprachlich noch einmal überprüft wurde. Zudem ist auf die korrekte Kommasetzung zu achten.
+
+Bachelor-, Master- und Diplomarbeiten müssen gebunden sein. Eine einfache Heissleim-, Kaltleim oder Klemmbindung (für ca. 3~EUR pro Exemplar aus dem Copyshop) genügt. Seminar- und Studienarbeiten können zumeist rein elektronisch abgegeben werden oder als lose Blätter in einer Klarsichthülle, bitte ungelocht und \emph{nicht} geklammert.
+
+Es sollte möglichst doppelseitig gedruckt werden, um Papier zu sparen. Die Umwelt dankt es. Schwarzweiß-Druck genügt in den meisten Fällen völlig.
+
+Zusätzlich muss die Arbeit noch einmal als PDF-Datei per Mail an die Betreuerin oder den Betreuer geschickt werden. Eine etwa im Prüfungssekretariat abgegebene CD erreicht uns gewöhnlich nicht. Falls Quellcodes und Programme erstellt wurden, sollte vor Abgabe mit der Betreuerin oder dem Betreuer besprochen werden, in welcher Weise diese abzugeben sind.
+
+\chapter{Betreuung und Bewertung der Arbeit}
+
+Für die Betreuung der Arbeit steht die bzw. der mit der Ausgabe der Aufgabenstellung genannte Betreuerin oder Betreuer zur Verfügung. Bitte nutzen Sie die Kontaktmöglichkeiten im Rahmen der Sprechstunden und nach Vereinbarung für regelmäßige Gespräche (mindestens etwa alle 2--3 Wochen). Sinnvollerweise sollte Sie jeweils darauf vorbereitet sein, einen kurzen mündlichen Bericht über den Stand der Bearbeitung zu geben. Während der Vorlesungszeit finden möglicherweise regelmäßige Treffen aller Bearbeiterinnen und Bearbeiter von Abschlussarbeiten statt, zu denen ggf. kurzfristig eingeladen wird. Jedes Gesprächsangebot sollte wahrgenommen werden!
+
+\section{Schriftlicher Teil}
+
+Folgende \textbf{Meilensteine} sollten bereits zu Beginn der Bearbeitung des Themas im Kalender vermerkt werden:
+
+Bei \textbf{Arbeiten mit etwa 3-monatiger Bearbeitungszeit} soll \textbf{nach 1,5 Monaten} die \textbf{Abgabe eines ersten Textentwurfs} bei der Betreuerin bzw. beim Betreuer erfolgen. Wenn mit der Zweitbetreuerin bzw. dem Zweitbetreuer (soweit vorhanden) nichts anderes vereinbart ist, sollte ihr bzw. ihm zu diesem Zeitpunkt ein Zwischenbericht geliefert werden und ggf. nachgefragt werden werden, ob der aktuelle Textentwurf zur Kommentierung überlassen werden soll.
+
+Bei \textbf{Arbeiten mit etwa 6-monatiger Bearbeitungszeit} soll \textbf{nach 2 Monaten} ein etwa 12-seitiger Textentwurf inkl. Gliederungsentwurf vorliegen und \textbf{nach weiteren 2 Monaten} ein erster vollständiger Textentwurf.
+
+Die Textentwürfe werden von uns gelesen, kommentiert und zurückgegeben. Die Meilensteine dienen der Fortschrittskontrolle und sind für die endgültige Bewertung der Arbeit bedeutungslos; Fehler dürfen sorgenfrei gemacht werden.
+
+\section{Bewertung}
+
+Typische Kontrollfragen zur Beurteilung einer Arbeit sind:
+\begin{itemize}
+	\item Wurde die Fragestellung auf hohem Niveau bearbeitet?
+	\item Handelt es sich um eine kreative Herangehensweise bzw. Lösung?
+	\item Sind die Annahmen und getroffenen Voraussetzungen realistisch, oder wurden unzulässige Vereinfachungen vorgenommen?
+	\item Sind alle Aussagen klar und verständlich formuliert?
+	\item Wurde die Literatur zur Kenntnis genommen?
+	\item Falls Programme entwickelt wurden: Sind die Quellcodes dokumentiert, die Module und Schnittstellen beschrieben? Gibt es eine Programmbeschreibung?
+	\item Wie ist die äußere Form (Layout, Rechtschreibung, Grammatik)?
+	\item Ist der Umfang angemessen?
+\end{itemize}
+
+Bei der Bewertung der schriftlichen Ausarbeitung wird ein Punkteschema verwendet, das sich an \cite{faui2} orientiert, welches am Lehrstuhl für Informatik 2 (Programmiersysteme) der Friedrich-Alexander Universität Erlangen-Nürnberg entwickelt wurde. Eine gekürzte und angepasste Übernahme des Punkteschemas ist im Anhang enthalten.
+
+\section{Referat}
+
+Oft müssen die Ergebnisse der Arbeit in einem Referat vorgestellt werden. Generell gilt: Ein Referat soll die Zuhörerschaft gezielt informieren. Bei der Vorbereitung des Referats sollte deshalb Klarheit darüber bestehen, wieviele Zuhörerinnen und Zuhörer voraussichtlich teilnehmen werden, welches Vorwissen sie haben und mit welchen Erwartungen sie zu dem Referat gekommen sind.
+
+Übersichtliche Folien sind für die bzw. den Vortragenden und die Zuhörerinnen und Zuhörer eine große Unterstützung. Die Folien sollten nummeriert sein, nicht mehr als 4--8 Stichpunkte enthalten, keinen Fließtext und aussagekräftige Abbildungen. Bei Farbfolien sollte man sich auf drei bis vier Farben beschränken, die durchgehend durch die Präsentation verwendet werden. Ansonsten wirken die Folien bunt und unruhig. Schriften ohne oder mit unauffälligen Serifen (z.\,B. Helvetica, Calibri oder Verdana) in 18--20pt eignen sich sehr gut für Vortragsfolien. Es existieren am Arbeitsbereich Templates für Folien, die möglichst verwendet werden sollten.
+
+Als Daumenregel gilt: Folienanzahl $\approx$ Vortragszeit$\,/\,$3 Minuten.
+
+Während des gesamten Vortrags sollte man ins Publikum schauen und nicht zur Wand oder in den Laptop.
+
+Auch das Referat wird nach festgelegten Kriterien beurteilt, die dem Formular im Anhang entnommen werden können.
+
+Ein Kolloquium zur Abschlussarbeit kann auch vor Abgabe der schriftlichen Ausarbeitung stattfinden. Der Vorteil ist, dass ggf. noch Tipps gegeben werden, die in die schriftliche Ausarbeitung einfließen können. Bitte sprechen Sie Ihre Betreuerin bzw. Ihren Betreuer an, wenn Sie Interesse an einem vorgezogenen Kolloquiumstermin haben.
+
+\chapter{Schlussbemerkungen}
+
+Im Internet sind zahlreiche Erfahrungsberichte von (renommierten) Wissenschaftlerinnen und Wissenschaftlern zu finden, die auch bei der Bearbeitung einer Seminar- oder Abschlussarbeit hilfreich sein können. Hier einige wenige Empfehlungen:
+
+\begin{itemize}
+	\item Randy Pausch Lecture: Time Management. \\ \url{http://www.youtube.com/watch?v=oTugjssqOT0}
+	\item Richard Hamming: You and Your Research. \\ \url{http://www.cs.virginia.edu/~robins/YouAndYourResearch.html}
+	\item Nick Feamster: Writing Tips for Academics. \\ \url{http://greatresearch.org/2013/10/11/storytelling-101-writing-tips-for-academics/}
+\end{itemize}
+
+Eine besondere Empfehlung ist der Duden-Ratgeber „Wie schreibt man wissenschaftliche Arbeiten?“ von Ulrike Pospiech \cite{Posp2012}, der Informationen und Beispiele zu allen wichtigen Themen bezüglich wissenschaftlicher Texte enthält.
+
+Wissenschaftliches Arbeiten und Schreiben will gelernt sein. Dafür dienen während des Studiums u.a. die Seminararbeiten. Die Abschlussarbeit soll dann zeigen, welche methodischen und fachlichen Fähigkeiten während des Studiums erworben wurden. 
+
+Das Bearbeiten von wissenschaftlichen Fragestellungen während des Studiums schult zudem auch die Entschlussfähigkeit. Wenn Sie sich etwa zwischen zwei Darstellungsvarianten eines Problems entscheiden sollen, warten Sie nicht zu lange damit und grübeln Sie bitte nicht zuviel, sonst landen Sie in einem Deadlock. Dieses Phänomen ist als das Buridansche Paradoxon (auch: Buridans Esel, Grasbüschelproblem) \cite{BuridansAss} bekannt.
+
+Neben einem guten Zeitmanagement, Disziplin und Bereitschaft zur Literaturrecherche ist die Kommunikation mit der Betreuerin bzw. dem Betreuer ein Schlüssel zur erfolgreichen Bearbeitung des Themas.
+
+
+% =============================Literaturverzeichnis=============================
+\begin{raggedright}         % Schaltet Blocksatz ab, erzeugt ein stimmigeres
+                            %  Schriftbild im Literaturverzeichnis.
+  \printbibliography        % Falls Biblatex verwendet wird.
+  \label{sec:literaturverzeichnis}
+\end{raggedright}
+
+
+% ===================================Anhang=====================================
+\appendix
+\setcounter{figure}{0}
+\renewcommand\thetable{A.\arabic{figure}}
+\setcounter{table}{0}
+\renewcommand\thetable{A.\arabic{table}}
+
+\chapter*{Punktesystem zur Beurteilung}
+
+Bei der Bewertung der schriftlichen Ausarbeitung wird ein Punkteschema verwendet, das am Lehrstuhl für Informatik 2 (Programmiersysteme) der Friedrich-Alexander Universität Erlangen-Nürnberg entwickelt wurde. Die folgende Übersicht ist eine gekürzte und angepasste Übernahme von \cite{faui2}.
+
+\section*{Allgemeine Hinweise}
+
+Die Arbeit wird unter fünf Aspekten einzeln bewertet, die jedoch nicht gleichgewichtig sind. Das verschiedene Gewicht wird dadurch berücksichtigt, dass für die einzelnen Aspekte verschieden hohe Punktzahlen zur Verfügung stehen (siehe Tabelle~\ref{tab:punktzahl}).
+
+\begin{table}[!h]%Tabelle soll hier (!h) erscheinen!
+\begin{tabu}{lcrl}
+	\toprule
+	\multicolumn{3}{l}{Punktzahl} & Aspekt\\
+	\midrule
+	0 & -- & 6  & Schwierigkeitsgrad\\
+	0 & -- & 8  & Schöpferische Originalität\\
+	0 & -- & 10 & wissenschaftliche Arbeitstechnik\\
+	0 & -- & 4  & Stil\\
+	0 & -- & 3  & Äußere Form\\
+	\midrule
+	0 & -- & 31 & Summe\\
+	%\bottomrule
+\end{tabu}
+\caption{Maximale Punktzahlen pro Aspekt}
+\label{tab:punktzahl}
+\end{table}
+
+\section*{Notenstufen}
+
+Die Note wird in folgender Weise festgesetzt:
+\begin{enumerate}
+	\item Arbeiten, bei denen für wissenschaftliche Arbeitstechnik weniger als 4~Punkte oder für die wissenschaftliche Arbeitstechnik, den Stil und die Form zusammen weniger als 8~Punkte vergeben wurden, erhalten die Note~5 (nicht ausreichend, nicht bestanden).
+	\item Alle anderen Arbeiten werden nach Tabelle~\ref{tab:noten} benotet.
+\end{enumerate}
+
+\begin{table}
+\begin{tabu}{lp{6cm}}
+	\toprule
+	Punktzahl  & Note \\
+	\midrule
+	31--29 &   1,0 \quad  sehr gut\\
+	28--27 &   1,3\\
+	\midrule
+	26--25 &   1,7\\
+	24--23 &   2,0 \quad  gut\\
+	22--21 &   2,3\\
+	\midrule
+	20--19 &   2,7 \\
+	18--17 &   3,0 \quad  befriedigend\\
+	16--15 &   3,3\\
+	\midrule
+	14--13 &   3,7\\
+	12--11 &   4,0 \quad  ausreichend\\
+	\bottomrule
+\end{tabu}
+\caption{Punkte- und Notenverteilung}
+\label{tab:noten}
+\end{table}
+
+\section*{1. Schwierigkeitsgrad (0--6)}
+
+Bei der Beurteilung des Schwierigkeitsgrades ist davon auszugehen, ob die Problemstellung mit der durchschnittlichen Ausgangsqualifikation der Bearbeitungsgruppe gelöst werden kann (4~Punkte). Die Beurteilung des Schwierigkeitsgrades einer Arbeit kann erst nach Abschluss erfolgen und umfasst die Prüfung, ob die vorgelegte Fassung die genannten Merkmale auch tatsächlich enthält.
+
+\section*{2. Schöpferische Originalität (0--8)}
+
+Bei der Beurteilung der schöpferischen Originalität ist nicht nur davon auszugehen, inwieweit die Bearbeiterin bzw. der Bearbeiter der Anleitung und Führung durch die Betreuerin bzw. den Betreuer bedarf. Es ist vielmehr selbstverständlich, dass die Bearbeiterin bzw. der Bearbeiter Initiative entwickelt, d.h. aus eigenem Antrieb Schwierigkeiten aufgreift und mit der Betreuerin bzw. dem Betreuer diskutiert (4~Punkte).
+
+\section*{3. Wissenschaftliche Arbeitstechnik (0--10)}
+
+Bei der Beurteilung der wissenschaftlichen Arbeitstechnik ist nicht nur vom Grad der Fehlerfreiheit (formale Richtigkeit der Aussagen und eventueller Programme) auszugehen, die vielmehr als selbstverständlich vorausgesetzt werden muss. Daneben fällt sehr stark das Ausmaß der Selbstkontrolle ins Gewicht, das sich bei formalen Aussagen in der Beweisgründlichkeit, bei Programmen in ausführlichen Tests zeigt. Bezüglich der Programmrichtigkeit darf davon ausgegangen werden, dass bei hinreichend modularem Programmaufbau eine durchdachte (Begründung!) Menge von Testprogrammen genügt (5~Punkte).
+
+\section*{4. Stil (0--4)}
+
+Bei der Beurteilung des Stils ist von der sprachlichen Ausdrucksfähigkeit auszugehen, die sich der Leserin bzw. dem Leser in der vorgelegten Arbeit bietet. Diese zeigt sich insbesondere in der Klarheit und Kürze des Ausdrucks: Auch schwierige Probleme müssen verständlich dargelegt, triviale Zusammenhänge nicht hinter einem formalen Apparat verborgen sein. Die Gedankenführung muss eindeutig sein (2~Punkte).
+
+\section*{5. Äußere Form (0--3)}
+
+Bei der Beurteilung der äußeren Form fällt neben der Sorgfalt der Ausführung, insbesondere der Zeichnungen und Tabellen, die Klarheit der Gliederung und des
+Inhaltsverzeichnisses ins Gewicht (2~Punkte).
+
+
+% ===========================Präsentationsbewertung============================
+\chapter*{Formular Präsentationsbewertung}
+\begin{sideways}
+    \begin{tabu} to 1.2\textwidth {|l|X|X|X|X|X|X|X|X|}
+    \multicolumn{6}{l}{\textbf{Präsentationsbewertung}} \\
+    \multicolumn{6}{l}{} \\
+    \hline
+    Datum                                    & & & & & & & \\ \hline
+    Name                                     & & & & & & & \\ \hline
+    Thema                                    & & & & & & & \\ \hline
+    \multicolumn{6}{l}{} \\
+    \multicolumn{6}{l}{\textbf{Stil}} \\
+    \hline
+    Sicheres Auftreten                       & & & & & & & \\ \hline
+    Kontakt zum Zuhörer                      & & & & & & & \\ \hline
+    Deutliche Sprechweise                    & & & & & & & \\ \hline
+    Angemessenes Tempo                       & & & & & & & \\ \hline
+    Freies Sprechen                          & & & & & & & \\ \hline
+    Einhalten der Zeit                       & & & & & & & \\ \hline
+    \multicolumn{6}{l}{} \\
+    \multicolumn{6}{l}{\textbf{Inhalt}} \\
+    \hline
+    Verständlichkeit des Inhalts             & & & & & & & \\ \hline
+    Prägnanz                                 & & & & & & & \\ \hline
+    Konzept/Gliederung                       & & & & & & & \\ \hline
+    Beispiele                                & & & & & & & \\ \hline
+    Angemessene Detailtiefe                  & & & & & & & \\ \hline
+    \multicolumn{6}{l}{} \\
+    \multicolumn{6}{l}{\textbf{Folien/Demo}} \\
+    \hline
+    Vertrautheit mit Folien/Demo             & & & & & & & \\ \hline
+    Verständlichkeit der Folien/Demo         & & & & & & & \\ \hline
+    Qualität von Abbildungen                 & & & & & & & \\ \hline
+    Nachvollziehbarkeit der Demo             & & & & & & & \\ \hline
+    \multicolumn{6}{l}{} \\
+    \hline
+    Subjektiver Gesamteindruck               & & & & & & & \\ \hline
+    \end{tabu}
+\end{sideways}
+
+
+% ===========================Formular Rump Session======================
+% \chapter*{Formular „Rump Session“}
+\newpage
+\thispagestyle{empty}
+\vspace*{-3.2cm}
+\begin{center}
+	Formular „Rump Session“
+\end{center}
+\vspace*{-0.2cm}
+
+\newsavebox{\rumpsessBox}
+\savebox{\rumpsessBox}{%
+	%\begin{sffamily}
+	\begin{tiny}
+	\begin{tabu} to 10cm {lcccc} %\hline
+	\multicolumn{5}{l}{} \\[3mm]
+	Vortragsnummer/Titel: \dotfill                                               & \tiny ja & \multicolumn{2}{l}{\dotfill} & \tiny nein \\[3pt]
+	\textbf{Struktur:} Ich konnte einen „roten Faden“ erkennen.                         & $\Box$ & $\Box$ & $\Box$ & $\Box$ \\[1pt]
+	\textbf{Auftreten:} Die/der Vortragende ist selbstsicher aufgetreten.               & $\Box$ & $\Box$ & $\Box$ & $\Box$ \\[1pt]
+	\textbf{Kompetenz:} Die/der Vortragende kennt sich mit dem Thema aus.               & $\Box$ & $\Box$ & $\Box$ & $\Box$ \\[1pt]
+	\textbf{Didaktik:} Ich habe alles verstanden, was gesagt wurde.                     & $\Box$ & $\Box$ & $\Box$ & $\Box$ \\[1pt]
+	\textbf{Niveau:} Ich kann die Kernideen des Vortrag mit eigenen Worten wiedergeben. & $\Box$ & $\Box$ & $\Box$ & $\Box$ \\[1pt]
+	\multicolumn{5}{l}{\textbf{Anmerkungen:}} \\[24mm] %\hline
+	\end{tabu}
+	\end{tiny}
+	%\end{sffamily}
+}
+
+\hspace*{-2cm}\rule{3mm}{0.5pt}\rule{95mm}{0pt}\rule{0.5pt}{3mm}\rule{95mm}{0pt}\rule{3mm}{0.5pt}\\
+\hspace*{-2cm}\usebox{\rumpsessBox}\usebox{\rumpsessBox}\\
+\hspace*{-2cm}\rule{3mm}{0.5pt}\rule{95mm}{0pt}\rule{0.5pt}{3mm}\rule{95mm}{0pt}\rule{3mm}{0.5pt}\\
+\hspace*{-2cm}\usebox{\rumpsessBox}\usebox{\rumpsessBox}\\
+\hspace*{-2cm}\rule{3mm}{0.5pt}\rule{95mm}{0pt}\rule{0.5pt}{3mm}\rule{95mm}{0pt}\rule{3mm}{0.5pt}\\
+\hspace*{-2cm}\usebox{\rumpsessBox}\usebox{\rumpsessBox}\\
+\hspace*{-2cm}\rule{3mm}{0.5pt}\rule{95mm}{0pt}\rule{0.5pt}{3mm}\rule{95mm}{0pt}\rule{3mm}{0.5pt}\\
+\hspace*{-2cm}\usebox{\rumpsessBox}\usebox{\rumpsessBox}\\
+\hspace*{-2cm}\rule{3mm}{0.5pt}\rule{95mm}{0pt}\rule{0.5pt}{3mm}\rule{95mm}{0pt}\rule{3mm}{0.5pt}\\
+\hspace*{-2cm}\usebox{\rumpsessBox}\usebox{\rumpsessBox}\\
+\hspace*{-2cm}\rule{3mm}{0.5pt}\rule{95mm}{0pt}\rule{0.5pt}{3mm}\rule{95mm}{0pt}\rule{3mm}{0.5pt}\\
+
+% ===========================Selbstständigkeitserklärung======================
+\chapter*{Eidesstattliche Versicherung} % war: Selbständigkeitserklärung
+\vspace{1cm}
+
+\todo[noline]{Bitte verwenden Sie hier in jedem Fall die offizielle von der Prüfungsbehörde vorgegebene Formulierung der Selbständigkeitserklärung.}
+%
+Hiermit versichere ich an Eides statt, dass ich die vorliegende Arbeit selbstständig verfasst und keine anderen als die angegebenen Hilfsmittel – insbesondere keine im Quellenverzeichnis nicht benannten Internet-Quellen – benutzt habe. Alle Stellen, die wörtlich oder sinngemäß aus Veröffentlichungen entnommen wurden, sind als solche kenntlich gemacht. Ich versichere weiterhin, dass ich die Arbeit vorher nicht in einem anderen Prüfungsverfahren eingereicht habe und die eingereichte schriftliche Fassung der auf dem elektronischen Speichermedium entspricht.
+
+Ggf. streichen: Ich bin damit einverstanden, dass meine Abschlussarbeit in den Bestand der Fachbereichsbibliothek eingestellt wird.
+
+\makeatletter
+Hamburg, den {\@date}
+\makeatother
+
+\vspace{2cm}
+\rule{6cm}{0.25pt}\\
+\makeatletter
+{\@author} \par
+\makeatother
+
+
+% ================================Deckblatt-Muster Abschlussarbeit==============================
+\newpage
+\thispagestyle{empty}
+% \addcontentsline{toc}{chapter}{Muster des Deckblatts}
+%
+% In der Ausarbeitung bitte den Bereich ab \begin{titlepage} bis \end{titlepage}
+%  vorne durch den nachfolgenden Codeabschnitt ersetzen:
+% ====> Von hier ...
+\begin{titlepage}% {{{
+\includegraphics[width=6.8cm]{./pic/up-uhh-logo-u-2010-u-farbe-u-rgb.pdf}
+\begin{center}\Large
+	\vfill
+	Masterarbeit
+	\vfill
+	\makeatletter
+	{\Large\textsf{\textbf{\@title}}\par}
+	\makeatother
+	\vfill
+	vorgelegt von
+	\par\bigskip
+	\makeatletter
+	{\@author} \par
+	\makeatother
+	Matrikelnummer 1234567 \par
+	Studiengang Informatik
+	\vfill
+	MIN-Fakultät \par
+	Fachbereich Informatik
+	\vfill
+	\makeatletter
+	eingereicht am {\@date}
+	\makeatother
+	\vfill
+	Betreuerin: Erika Musterfrau, M.\,Sc. \todo{Todos im Text und Fragen an den Betreuer sind in dieser Form dargestellt}\par
+	Erstgutachter: Prof. Dr.-Ing. Hannes Federrath \par
+	Zweitgutachter: N.N.
+\end{center}
+\ifoptionfinal{}{
+\begin{tikzpicture}[remember picture, overlay]
+    \node[draw, red, font=\ttfamily\bfseries\Large, xshift=30mm, yshift=238mm,
+        rotate=340, text centered, text width=6cm, very thick, rounded
+        corners=4mm] at (current page.south) {Entwurf vom \today};
+\end{tikzpicture}
+% ====> Delete me
+\begin{tikzpicture}[overlay]
+    \node[draw, blue, font=\sffamily\Large, xshift=0mm, yshift=210mm, rotate=0, text centered, rounded corners=1mm] at (current page.south) {Muster des Deckblatts für Abschlussarbeiten};
+\end{tikzpicture}
+% <==== /Delete me
+}
+\end{titlepage}% }}}
+% <==== ... bis hierher.
+
+% ================================Deckblatt-Muster Seminararbeit==============================
+\newpage
+\thispagestyle{empty}
+% \addcontentsline{toc}{chapter}{Muster des Deckblatts}
+%
+% In der Ausarbeitung bitte den Bereich ab \begin{titlepage} bis \end{titlepage}
+%  vorne durch den nachfolgenden Codeabschnitt ersetzen:
+% ====> Von hier ...
+\begin{titlepage}% {{{
+\includegraphics[width=6.8cm]{./pic/up-uhh-logo-u-2010-u-farbe-u-rgb.pdf}
+\begin{center}\Large
+	\vfill
+	Seminararbeit
+	\vfill
+	\makeatletter
+	{\Large\textsf{\textbf{\@title}}\par}
+	\makeatother
+	\vfill
+	vorgelegt von
+	\par\bigskip
+	\begin{tabu}{p{0.5\textwidth}p{0.5\textwidth}}
+	\centering Martina Mustermann     & \centering Max Mustermann \\[1ex]
+	\centering Matrikelnummer 1234567 & \centering Matrikelnummer 7654321 \\
+	\centering Studiengang Informatik & \centering Studiengang Informatik \\
+	\end{tabu}
+	\vfill
+	MIN-Fakultät \par
+	Fachbereich Informatik
+	\vfill
+	\makeatletter
+	eingereicht am {\@date}
+	\makeatother
+	\vfill
+	Betreuer: Heinz Mustermann, M.\,Sc. \todo{Todos im Text und Fragen an den Betreuer sind in dieser Form dargestellt}\par
+\end{center}
+\ifoptionfinal{}{
+\begin{tikzpicture}[remember picture, overlay]
+    \node[draw, red, font=\ttfamily\bfseries\Large, xshift=30mm, yshift=238mm,
+        rotate=340, text centered, text width=6cm, very thick, rounded
+        corners=4mm] at (current page.south) {Entwurf vom \today};
+\end{tikzpicture}
+% ====> Delete me
+\begin{tikzpicture}[overlay]
+    \node[draw, blue, font=\sffamily\Large, xshift=0mm, yshift=210mm, rotate=0, text centered, rounded corners=1mm] at (current page.south) {Muster des Deckblatts für Seminararbeiten};
+\end{tikzpicture}
+% <==== /Delete me
+}
+\end{titlepage}% }}}
+% <==== ... bis hierher.
+
+
+% ================================Literaturliste-Muster==============================
+\newpage
+\thispagestyle{empty}
+\label{sec:literaturliste}
+\par\textbf{\textsf{Thema:}} Privacy Enhancing Technologies zum Schutz von Kommunikationsbeziehungen
+\par\textbf{\textsf{Bearbeiter:}} Eva Musterfrau, Heinz Mustermann
+\par\textbf{\textsf{Datum:}} \today
+\bigskip
+% ====> Delete me
+\begin{tikzpicture}[overlay]
+    \node[draw, blue, font=\sffamily\Large, xshift=70mm, yshift=0mm, rounded corners=1mm]{Muster der Literaturliste};
+\end{tikzpicture}
+% <==== /Delete me
+\par\textbf{\Large\textsf{Literaturliste}}
+
+
+% ----- Nachfolgend eine händisch gesetzte Literaturliste, die sich exakt an die Syntax im Abschnitt \ref{sec:literaturhowto} hält. Wir nutzen diese aber hier nicht, sondern lassen BibLaTeX die Einträge formatieren.
+\iffalse
+David Chaum: Untraceable Electronic Mail, Return Addresses, and Digital Pseudonyms. Communications of the ACM 24/2 (1981) 84--88.
+
+David Chaum: The Dining Cryptographers Problem: Unconditional Sender and Recipient Untraceability. Journal of Cryptology 1/1 (1988) 65--75.
+
+David Goldschlag, Michael Reed, Paul Syverson: Onion Routing for Anonymous and Private Internet Connections. Communications of the ACM 42/2 (1999) 39--41.
+
+Andreas Pfitzmann: Diensteintegrierende Kommunikationsnetze mit teilnehmerüberprüfbarem Datenschutz. IFB 234, Springer-Verlag, Berlin 1990.
+
+Wei Wang, Mehul Motani, Vikram Srinivasan: Dependent link padding algorithms for low latency anonymity systems. Proc. 15th ACM conference on Computer and communications security. ACM, 2008, 323--332.
+\fi
+
+% ----- Nachfolgend die Ausgabe unter Verwendung von BibLaTeX. Die Formatierung übernimmt BibLaTeX. Dadurch wird es zu Abweichungen von der vorgegebenen Syntax kommen. Dies ist tolerabel, da es i.W. auf Einheitlichkeit ankommt, nicht auf eine dogmatische Einhaltung der Syntax.
+\fullcite{Chau81}
+
+\fullcite{Chau88}
+
+\fullcite{GoRS99}
+
+\fullcite{Pfit90}
+
+\fullcite{WaMS2008}
+
+% ================================Todo list==============================
+\listoftodos
+% \todototoc
+
+\end{document}
