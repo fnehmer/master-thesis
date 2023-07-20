@@ -13,38 +13,55 @@
 \include{stylesvs}
 % ===================================Dokument===================================
 
-\title{Hinweise für das Erscheinungsbild von Seminar-, Studien- und Bachelor-,
-    Master- und Diplomarbeiten}
-\author{Hannes Federrath}
-% \date{01.01.2015} % Falls ein bestimmtes Datum eingesetzt werden soll, einfach
+\title{Intrusion detection for OAuth}
+\author{Florian Nehmer}
+\date{06.01.2023} % Falls ein bestimmtes Datum eingesetzt werden soll, einfach
                     %  diese Zeile aktivieren.
 
 \begin{document}
 
-\begin{titlepage}
-\includegraphics[width=6.8cm]{./pic/up-uhh-logo-u-2010-u-farbe-u-rgb.pdf}
-\begin{center}\Large
-    % Universität Hamburg \par
-    % Fachbereich Informatik
-    \vfill
-    \makeatletter
-    {\Large\textsf{\textbf{\@title}}\par}
-    \makeatother
-    \bigskip
-    am Arbeitsbereich Sicherheit in Verteilten Systemen (SVS) \par
-    \bigskip
-    \makeatletter
-    {\@author} \par
-    \makeatother
-    \bigskip
-    \makeatletter
-    {\@date}
-    \makeatother
-    \vfill
-    \vfill
-    (Muster für das Deckblatt: siehe Anhang dieser Hinweise)
-\end{center}
-\end{titlepage}
+\begin{titlepage}% {{{
+	\includegraphics[width=6.8cm]{./pic/up-uhh-logo-u-2010-u-farbe-u-rgb.pdf}
+	\begin{center}\Large
+		\vfill
+		Masterarbeit
+		\vfill
+		\makeatletter
+		{\Large\textsf{\textbf{\@title}}\par}
+		\makeatother
+		\vfill
+		vorgelegt von
+		\par\bigskip
+		\makeatletter
+		{\@author} \par
+		\makeatother
+		Matrikelnummer 1234567 \par
+		Studiengang Informatik
+		\vfill
+		MIN-Fakultät \par
+		Fachbereich Informatik
+		\vfill
+		\makeatletter
+		eingereicht am {\@date}
+		\makeatother
+		\vfill
+		Betreuerin: Erika Musterfrau, M.\,Sc. \todo{Todos im Text und Fragen an den Betreuer sind in dieser Form dargestellt}\par
+		Erstgutachter: Prof. Dr.-Ing. Hannes Federrath \par
+		Zweitgutachter: N.N.
+	\end{center}
+	\ifoptionfinal{}{
+	\begin{tikzpicture}[remember picture, overlay]
+		\node[draw, red, font=\ttfamily\bfseries\Large, xshift=30mm, yshift=238mm,
+			rotate=340, text centered, text width=6cm, very thick, rounded
+			corners=4mm] at (current page.south) {Entwurf vom \today};
+	\end{tikzpicture}
+	% ====> Delete me
+	\begin{tikzpicture}[overlay]
+		\node[draw, blue, font=\sffamily\Large, xshift=0mm, yshift=210mm, rotate=0, text centered, rounded corners=1mm] at (current page.south) {Muster des Deckblatts für Abschlussarbeiten};
+	\end{tikzpicture}
+	% <==== /Delete me
+	}
+\end{titlepage}% }}}
 
 \chapter*{Aufgabenstellung}
 
@@ -645,48 +662,7 @@ Hamburg, den {\@date}
 % In der Ausarbeitung bitte den Bereich ab \begin{titlepage} bis \end{titlepage}
 %  vorne durch den nachfolgenden Codeabschnitt ersetzen:
 % ====> Von hier ...
-\begin{titlepage}% {{{
-\includegraphics[width=6.8cm]{./pic/up-uhh-logo-u-2010-u-farbe-u-rgb.pdf}
-\begin{center}\Large
-	\vfill
-	Masterarbeit
-	\vfill
-	\makeatletter
-	{\Large\textsf{\textbf{\@title}}\par}
-	\makeatother
-	\vfill
-	vorgelegt von
-	\par\bigskip
-	\makeatletter
-	{\@author} \par
-	\makeatother
-	Matrikelnummer 1234567 \par
-	Studiengang Informatik
-	\vfill
-	MIN-Fakultät \par
-	Fachbereich Informatik
-	\vfill
-	\makeatletter
-	eingereicht am {\@date}
-	\makeatother
-	\vfill
-	Betreuerin: Erika Musterfrau, M.\,Sc. \todo{Todos im Text und Fragen an den Betreuer sind in dieser Form dargestellt}\par
-	Erstgutachter: Prof. Dr.-Ing. Hannes Federrath \par
-	Zweitgutachter: N.N.
-\end{center}
-\ifoptionfinal{}{
-\begin{tikzpicture}[remember picture, overlay]
-    \node[draw, red, font=\ttfamily\bfseries\Large, xshift=30mm, yshift=238mm,
-        rotate=340, text centered, text width=6cm, very thick, rounded
-        corners=4mm] at (current page.south) {Entwurf vom \today};
-\end{tikzpicture}
-% ====> Delete me
-\begin{tikzpicture}[overlay]
-    \node[draw, blue, font=\sffamily\Large, xshift=0mm, yshift=210mm, rotate=0, text centered, rounded corners=1mm] at (current page.south) {Muster des Deckblatts für Abschlussarbeiten};
-\end{tikzpicture}
-% <==== /Delete me
-}
-\end{titlepage}% }}}
+
 % <==== ... bis hierher.
 
 % ================================Deckblatt-Muster Seminararbeit==============================
