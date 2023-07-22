@@ -25,8 +25,8 @@ class User(db.Model):
     __tablename__: str = 'user'
 
     id: Column = Column(Integer, primary_key=True)
-    username: Column = Column(String, length=32, unique=True, nullable=False)
-    password: Column = Column(String, length=72, nullable=False)
+    username: Column = Column(String(32), unique=True, nullable=False)
+    password: Column = Column(String(72), nullable=False)
 
     def set_password(self, password) -> None:
         salt: bytes = bcrypt.gensalt()
