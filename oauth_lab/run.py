@@ -1,12 +1,8 @@
-from app.app import create_app
+from flask import Flask
+from app.routes import bp
 
-
-APP = create_app({
-    # 'SECRET_KEY': 'secret',
-    # 'OAUTH2_REFRESH_TOKEN_GENERATOR': True,
-    # 'SQLALCHEMY_TRACK_MODIFICATIONS': False,
-    # 'SQLALCHEMY_DATABASE_URI': 'sqlite:///db.sqlite',
-})
+APP: Flask = Flask(__name__)
+APP.register_blueprint(bp, url_prefix='/api')
 
 if __name__ == '__main__':
     APP.debug = True
