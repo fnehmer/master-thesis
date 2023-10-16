@@ -86,39 +86,90 @@ Durch eine solche Zusammenfassung (im Engl. auch Abstract genannt) am Anfang der
 \label{chap.fundamental_knowledge}
 
 \section{OAuth 2.0 protocol}
-The Open Authorization 2.0 protocol nowadays often referred to as the \emph{OAuth} protocol, is an authorization framework, that allows third-party applications to gain limited access to resources in a different location on behalf of the party, that owns these resources. For many users of the Internet, it is in practice the protocol behind the ``\emph{Sign in with ...}'' button. The current standard, first defined in 2012 in RFC6749, is already the successor of the OAuth 1.0 standard, which was officially published in 2010 by the IETF in RFC5849 \cite{hammer2010rfc}. In the meantime, several extensions for the protocol were published as standards and technical reports. These extensions include new functionalities for the protocol e.g. the ability to use the protocol with devices like smart TVs and printers \cite{denniss2019oauth} or documents, which describe several security considerations when implementing the protocol in practice \cite{lodderstedt2020oauth}.
+The Open Authorization 2.0 protocol nowadays often referred to as the
+\emph{OAuth} protocol, is an authorization framework, that allows third-party
+applications to gain limited access to resources in a different location on
+behalf of the party, that owns these resources. For many users of the Internet,
+it is in practice the protocol behind the ``\emph{Sign in with ...}'' button.
+The current standard, first defined in 2012 in RFC6749, is already the
+successor of the OAuth 1.0 standard, which was officially published in 2010 by
+the IETF in RFC5849 \cite{hammer2010rfc}. In the meantime, several extensions
+for the protocol were published as standards and technical reports. These
+extensions include new functionalities for the protocol e.g. the ability to use
+the protocol with devices like smart TVs and printers \cite{denniss2019oauth}
+or documents, which describe several security considerations when implementing
+the protocol in practice \cite{lodderstedt2020oauth}. As a whole, the OAuth
+working group of the Internet Engineering Task Force (IETF) submitted a total
+of 30 Request for Comments (RFCs) and 16 active drafts, from which 7 are active
+individual drafts. Table X shows a complete list of all OAuth 2.0. related IETF
+submissions by the OAuth working group. 
 
-The current version of the OAuth protocol grew over time and nowadays has many involved actors and offers several different modes of operation.
+\subsection{Involved parties}
+In general, there are up to four parties involved in the OAuth protocol.
 
-\subsection{Involved actors}
-In general, there are four involved actors in the OAuth protocol:
-\begin{itemize}
-	\item Resource owner: 
-	The resource owner is the entity that owns or is allowed to manage protected resources. The resource owner might grant access to these resources.
-	\item Resource server: The resource server is the server, where the protected resources are stored. It can accept or decline authorization tokens, which it receives from the client.
-	\item Client: The client is an entity, which makes requests to get access to the protected resources, on behalf of the resource owner.
-	\item Authorization server: The server, that manages access to the protected data. It issues access tokens to the client after successful authentication of the resource owner.
+\begin{itemize} 
+
+    \item Resource owner: The resource owner is the entity that owns or is
+        allowed to manage protected resources. The resource owner might grant
+        access to these resources. 
+
+    \item Resource server: The resource server is the server, where the
+        protected resources are stored. It can accept or decline authorization
+        tokens, which it receives from the client. 
+
+    \item Client: The client is an entity, which makes requests to get access
+        to the protected resources, on behalf of the resource owner. 
+        
+    \item Authorization server: The server, that manages access to the
+        protected data. It issues access tokens to the client after successful
+        authentication of the resource owner. 
+
 \end{itemize}
 
-Depending on the protocol mode, these four actors exchange different messages in variable ways. 
+Depending on the protocol mode, these four parties or in some cases three
+parties exchange different messages in variable ways. In general, there are two
+different types of messages, which are explained in the next section.
 
 \subsection{Front-channel and Back-channel messages}
 
-Regarding security considerations messages are categorized into two main categories, \emph{front-channel} and \emph{back-channel}. As the protocol is mostly used in the application layer using HTTP and TLS, \emph{front-channel} means that the message is transported via the \emph{Request-URI} \cite[Sec. 5.1.2]{fielding1999hypertext} e.g. by using query parameters. An attacker, which is able to eavesdrop on network traffic would be able to read such messages.
-\emph{Back-channel} means on the other hand that the message is transported via the HTTP message body. In the case of HTTPS, this means the attacker, who eavesdrops on the network traffic is not able to read the message anymore, as it is encrypted. 
+Regarding security considerations messages of the OAuth framework can be
+categorized into two main categories, \emph{front-channel} and
+\emph{back-channel}. As the protocol is mostly used in the application layer
+using HTTP and TLS, \emph{front-channel} means that the message is transported
+via the \emph{Request-URI} \cite[Sec. 5.1.2]{fielding1999hypertext} e.g. by
+using query parameters. \emph{Back-channel} means on the other hand that the
+message is transported via the HTTP message body. In other words, back-channel
+messages are transported in one TCP connection, between caller and receiver,
+whereas front-channel messages use redirects. \cite[p. 338]{belfaik2022single}.
 
 \subsection{Grant Types}
-The protocol flow is dependent on the protocol mode. In the case of OAuth the different protocol modes are called \emph{Grant types}, as the modes differ on how the authorization is granted to the resource owner via the client.
-\todo{write about general OAuth flow with graphic, see rfc}
+The protocol flow is dependent on the protocol mode. In the case of OAuth the
+different protocol modes are called \emph{Grant types}, as the modes differ on
+how the authorization is granted to the resource owner via the client.
 
 \subsubsection{Authorization Code Grant}
-According to a recent study, the authorization code grant mode of OAuth is the most used protocol mode for OAuth on the internet \cite[Table 1]{philippaerts2022oauch}. It is offered by more than 90\% of all identity providers.
+According to a recent study, the authorization code grant mode of OAuth is the
+most used protocol mode for OAuth on the internet
+\cite[Table1]{philippaerts2022oauch}. It is offered by more than 90\% of all 
+identity providers.
 
-In this mode illustrated in Figure 2.1, a resource owner aiming to access protected data via a REST API utilizes a user agent, in this case a web browser, to interact with a client application that manages API requests through the user agent.
-The process begins as the client redirects the user agent to the authorization server through the front channel. The message contains a client ID, a redirect URL and a state. The client ID is a unique identifier of the protected resource. The redirect URI is the location the user agent is redirected to after authentication. The state can hold any string value and is most commonly used for CSRF tokens. 
-The authorization server now asks the resource owner for authentication. If the resource owner is authenticated and is allowed to access the desired protected resources, the user agent gets redirected back using the redirect URI. This means that the message is again sent via the front channel and contains now an authorization code and the state. 
-Using the valid authorization code and the state, the client proceeds to request an access token via the back channel at the authorization server. 
-With the acquired access token the client follows with the request of the desired protected resource at the resource server.
+In this mode illustrated in Figure 2.1, a resource owner aiming to access
+protected data via a REST API utilizes a user agent, in this case the web
+browser, to interact with a client application that manages API requests
+through the user agent. The process begins as the client redirects the user
+agent to the authorization server through the front channel. The message
+contains a client ID, a redirect URL and a state. The client ID is a unique
+identifier of the protected resource. The redirect URI is the location the user
+agent is redirected to after authentication. The state can hold any string
+value and is most commonly used for CSRF tokens. The authorization server now
+asks the resource owner for authentication. If the resource owner is
+authenticated and is allowed to access the desired protected resources, the
+user agent gets redirected back using the redirect URI. This means that the
+message is again sent via the front channel and contains now an authorization
+code and the state. Using the valid authorization code and the state, the
+client proceeds to request an access token via the back channel at the
+authorization server. With the acquired access token the client follows with
+the request of the desired protected resource at the resource server.
 
 \begin{figure}[ht]
 	\sffamily\footnotesize
@@ -129,19 +180,56 @@ With the acquired access token the client follows with the request of the desire
 	\caption{Authorization Code Grant flow without any extensions}
 	\label{fig:auth_code_grant}
 \end{figure}
+
+\subsubsection{Implicit Grant}
+The Implicit Grant comes from a time when there were no mechanisms like
+Cross-Origin resource sharing implemented in browsers, to share content from
+different domains. It is a predecessor of the authorization code flow and works
+similarly with the difference of leaving out the exchanging of the
+authorization code step. Instead, the access token is sent via the front
+channel directly from the authorization server to the client. This leaves open
+more attack vectors for example by utilizing the browser history or by
+simplifying access token injection \cite{lodderstedt2020oauth}.
+
+\subsection{Resource Owner Password Credentials Grant}
+This grant type is special in the way that the client is providing its
+authentication credentials for the authorization provider to the
+resource provider instead. The resource provider than uses the credentials to
+retrieve authorization from the authorization provider. This grant type is only
+feasible for the scenerio, that the resource provider is trusted completely \cite.
 	
+
+\subsubsection{Client Credentials Grant}
+The client credentials grant must only be used by confidential clients
+interacting with each other. This means the the clients have the ability to
+securely store a secret, which is only accessible by themselves. A common
+use-case for this scenario would be machine-to-machine interactions. This grant
+type is meant for clients to access their own resources as is the case in
+micro-service architectures. The client authenticates at the authorization
+server with its client secret and receives an access token, to authenticate at
+the resource provider. This means that the resource provider does not need to
+verify client secrets, but instead only needs the capability to verify access
+tokens. This fact is useful for practical reasons, as a resource provider could
+reuse the implementation of access tokens for other grant types it is offering.
+
+\subsubsection{Device Authorization Grant}
+Introduced in RFC8628 the device authorization grant is meant to be used for
+devices, that lack a user agent like a web browser or do not offer a convenient
+way of entering text \cite{denniss2019oauth}. 
+
+\subsubsection{Other grant types}
+There are several  more grant types, which got introduced to the OAuth standard over
+time. These additional grant typer 
+
+
+
 \begin{itemize}
-	\item Implicit Grant
-	\item Resource Owner Password Credentials Grant
-	\item Client Credentials Grant
 	\item Refresh Token Grant
 	\item JWT Bearer Grant
-	\item Device Code Grant
 	\item UMA Grant
 	\item SAML 2.0 Bearer Grant
 	\item Token Exchange Grant
 \end{itemize}
-\todo{Decide on how to handle niche grant types}
 
 \subsection{OpenID}
 
@@ -157,15 +245,41 @@ With the acquired access token the client follows with the request of the desire
 \section{OAuth Vulnerabilities}
 
 \subsection{Insufficient Redirect URI Validation \cite{lodderstedt2020oauth} \cite{wang2019make}}
-Authorization Servers need to whitelist redirection URLs in order to make sure, that an attacker cannot craft a hyperlink, which leads to the victim initiating an OAuth flow and sending the authorization code or token to an attacker-controlled domain. Some authorization servers may allow the usage of patterns in order to allow several domains at once. As well as the absence of any sort of whitelist mechanism even a pattern-matching functionality could lead to security problems. Among the possibility that a user is entering patterns that are too broad and allow the usage of unintended redirect URLs, the attack surface includes issues with the URL parsing implemented by the authorization server as shown by Wang et al. \cite{wang2019make}. They presented several techniques to trick the parser into accepting unintended domain names, like using squared brackets for IPv6 parsing or the \emph{Evil Slash Trick}, where the parser does not treat a forward slash as a path separator, while modern browsers do. Depending on the OAuth grant type in use this vulnerability leads to different possibilities to exploit it.
+Authorization Servers need to whitelist redirection URLs in order to make sure,
+that an attacker cannot craft a hyperlink, which leads to the victim initiating
+an OAuth flow and sending the authorization code or token to an
+attacker-controlled domain. Some authorization servers may allow the usage of
+patterns in order to allow several domains at once. As well as the absence of
+any sort of whitelist mechanism even a pattern-matching functionality could
+lead to security problems. Among the possibility that a user is entering
+patterns that are too broad and allow the usage of unintended redirect URLs,
+the attack surface includes issues with the URL parsing implemented by the
+authorization server as shown by Wang et al. \cite{wang2019make}. They
+presented several techniques to trick the parser into accepting unintended
+domain names, like using squared brackets for IPv6 parsing or the \emph{Evil
+Slash Trick}, where the parser does not treat a forward slash as a path
+separator, while modern browsers do. Depending on the OAuth grant type in use
+this vulnerability leads to different possibilities to exploit it.
 
 
 \subsubsection{Authorization Code Flow}
 \begin{itemize}
-	\item The attacker uses techniques like phishing to make its victim open an attacker-controlled webpage, which initiates an OAuth flow with the vulnerable authorization server.
-	\item The request is crafted with a valid client ID (which is public information), ``code'' as response type and a malicious redirect URI, which leads to an attacker-controlled server again.
-	\item If the user logs in at the authorization server, the authorization code now gets transmitted to the attacker's webpage, via the redirect URI.
-	\item The attacker page can now use the received authorization code, to retrieve a token 
+
+    \item The attacker uses techniques like phishing to make its victim open an
+        attacker-controlled webpage, which initiates an OAuth flow with the
+        vulnerable authorization server.
+	
+    \item The request is crafted with a valid client ID (which is public
+        information), ``code'' as response type and a malicious redirect URI,
+        which leads to an attacker-controlled server again.
+	
+    \item If the user logs in at the authorization server, the authorization
+        code now gets transmitted to the attacker's webpage, via the redirect
+        URI.
+	
+    \item The attacker page can now use the received authorization code, to
+        retrieve a token 
+
 \end{itemize}
 
 \subsubsection{Implicit Flow}
@@ -173,13 +287,25 @@ Authorization Servers need to whitelist redirection URLs in order to make sure, 
 
 
 \subsection{Credential Leakage via Referer Headers}
-The Referer HTTP header is a potential attack surface. It can be utilized by a malicious actor to capture query parameters, which are sent via the front channel, like the state and the authorization code. The authorization code may be used to redeem an access token before the victim retrieves it and the state parameter oftentimes includes a CSRF token, which could potentially open up vulnerabilities in other parts of the application as explained by Fett et al \cite{fett2016comprehensive}.
+The Referer HTTP header is a potential attack surface. It can be utilized by a
+malicious actor to capture query parameters, which are sent via the front
+channel, like the state and the authorization code. The authorization code may
+be used to redeem an access token before the victim retrieves it and the state
+parameter oftentimes includes a CSRF token, which could potentially open up
+vulnerabilities in other parts of the application as explained by Fett et al
+\cite{fett2016comprehensive}.
 
 \subsubsection{OAuth Client}
-If a client renders third-party content, like advertisements in iframes or images, before redeeming the authorization code for an access token an attacker, who places these advertisements or images can capture the code via the referer header and redeem it for an access token.
+If a client renders third-party content, like advertisements in iframes or
+images, before redeeming the authorization code for an access token an
+attacker, who places these advertisements or images can capture the code via
+the referer header and redeem it for an access token.
 
 \subsubsection{Authorization Server}
-At the authorization server, the state parameter could be leaked via the Referer header, when 3rd party images or advertisements are being rendered on the page. This may be an issue when the state contains a CSRF token as explained by Fett at al \cite{fett2016comprehensive}.
+At the authorization server, the state parameter could be leaked via the
+Referer header, when 3rd party images or advertisements are being rendered on
+the page. This may be an issue when the state contains a CSRF token as
+explained by Fett at al \cite{fett2016comprehensive}.
 
 
 \subsection{Credential Leakage via Browser History}
@@ -188,21 +314,49 @@ At the authorization server, the state parameter could be leaked via the Referer
 \subsection{Mix-Up Attacks}
 
 \subsection{Authorization Code Injection \cite{philippaerts2022oauch}} 
-The precondition for an authorization code injection is that an attacker has successfully stolen an authorization code. This can be accomplished in various ways for example by tricking the user into installing a malicious browser extension, using other vulnerabilities in a web app like open redirections, or abusing proxy auto-configuration files \cite*{philippaerts2022oauch}.
+The precondition for an authorization code injection is that an attacker has
+successfully stolen an authorization code. This can be accomplished in various
+ways for example by tricking the user into installing a malicious browser
+extension, using other vulnerabilities in a web app like open redirections, or
+abusing proxy auto-configuration files \cite*{philippaerts2022oauch}.
 
-In the case, that the client is using the authorization code flow the attacker can use the stolen authorization code to fetch an access token before the client does.
+In the case, that the client is using the authorization code flow the attacker
+can use the stolen authorization code to fetch an access token before the
+client does.
 
 \subsection{Countermeasures}
-There are several ways to mitigate the risk of authorization code injection. For example, if an authorization code got used twice in the case it got stolen and the attacker, as well as the client, tried to redeem a token, every token that was redeemed with this authorization code should get invalidated. Another method is the usage of PKCE to make sure the OAuth flow is only used, between the two legitimate parties.
+There are several ways to mitigate the risk of authorization code injection.
+For example, if an authorization code got used twice in the case it got stolen
+and the attacker, as well as the client, tried to redeem a token, every token
+that was redeemed with this authorization code should get invalidated. Another
+method is the usage of PKCE to make sure the OAuth flow is only used, between
+the two legitimate parties.
 
 
 
 \subsection{Access Token Injection}
+This kind of attack describes the process of an attacker using a stolen access
+token in a legitimate authentication flow, to impersonate the client. If the
+implicit flow is available, the attacker can now start a new flow and simply
+replace the access token in the authorization servers' response. This will
+circumvent any CSRF protection, as there is no difference to a non-compromised
+flow. \cite{lodderstedt2020oauth}
+
 
 \subsection{Cross Site Request Forgery}
-This type of attack, often referred to by its abbreviation ``CSRF"", is about the attacker executing a request in the name of the user, by tricking the user into executing requests for the attacker including all required authentication, or authorization information. The default OAuth protocol does not include protection mechanisms against this type of attack. 
+This type of attack, often referred to by its abbreviation ``CSRF"", is about
+the attacker executing a request in the name of the user, by tricking the user
+into executing requests for the attacker including all required authentication,
+or authorization information. The default OAuth protocol does not include
+protection mechanisms against this type of attack. 
 
 \subsection{PKCE Downgrade Attacks}
+If an authorization server is not implemented to require PKCE for all its
+flows, it is susceptible to being vulnerable to PKCE downgrade attacks
+\cite{philippaerts2022oauch}. Even if it is documented otherwise, attackers
+might try to omit PKCE parameters, as the current OAuth 2.0 standard does not
+require the usage of the PKCE extension \cite{hardt2012rfc}. 
+
 
 \subsection{Access Token Leakage at the Ressource Server}
 
@@ -226,7 +380,9 @@ This type of attack, often referred to by its abbreviation ``CSRF"", is about th
 
 \section{Countermeasures}
 \subsection{PKCE system}
-As an extension to OAuth defined by RFC 7636, ```Proof Key for Code Exchange'' is a technique to mitigate Authorization Code Injection misuse or CSRF attacks \cite{bradley2015rfc}. Specifically, it extends the authorization code flow 
+As an extension to OAuth defined by RFC 7636, ```Proof Key for Code Exchange''
+is a technique to mitigate Authorization Code Injection misuse or CSRF attacks
+\cite{bradley2015rfc}. Specifically, it extends the authorization code flow 
 
 \chapter{Intrusion Detection: State of the Art}
 
@@ -257,9 +413,17 @@ As an extension to OAuth defined by RFC 7636, ```Proof Key for Code Exchange'' i
 
 \todo[noline]{Bitte verwenden Sie hier in jedem Fall die offizielle von der Prüfungsbehörde vorgegebene Formulierung der Selbständigkeitserklärung.}
 %
-Hiermit versichere ich an Eides statt, dass ich die vorliegende Arbeit selbstständig verfasst und keine anderen als die angegebenen Hilfsmittel – insbesondere keine im Quellenverzeichnis nicht benannten Internet-Quellen – benutzt habe. Alle Stellen, die wörtlich oder sinngemäß aus Veröffentlichungen entnommen wurden, sind als solche kenntlich gemacht. Ich versichere weiterhin, dass ich die Arbeit vorher nicht in einem anderen Prüfungsverfahren eingereicht habe und die eingereichte schriftliche Fassung der auf dem elektronischen Speichermedium entspricht.
+Hiermit versichere ich an Eides statt, dass ich die vorliegende Arbeit
+selbstständig verfasst und keine anderen als die angegebenen Hilfsmittel –
+insbesondere keine im Quellenverzeichnis nicht benannten Internet-Quellen –
+benutzt habe. Alle Stellen, die wörtlich oder sinngemäß aus Veröffentlichungen
+entnommen wurden, sind als solche kenntlich gemacht. Ich versichere weiterhin,
+dass ich die Arbeit vorher nicht in einem anderen Prüfungsverfahren eingereicht
+habe und die eingereichte schriftliche Fassung der auf dem elektronischen
+Speichermedium entspricht.
 
-Ggf. streichen: Ich bin damit einverstanden, dass meine Abschlussarbeit in den Bestand der Fachbereichsbibliothek eingestellt wird.
+Ggf. streichen: Ich bin damit einverstanden, dass meine Abschlussarbeit in den
+Bestand der Fachbereichsbibliothek eingestellt wird.
 
 \makeatletter
 Hamburg, den {\@date}
