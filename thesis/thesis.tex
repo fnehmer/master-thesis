@@ -105,7 +105,10 @@ individual drafts. Table X shows a complete list of all OAuth 2.0. related IETF
 submissions by the OAuth working group. 
 
 \subsection{Involved parties}
-In general, there are up to four parties involved in the OAuth protocol.
+Because the OAuth protocol is very diverse and complex, as it is a
+whole authorization framework it makes sense to narrow it down to its core
+features. Starting with the involved parties in the protocol. In general there
+are four parties involved in the most common OAuth protocol modes:
 
 \begin{itemize} 
 
@@ -150,12 +153,12 @@ how the authorization is granted to the resource owner via the client.
 \subsubsection{Authorization Code Grant}
 According to a recent study, the authorization code grant mode of OAuth is the
 most used protocol mode for OAuth on the internet
-\cite[Table1]{philippaerts2022oauch}. It is offered by more than 90\% of all 
+\cite[Table1]{philippaerts2022oauch}. It is offered by more than 90\% of common 
 identity providers.
 
 In this mode illustrated in Figure 2.1, a resource owner aiming to access
 protected data via a REST API utilizes a user agent, in this case the web
-browser, to interact with a client application that manages API requests
+browser, to interact with a client application that executes API requests
 through the user agent. The process begins as the client redirects the user
 agent to the authorization server through the front channel. The message
 contains a client ID, a redirect URL and a state. The client ID is a unique
@@ -189,14 +192,17 @@ similarly with the difference of leaving out the exchanging of the
 authorization code step. Instead, the access token is sent via the front
 channel directly from the authorization server to the client. This leaves open
 more attack vectors for example by utilizing the browser history or by
-simplifying access token injection \cite{lodderstedt2020oauth}.
+simplifying access token injection \cite{lodderstedt2020oauth}. The Implicit
+Grant is officially deprecated, but still has its relevance, as it is still
+offered by 37\% of common identity providers \cite{philippaerts2022oauch}.
 
 \subsection{Resource Owner Password Credentials Grant}
 This grant type is special in the way that the client is providing its
-authentication credentials for the authorization provider to the
-resource provider instead. The resource provider than uses the credentials to
-retrieve authorization from the authorization provider. This grant type is only
-feasible for the scenerio, that the resource provider is trusted completely \cite.
+authentication credentials for the authorization provider to the resource
+provider instead. The resource provider than uses the credentials to retrieve
+authorization from the authorization provider. This grant type is only feasible
+for the scenerio, that the resource provider is trusted completely \cite[Sec.
+4.3.]{hardt2012rfc}.
 	
 
 \subsubsection{Client Credentials Grant}
@@ -211,17 +217,24 @@ the resource provider. This means that the resource provider does not need to
 verify client secrets, but instead only needs the capability to verify access
 tokens. This fact is useful for practical reasons, as a resource provider could
 reuse the implementation of access tokens for other grant types it is offering.
+\cite[Sec. 4.4.]{hardt2012rfc}
 
 \subsubsection{Device Authorization Grant}
 Introduced in RFC8628 the device authorization grant is meant to be used for
 devices, that lack a user agent like a web browser or do not offer a convenient
-way of entering text \cite{denniss2019oauth}. 
+way of entering text \cite{denniss2019oauth}. In this grant type the client is
+not interacting through a user agent like a web browser anymore, but instead is
+using a device authorization endpoint at authorization provider directly to
+initiate an authorization request. The client, then instructs the user to open
+a webpage on a secondary device to complete the authorization process using a
+displayed code for verification of the session. This OAuth flow still requires
+the involved devices to use HTTP for communication, which in general is not a
+feasible solution for many IoT-devices. A solution for the popular IoT-protocol
+CoAP is proposed by Chung et al. 
 
 \subsubsection{Other grant types}
-There are several  more grant types, which got introduced to the OAuth standard over
-time. These additional grant typer 
-
-
+There are several more grant types, which got introduced to the OAuth standard
+over time, which are listed below, but are out of scope for this work: 
 
 \begin{itemize}
 	\item Refresh Token Grant
