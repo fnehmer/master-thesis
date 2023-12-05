@@ -87,7 +87,11 @@ Durch eine solche Zusammenfassung (im Engl. auch Abstract genannt) am Anfang der
 
 \chapter{Fundamental Knowledge}
 \label{chap.fundamental_knowledge}
-\todo{Write Introduction to Fundamental knowledge chapter}
+The OAuth authorization framework is complex and extensive as it has been refined and extended through several standards over the last 11 years. Securing applications using the OAuth protocol, therefore, leads to various considerations. Consequently, section 1 introduces the essential aspects and vocabulary of the OAuth authorization framework in the web context to form an understanding of the security-relevant parts of the protocol.
+
+As one of the main goals of this thesis is to experiment with techniques to detect attacks on services using OAuth, section 2 provides an exploration of intrusion detection systems and the different ways to categorize them.
+
+In the last part of this chapter, section 3 concludes with a description and depiction of the different algorithms used in the experiments.
 
 \section{OAuth 2.0 protocol}
 The Open Authorization 2.0 protocol nowadays often referred to as the
@@ -330,8 +334,15 @@ An additional way for Anomaly-based IDS is the knowledge-based method. With this
 
 
 \chapter{OAuth Security}
-\todo{Write Introduction to OAuth Security chapter}
+
+This chapter presents known threats and vulnerabilities when using the OAuth authorization framework. Section \ref{sec:oauth_threats_and_vulns} elaborates on every threat and vulnerability separately. The list is mainly based on the current draft for security best practices for OAuth from the OAuth task force at IETF and is enriched with various examples, further explanations, and a categorization of types of threats.
+
+Section \ref{sec:oauth_countermeasures} starts with a classification of OAuth threats and vulnerabilities by mitigation responsibility of the involved parties in the protocol. It then continues with a description of the specific countermeasures and mitigation strategies and ends with an overview of which threat can be mitigated by which countermeasure.
+
+Lastly, section \ref{sec:discussion_of_oauth_security} performs a short discussion about the difference. \todo{Finish this when there is an idea for section 3}
+
 \section{Threats and Vulnerabilities}
+\label{sec:oauth_threats_and_vulns}
 
 \subsection{Insufficient Redirect URI Validation \cite{lodderstedt2020oauth} \cite{wang2019make}}
 Authorization Servers need to whitelist redirection URLs in order to make sure,
@@ -400,11 +411,6 @@ explained by Fett at al \cite{fett2016comprehensive}.
 \subsection{Credential Leakage via History Logs}
 OAuth potentially transports sensitive data via the request-URI, like the access token, as is the case when the implicit grant is used or if other grant types optionally allow the transportation of access tokens or authorization codes via URI parameters. Therefore, a person accessing the user's browser can extract this sensitive data and try to replay it. The same threat is present when a logging server is present, for example, in a corporate network \cite{lodderstedt2020oauth}. Research about browser history security focuses mainly on accessing information about the victim's history by comparing cache timings if a page was visited \cite{bansalcache}. This type of threat is irrelevant in the OAuth context because an attacker would need to guess the access token, which the attacker could endeavor outside the browser history as well. However, recent studies on the security of browser extensions show that malicious browser extensions could access the browser history, or data could be leaked by utilizing vulnerable browser extensions \cite{eriksson2022}.
 
-\subsubsection{Countermeasures}
-- Authorization Code
-- Access Token
-
-
 \subsection{Mix-Up Attack}
 In this attack, at least two authorization providers are involved. The target AP and the attacker AP. The OAuth standard allows the resource provider to interact with multiple authorization providers, one of which could be malicious, so the security for such interactions must also be provided. The attack is feasible for the implicit and authorization code grants and works similarly for both. Another precondition is that the resource owner registers the same redirect URI at both authorization providers, which is typical for Open ID Connect dynamic client registration \cite{hosseyni2023formal}. With these preconditions present, the attacker now waits until the target initializes an OAuth flow with the attacker AP. The attacker then intercepts the initialization request and exchanges the target AP with its attacker AP. When the target client gets redirected to the attacker AP, the target gets immediately redirected back to the target AP for authentication. At the same time, the client ID in the query parameters of the redirection URL gets replaced with the one registered at the target AP. Suppose the target user authenticates because it did not detect that it intended to authenticate at another AP. In that case, an authorization code gets issued to the client when the authorization code grant used. The client then proceeds to try to redeem an access token at the attacker AP, as the client still thinks that it initiated an OAuth flow with the attacker AP. The attacker can now use the received authorization code to redeem an access token at the target AP. \cite{fett2016comprehensive}
 
@@ -418,16 +424,6 @@ abusing proxy auto-configuration files \cite*{philippaerts2022oauch}.
 In the case, that the client is using the authorization code flow the attacker
 can use the stolen authorization code to fetch an access token before the
 client does.
-
-\subsubsection{Countermeasures}
-There are several ways to mitigate the risk of authorization code injection.
-For example, if an authorization code got used twice in the case it got stolen
-and the attacker, as well as the client, tried to redeem a token, every token
-that was redeemed with this authorization code should get invalidated. Another
-method is the usage of PKCE to make sure the OAuth flow is only used, between
-the two legitimate parties.
-
-
 
 \subsection{Access Token Injection}
 This kind of attack describes the process of an attacker using a stolen access
@@ -485,19 +481,78 @@ As authorization providers authorize applications to access confidential data, t
 
 
 \section{Countermeasures}
-\subsection{PKCE system}
-As an extension to OAuth defined by RFC 7636, ```Proof Key for Code Exchange''
-is a technique to mitigate Authorization Code Injection misuse or CSRF attacks
-\cite{bradley2015rfc}. Specifically, it extends the authorization code flow 
-\todo{OAuth Security: Finish section about PKCE}
+\label{sec:oauth_countermeasures}
+\subsection{Mandatory PKCE}
+As an extension to OAuth defined by RFC 7636, \emph{Proof Key for Code Exchange (PKCE)} is a technique to mitigate several OAuth threats \cite{bradley2015rfc}. The main problem PKCE solves for the authorization code grant is verifying that only the original client who started an OAuth flow receives the access token, so a stolen authorization code cannot just get exchanged with an access token by the entity who stole the code. Figure \ref{fig:pkce} shows the way PKCE works \cite{siriwardena_oauth_2020}:
 
-\subsection{Refresh Token Protection}
-\todo{OAuth Security: Write about Refresh Token Protection}
+\begin{enumerate}
+	\item Initially, before the client redirects the resource owner\'s user agent to the authorization server, it generates a random string of length 43 at minimum, called the \emph{code\_verifier}. It then calculates the hash value of the code\_verifier and encodes it with base64 without padding. The hash algorithm in use should be one which is currently regarded as secure and known by the authorization server. The resulting value is called the \emph{code\_challenge}
+	
+	\item At redirection to the authorization server, the client appends the code\_challenge and the hashing algorithm, which it has used to create the code\_challenge to the redirection URL as query parameters.
+	
+	\item After successful authentication, the authorization server creates a record of code\_challenge and the corresponding authorization code it generates and sends back to the user agent. Alternatively, it may append the code\_challenge to the authorization code and create the record this way.
+	
+	\item When exchanging the authorization code for an access token, the client sends the code and the code\_verifier to the authorization server.
 
-\subsection{Misuse of Stolen Access Tokens as Countermeasure}
-\todo{OAuth Security: Write about Misuse of Stolen Access Tokens}
+	\item The client compares the code\_verifier with the corresponding code\_challenge of the authorization code by calculating the unpadded base64 encoded hash value of the provided code\_verifier. Only the client who initially requested protected resources could possess the random value that matches the code\_challenge.
+\end{enumerate}
 
-\section{OAuth Threats by Mitigation Responsibility}
+
+The PKCE mechanism mitigates several threats and vulnerabilities, as shown in Table X. It mitigates credential leakage via referer headers (T2), as this attack aims in the case of the authorization grant to extract authorization codes after a redirect. Even with a stolen authorization code, an attacker does not know the code\_verifier and thus can not receive an access token. For the same reason, any kind of authorization code injection (T5), where the precondition is a stolen authorization code, would only be possible by knowing the code\_verifier. Protection against cross-site request forgery (T7) is also provided since an attacker could not trick a client into appending confidential data to the resources owned by the attacker, as the victim\'s client does not send the attacker\'s code\_verifier to the authorization server. Lastly, protection against PKCE downgrade attacks (T8) is ensured when the authorization server implements PKCE as mandatory.
+
+\begin{figure}[ht]
+	\sffamily\footnotesize
+	\includegraphics[width=0.75\textwidth]{pic/PKCE.png}
+	\unitlength=0.75mm
+	\special{em:linewidth 0.4pt}
+	\linethickness{0.4pt}
+	\caption{Authorization Code Grant with extension for Proof Key for Code Exchange}
+	\label{fig:pkce}
+\end{figure}
+
+\subsection{Random value state}
+\label{sec:countermeasure:state}
+Another method to protect against Cross-Site request forgery is by taking advantage of the state parameter the OAuth standard offers. When the client initiates an authorization request, it generates a random value of sufficient length, attaches it to the current session and sets it as the state parameter for the request. After authentication, the authorization server has to attach the previously received state parameter to the redirection URI as a query parameter. The client can now validate the received state value with the one it attached to its session earlier to ensure the redirection stems from the authorization flow it initiated \cite{ferry2015security}. When PKCE for the authorization code grant is already implemented, this measure does not add any benefit regarding CSRF protection \cite{bradley2015rfc}. In conclusion, the usages of state's main difference to PKCE is that the client knows that the received authorization code is connected to its initial authorization request before redeeming an access token with the code\_verifier, where the authorization server relates the client's requests to each other with the code\_challenge and the code\_verifier.
+
+
+\subsection{Invalidation of access tokens}
+The OAuth framework requires an authorization code to be redeemed only once for an access token. Therefore, an authorization code needs to be invalidated after its first usage. However, this does not stop an attacker from receiving an access token with a stolen authorization code before the valid user does it. The original OAuth standard recommends invalidating a previous access token if there was an attempt to receive an access token at least twice for the same authorization code \cite{hardt2012rfc}. Invalidation of access tokens if an authorization code gets redeemed twice helps mitigate the threats of credential leakage via referer headers (T2) and credential leakage via browser history (T3) \cite{lodderstedt2020oauth}, as for these threats, exposed authorization codes were already redeemed in most cases.
+
+\subsection{Simple string comparision}
+A technique to completely circumvent the threat of insufficient redirect URI validation (T1) is to disallow whitelisting redirect URIs using regular expressions. Instead, exact string comparison should be the way to allow redirections \cite{lodderstedt2020oauth}.
+
+\subsection{Avoid usage of grant types}
+Threats like credential leakage via referer headers (T2) or browser history (T3) can be avoided when the implicit grant is not used at all, as the access token would not be in the URI of a request. Access token injection (T6) using the implicit grant makes it easy for any attacker to circumvent CSRF protection through the state parameter (see Section \ref{sec:countermeasure:state}) since, for the client, it does not make a difference what access token is used for the state check \cite{lodderstedt2020oauth}. For these reasons, the OAuth task force removed the implicit grant in the draft for OAuth 2.1 \cite{hardt2023rfc}. In the past the main benefit of the implicit flow was that it was possible to implement it for clients that did not utilize cross-origin resource sharing (CORS). CORS was finalized in 2014 by the W3C and superseded by the fetch standard afterwards \cite{vanKesteren2014}. As the OAuth standard dates back to 2012 \cite{hardt2012rfc}, the implicit grant could be implemented for applications that did not support CORS yet.
+
+\subsection{Constrained access tokens}
+This countermeasure aims to harden the protocol against the misuse of stolen access tokens (T10) if they are leaked, for example, at the resource server (T9) or through credential leakage via the browser history (T3) and or referer headers (T2). It reaches this goal by narrowing the access permissions of the access token in two ways \cite{lodderstedt2020oauth}:
+\begin{itemize}
+	\item \emph{Sender-constrained access token}: The token contains cryptographical material to identify the client who redeems the access token, which opens the possibility of only allowing specific clients.
+	\item \emph{Audience-constrained access token}: Access tokens are constrained to particular resource servers. The resource owner executes the audience configuration at the resource server, and the resource server performs the audience verification. If the access token, in addition, bears user-identifying data, different audiences can be defined at the resource server level to further restrain access to the protected data.
+\end{itemize}
+
+ 
+
+
+\subsection{Issuer identification}
+\subsection{Open ID Connect ID token}
+
+\subsection{Implementation details}
+\subsubsection{303 redirect}
+\subsubsection{Client\_id not choosable by user}
+\subsubsection{No redirect before authentication at authorization provider}
+\subsubsection{No access token in uri}
+\subsubsection{Usage of form\_post}
+\subsubsection{Avoid 3rd party content on pages involved with OAuth}
+\subsubsection{Appropriate Referer Policy}
+
+\subsection{General web security countermeasures}
+\subsubsection{Clickjacking Protection}
+\subsubsection{CSRF protection}
+\subsubsection{Protection against open redirections}
+
+\section{Discussion}
+\label{sec:discussion_of_oauth_security}
 
 \begin{figure}[!htb]
 	\sffamily\footnotesize
