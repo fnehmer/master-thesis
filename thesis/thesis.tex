@@ -314,10 +314,70 @@ Another approach is to use machine learning techniques. Unsupervised learning me
 An additional way for Anomaly-based IDS is the knowledge-based method. With this method, knowledge is applied to the detection in the form of rules to identify any behaviour that breaks those rules as an intrusion. These rules can stem from knowledge about a network protocol or any other system behaviour.
 
 \subsection{zeek IDS}
-\todo{Fundemental Knowledge: Write zeek section}
+\emph{Zeek} formerly known as \emph{bro}, as a reference to George Orwell's 1984 as a ``reminder that monitoring comes hand in hand with the potential for privacy violations'' \cite{zeek2023} is an open source network intrusion detection system. The first version of \emph{bro} was released in 1995 by the Lawrence Berkeley National Laboratory. In 2018, the project was renamed to \emph{zeek}. The system is often used for network security monitoring to detect and analyze suspicious behaviour in network traffic. Its architecture consists of two major components, as displayed in Figure. The first component is the \emph{event engine}, which refines the incoming network traffic into higher-level events without doing any analysis. It processes the traffic through different subcomponents, identifying protocols, file types, and, e.g. TCP connections at the link layer. The second component is the \emph{policy script interpreter}, which runs different event handlers to analyze the events. These event handlers are built in their own scripting language, but adaptors to public programming languages also exist and are applied in this work.
+
+\begin{figure}[ht]
+	\sffamily\footnotesize
+	\includegraphics[width=0.75\textwidth]{pic/zeek_architecture.png}
+	\unitlength=0.75mm
+	\special{em:linewidth 0.4pt}
+	\linethickness{0.4pt}
+	\caption{Architecture of zeek \cite{zeek2023}}
+	\label{fig:zeek_architecture}
+\end{figure}
 
 \section{Algorithms}
-\todo{Describe the algorithms used in the experiments}
+\subsection{k-Means Clustering}
+In the field of data analysis, finding patterns and anomalies in data sets is a ubiquitous challenge. Grouping data into different clusters can be an approach to reveal useful features or meanings from the data. One common technique for clustering is k-means clustering. There are different flavors of k-means algorithms, but one of the most common k-means algorithms and the one applied in this work is Lloyd's k-means algorithm \cite{wilkin2007kmeans}. 
+\subsubsection{Lloyd's k-Means clustering}
+The general goal of the algorithm is to group data by similar features into a fixed amount of clusters. The algorithm achieves this by finding $k$ \emph{centroids} $\mu_1, \mu_2 ... \mu_k \in \mathbb{R}$. The clusters are then based on the centroids so that every point $x$ of the n-dimensional dataset ${x_1 ... x_m}$ gets assigned to the centroid with the lowest Euclidean distance. In order to find the centroids, the algorithm's approach is an iterative process described in figure \ref{fig:kmeans}. In the beginning, $k$ (defined by the number of clusters) random centroids are chosen. Then, the clusters are created by calculating the minimum Euclidean distance from every point of the dataset to the centroids: $\arg\min_j \|x_i - c_j\|^2$. In the next step, the centroids are recalculated by finding the points in the center of the clusters: $\mu_j = \frac{1}{|\mu_j|} \sum_{x_i \in \mu_j} x_i$. The two steps of creating the clusters based on the centroids and calculating the center point of the new clusters are repeated until the centroids converge or a definition for a fixed amount of iterations is given \cite{piech2013kmeans} \cite{lloyd1982kmeans}.
+
+
+
+\begin{algorithm}
+	\label{fig:kmeans}
+	\caption{Lloyd's K-Means Algorithm}
+	\begin{algorithmic}[1]
+		\State \textbf{Input:} Data set $X = {x_1 \ldots x_m}$, number of clusters $k$
+		\State \textbf{Output:} Cluster centroids $\{\mu_1, \mu_2, \ldots, \mu_k\}$
+		\State Randomly choose $k$ centroids ${\mu_1 \ldots \mu_k}$ 
+		\Repeat
+		\For{each data point $x_i$}
+			\State Assign $x_i$ to the cluster with the nearest centroid: $\mu_i = \arg\min_j \|x_i - \mu_j\|^2$
+		\EndFor
+		\For{each cluster $j$}
+			\State Calculate new centroid $\mu_j$ as the center of all points assigned to cluster $j$ for every cluster: $\mu_j = \frac{1}{|\mu_j|} \sum_{x_i \in \mu_j} x_i$
+		\EndFor
+		\Until{New centroids don't change anymore or a fixed number of iterations was given}
+	\end{algorithmic}
+\end{algorithm}
+\todo{Adjust with stanford formulas}
+	
+\subsection{Word2Vec}
+
+Word2Vec ist eine beliebte Technik im Bereich der natürlichen Sprachverarbeitung (NLP) zur Generierung von Wort-Einbettungen, also Vektorrepräsentationen von Wörtern in einem kontinuierlichen Vektorraum. Von Mikolov et al. im Jahr 2013 eingeführt, basiert Word2Vec auf der Verteilungshypothese, nach der Wörter, die in ähnlichen Kontexten erscheinen, semantisch verwandt sind.
+
+\subsubsection{Continuous Bag of Words (CBOW)}
+
+Das CBOW-Modell ist eine der Architekturen, die von Word2Vec verwendet werden. Bei CBOW besteht das Ziel darin, das Zielwort vorherzusagen, basierend auf seinem Kontext, der aus umgebenden Wörtern besteht. Das Modell lernt, Wörter als dichte Vektoren darzustellen, indem es an einem großen Korpus trainiert wird. Die Architektur umfasst eine versteckte Schicht, die semantische Beziehungen zwischen Wörtern erfasst.
+
+\subsubsection{Skip-Gram}
+
+Im Gegensatz zu CBOW zielt das Skip-Gram-Modell darauf ab, die Kontextwörter vorherzusagen, basierend auf einem Zielwort. Es handelt sich um eine weitere Architektur, die in Word2Vec verwendet wird. Skip-Gram wird oft bevorzugt, wenn große Datensätze verwendet werden, da es auf umfangreichen und vielfältigen Korpora gut abschneidet. Die resultierenden Wort-Einbettungen kodieren semantische Informationen und erfassen Beziehungen zwischen Wörtern.
+
+\subsubsection{Trainingsprozess}
+
+Word2Vec verwendet ein neuronales Netzwerk, um die Wort-Einbettungen zu lernen. Der Trainingsprozess beinhaltet die Anpassung der Gewichte des neuronalen Netzwerks unter Verwendung eines großen Korpus. Das Ziel besteht darin, die Differenz zwischen den vorhergesagten und tatsächlichen Wortrepräsentationen zu minimieren. Die resultierenden erlernten Einbettungen erfassen semantische Beziehungen und ermöglichen verschiedene Anwendungen in der NLP, wie beispielsweise die Messung von Wortähnlichkeiten oder Analogien.
+
+\subsubsection{Anwendungen}
+
+Word2Vec findet weitreichende Anwendungen in Aufgaben der natürlichen Sprachverarbeitung, einschließlich, aber nicht beschränkt auf, Sentimentanalyse, maschinelles Übersetzen und Information Retrieval. Die Fähigkeit, semantische Beziehungen zwischen Wörtern in einem kontinuierlichen Vektorraum zu erfassen, hat es zu einem grundlegenden Werkzeug im Bereich der NLP gemacht.
+
+In den folgenden Kapiteln werden wir tiefer in die Details von Word2Vec eintauchen, seine Anwendungen erkunden und seine Leistung im Kontext unserer Forschungsziele bewerten.
+
+
+
+\subsection{k-nearest neighbor}
 
 \chapter{Related Work}
 \label{chap:related_work}
@@ -574,6 +634,8 @@ This countermeasure aims to harden the protocol against the misuse of stolen acc
 \section{k-nearest neighbor}
 
 \section{k-means clustering}
+
+The k-means clustering algorithm was chosen as it is one of the most 
 
 \section{Rule-based techniques}
 \subsection{Count auth code usages}
