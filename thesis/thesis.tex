@@ -355,29 +355,23 @@ The general goal of the algorithm is to group data by similar features into a fi
 	
 \subsection{Word2Vec}
 
-Word2Vec ist eine beliebte Technik im Bereich der natürlichen Sprachverarbeitung (NLP) zur Generierung von Wort-Einbettungen, also Vektorrepräsentationen von Wörtern in einem kontinuierlichen Vektorraum. Von Mikolov et al. im Jahr 2013 eingeführt, basiert Word2Vec auf der Verteilungshypothese, nach der Wörter, die in ähnlichen Kontexten erscheinen, semantisch verwandt sind.
 
-\subsubsection{Continuous Bag of Words (CBOW)}
+\emph{Word2Vec} introduced in 2013 by Mikolov et al. is a technique in natural language processing to convert words into embeddings. An embedding is a vector carrying a semantic to represent a word as a numerical value to enable the usage of words in algorithms requiring numerical inputs. In the case of \emph{Word2Vec}, the idea is that words hold similarities based on their surrounding words in a text corpus. This concept leads to words, which often stand close together in a text, receiving vectors that point in a similar direction. There are two models which are employed by \emph{word2vec}, the \emph{Continous Bag of words (CBOW)} model and the \emph{Skip-Gram} model. Both models have in common that they apply supervised learning techniques by training a neural network to predict relationships in text corpora. In both cases, the goal is to use the weights of the hidden layer after training as word embeddings instead of utilizing the neural networks for any predictions \cite{mikolov2013efficient} \cite{rong2014word2vec}.
 
-Das CBOW-Modell ist eine der Architekturen, die von Word2Vec verwendet werden. Bei CBOW besteht das Ziel darin, das Zielwort vorherzusagen, basierend auf seinem Kontext, der aus umgebenden Wörtern besteht. Das Modell lernt, Wörter als dichte Vektoren darzustellen, indem es an einem großen Korpus trainiert wird. Die Architektur umfasst eine versteckte Schicht, die semantische Beziehungen zwischen Wörtern erfasst.
+\subsubsection{Continous Bag of Words (CBOW)}
+The continuous bag of words model trains a neural network that predicts the word in the middle based on its surrounding words. An important hyperparameter for CBOW and Skip-Gram is the window size, which describes how many words surrounding a word are considered context. 
+During training, the network receives combined one-hot-encoded vectors of surrounding words (e.g., averaging or summing them) in a tuple with the corresponding target word. When the training is completed at inference, the model gets context words as input and outputs a vector of probabilities for the predicted target word. But as mentioned above, the goal of word2vec is to extract word embeddings, which are the weights of the hidden layer of the neural network.
 
 \subsubsection{Skip-Gram}
-
-Im Gegensatz zu CBOW zielt das Skip-Gram-Modell darauf ab, die Kontextwörter vorherzusagen, basierend auf einem Zielwort. Es handelt sich um eine weitere Architektur, die in Word2Vec verwendet wird. Skip-Gram wird oft bevorzugt, wenn große Datensätze verwendet werden, da es auf umfangreichen und vielfältigen Korpora gut abschneidet. Die resultierenden Wort-Einbettungen kodieren semantische Informationen und erfassen Beziehungen zwischen Wörtern.
-
-\subsubsection{Trainingsprozess}
-
-Word2Vec verwendet ein neuronales Netzwerk, um die Wort-Einbettungen zu lernen. Der Trainingsprozess beinhaltet die Anpassung der Gewichte des neuronalen Netzwerks unter Verwendung eines großen Korpus. Das Ziel besteht darin, die Differenz zwischen den vorhergesagten und tatsächlichen Wortrepräsentationen zu minimieren. Die resultierenden erlernten Einbettungen erfassen semantische Beziehungen und ermöglichen verschiedene Anwendungen in der NLP, wie beispielsweise die Messung von Wortähnlichkeiten oder Analogien.
-
-\subsubsection{Anwendungen}
-
-Word2Vec findet weitreichende Anwendungen in Aufgaben der natürlichen Sprachverarbeitung, einschließlich, aber nicht beschränkt auf, Sentimentanalyse, maschinelles Übersetzen und Information Retrieval. Die Fähigkeit, semantische Beziehungen zwischen Wörtern in einem kontinuierlichen Vektorraum zu erfassen, hat es zu einem grundlegenden Werkzeug im Bereich der NLP gemacht.
-
-In den folgenden Kapiteln werden wir tiefer in die Details von Word2Vec eintauchen, seine Anwendungen erkunden und seine Leistung im Kontext unserer Forschungsziele bewerten.
+The skip-gram model uses the reverse strategy compared to the CBOW model. Instead of predicting a word by its surroundings, it trains a neural network that tries to predict the surroundings of a word. At training, the neural network receives word tuples of single context words and their corresponding target words one-hot-encoded. After fitting the network during inference, the model receives a one-hot-encoded word as input and produces a probability distribution over the vocabulary, which stands for the probability of a word being a surrounding word for the input. Again, in the case of word2vec, this supervised learning approach is only applied to retrieve the weights of the hidden layer as word embeddings, as word2vec is used for non-labelled data. In their research, Mikolov et al. state that skip-gram is feasible for small data sets and even considers rare occurrences of words well. In contrast, CBOW is faster in training with large datasets and better at capturing the semantics of high-frequency words. 
 
 
 
-\subsection{k-nearest neighbor}
+
+
+
+
+% \subsection{k-nearest neighbor}
 
 \chapter{Related Work}
 \label{chap:related_work}
