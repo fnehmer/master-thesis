@@ -376,11 +376,9 @@ Section
 \todo{Continue Introduction to Related Work chapter}
 \section{Theoretical Security Analysis of OAuth}
 \label{sec:fks_model}
-??
+Security research on the OAuth standard has been conducted since its beginnings. Impactful research that unveiled security issues in the definition of OAuth 2.0 is the work by Fett et al. \cite{fett2016comprehensive}, who constructed a theoretical \emph{Dolev Yao}-style model called the FKS model and extended that model with OAuth2 capabilities. On the one hand, the FKS model mimics web standards, like HTTP/1.1 and HTML5. On the other hand, it simulates entities like browsers, including the concept of windows, documents, iframes, complex navigation rules, DNS servers, web servers, and web and network attackers. The FKS model puts entities as processes into practice, while the communication through standards is modelled via events between the processes. For OAuth 2.0, the researchers' goal is to reveal security flaws in the most secure implementation of the standard regarding all publicly known security considerations while modelling the four grant types: \emph{implicit grant}, \emph{authorization code grant}, \emph{resource owner password credentials grant}, and \{client credentials grant}. The central methodology of Fett et al. is to prove the security of the OAuth standard using their formal language, in which the standard is modelled, to find the flaws breaking the security proof. Following this methodology, the researchers uncovered four new vulnerabilities in the  OAuth standard, with the impact that the OAuth working group of IETF added these vulnerabilities and their countermeasures to the official document for security considerations for OAuth. These four vulnerabilities are later elaborated in this work in sections.
 
-
-\cite{fett2016comprehensive}
-\todo{Realted Work: Describe Security Analysis of OAuth}
+% \ref{xD1}, \ref{xD2}, \ref{xD3}, and \ref{xD4}
 
 \section{Machine Learning approach to detect OAuth vulnerabilities}
 \cite{munonye2022machine}
