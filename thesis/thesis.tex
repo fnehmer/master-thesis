@@ -813,7 +813,9 @@ The above-described services create a complete environment for executing valid O
 \section{Implementation of analysis algorithms}
 The last remaining part of the experimental setup is the intrusion detection mechanism. Based on the type of attacks implemented the decision was made, to analyze the logs produced by the authorization server, because the attack traffic appears in the network of this entity. The input for this part of the experiments is therefore the network log file produced by the logger of the authorization server overlay network. This file is passed to the data preprocessing step initiated by \emph{zeek}. The approach for the next step after the preprocessing, the detection step is based on previous studies \cite{carrasco2018unsupervised} \cite{zhuo2017network}, which had success in utilizing word2vec word embeddings to detect malicious network traffic even in small datasets. Therefore the same idea was chosen for this work to encode textual data, to enable clustering methods of the logs to reveal anomalies in the network data.
 
-\subsection{Data preprocessing}The first step of processing the data is to run it through the \emph{zeek IDS} to produce ``zeek-logs''. Zeek splits the data into different processed log files depending on the protocol of the packets. Since this research focuses on attacks on a specific protocol in the application layer, all logs, except for the http-log, get omitted. Another important detail is, that while producing the zeek-logs a ``zeek-script'' is loaded to preserve the HTTP headers in the HTTP log of zeek, as the headers include the labeling for the attacks and are not included by default in the zeek http-logs. The next steps of processing and the entire analysis from now on are executed using Python and popular data science libraries, which are mostly available for this programming language. Zeek supports the \emph{zat} library for Python, which allows for converting the zeek log into a data frame for the popular data-science library \emph{pandas}. After converting the zeek logs to a data frame a column gets added called ``is\_attack''. The column holds a flag for the row in the log if it is involved in an attack. The values for ``is\_attack'' get generated, by checking if the ``client\_header'' row includes a header called ``X-Is-Attack''. Afterwards, the ``X-Is-Attack''-header gets cleared from the header columns, as they are not a natural part of the traffic. The resulting matrix contains 34 columns, which carry different kinds of data like the URI of the request, the source and destination IPs, the HTTP method used, etc (compare Table \ref{tab:dataframe} for a full list of columns).
+\subsection{Data preprocessing}
+\label{subsec:dataset}
+The first step of processing the data is to run it through the \emph{zeek IDS} to produce ``zeek-logs''. Zeek splits the data into different processed log files depending on the protocol of the packets. Since this research focuses on attacks on a specific protocol in the application layer, all logs, except for the http-log, get omitted. Another important detail is, that while producing the zeek-logs a ``zeek-script'' is loaded to preserve the HTTP headers in the HTTP log of zeek, as the headers include the labeling for the attacks and are not included by default in the zeek http-logs. The next steps of processing and the entire analysis from now on are executed using Python and popular data science libraries, which are mostly available for this programming language. Zeek supports the \emph{zat} library for Python, which allows for converting the zeek log into a data frame for the popular data-science library \emph{pandas}. After converting the zeek logs to a data frame a column gets added called ``is\_attack''. The column holds a flag for the row in the log if it is involved in an attack. The values for ``is\_attack'' get generated, by checking if the ``client\_header'' row includes a header called ``X-Is-Attack''. Afterwards, the ``X-Is-Attack''-header gets cleared from the header columns, as they are not a natural part of the traffic. The resulting matrix contains 34 columns, which carry different kinds of data like the URI of the request, the source and destination IPs, the HTTP method used, etc (compare Table \ref{tab:dataframe} for a full list of columns).
 
 
 \begin{table}[]
@@ -864,43 +866,118 @@ Two clustering algorithms for anomaly detection are implemented to test the dete
 \subsubsection{Self-organizing maps}
 
 \section{Results}
-\todo{Write text for the results}
+This section describes the results of the intrusion detection approach conducted in this work on the self-generated dataset.
 
-- Talk about size and properties of dataset
+\begin{table}[H]
+	\caption{Results of Intrusion Detection using Word2Vec and Clustering algorithms}
+	\label{tab:results}
+	\begin{tabular}{|l|l|l|}
+	\hline
+					   & \textbf{k-Means} & \textbf{Self-Organizing Maps} \\ \hline
+	\textbf{Accuracy}  & 0.993            & 0.987                         \\ \hline
+	\textbf{Yield}     & 1.0              & 1.0                           \\ \hline
+	\textbf{Precision} & 0.637            & 0.463                         \\ \hline
+	\end{tabular}
+\end{table}
 
-- Visualize generated dataset
+\subsection{Dataset generation}
+The dataset, as described in Section \ref{subsec:dataset}, consists of records representing the generated HTTP network traffic over a fixed period of time. For this analysis, a dataset containing 3627 records is generated containing 44 records, which are requests involved in the attacks on the OAuth protocol. All implemented attacks are based on tampering with the query parameters of the requests to interfere with the OAuth redirection flow. As the goal of the analysis is to detect anomalies in the traffic, the dataset is generated in a way that at random around one percent of the generated traffic is attacker traffic. Table \ref{tab:record_attack} shows an example of an attack record, while Table \ref{tab:record_traffic} shows examples of non-attack records.
 
-- Talk about window size of Word2Vec
+\begin{table}[H]
+	\caption{Representation of a record of the dataset containing a request involved in an attack}
+	\label{tab:record_attack}
+	\begin{tabular}{|l|l|l|l|}
+	\hline
+	\textbf{method} & \textbf{uri}                                                                                                                                                    & \textbf{is\_attack} & \textbf{cluster} \\ \hline
+	GET             & \begin{tabular}[c]{@{}l@{}}/oauth/authorize\\ ?response\_type=code\\ \&client\_id=A30qfzW7fbvhAN4OtIq4ZNFR\\ \&redirect\_uri=http://localhost:8081\end{tabular} & 1                   & 2                \\ \hline
+	\end{tabular}
+\end{table}
 
-- Visualize Word embeddings
 
-- Add better visualizations for clusters
+\begin{table}[H]
+	\caption{Representation of records of the dataset containing requests involved in usual traffic}
+	\label{tab:record_traffic}
+	\begin{tabular}{|l|l|l|l|}
+	\hline
+	\textbf{method} & \textbf{uri}                                                                                                                                                                                           & \textbf{is\_attack} & \textbf{cluster} \\ \hline
+	GET             & \begin{tabular}[c]{@{}l@{}}/?next=http://localhost:5123/oauth/authorize\\ ?response\_type=code\\ \&client\_id=A30qfzW7fbvhAN4OtIq4ZNFR\\ \&redirect\_uri=http://localhost:8080/index.html\end{tabular} & 0                   & 0                \\ \hline
+	GET             & /                                                                                                                                                                                                      & 0                   & 0                \\ \hline
+	POST            & /create\_client                                                                                                                                                                                        & 0                   & 0                \\ \hline
+	\end{tabular}
+\end{table}
 
-- Compare the found Yield and Accuracy
-
+\subsection{Word2Vec embeddings}
+The Word2Vec embeddings for the textual data are the most crucial step for the detection, as the clustering algorithms work with the vectors produced by the word2vec algorithm. The vectors hold the knowledge about the relation of the individual pieces of the URIs and methods. Finding the best Word2Vec embeddings is achieved by tuning the window size hyperparameter. This parameter controls how many words around a word are considered related. In the case of the URI, this is the decision of whether, for example, a query parameter key should only relate to its direct value or if the combination of multiple query parameter key-value pairs is considered related. Experimenting with the window size hyperparameter shows that it does not affect the detection rate for both clustering algorithms in this environment of generated data. This circumstance could result from the short repetitive strings given to the algorithm as input. Even though there is randomization in the generated traffic for user IDs, Figure \ref{fig:word_embeddings3D} shows a very dense cluster for most of the non-attack traffic, meaning these embeddings have a close semantic meaning. Following along with the representation in Figure \ref{fig:word_embeddings3D} it stands out that there is a large cluster and some smaller outliers. The goal of the clustering algorithms in the next step is to capture this observation.
 
 \begin{figure}[H]
 	\sffamily\footnotesize
-	\includegraphics[width=0.5\textwidth]{pic/kmeans.png}
+	\includegraphics[width=1\textwidth]{pic/word_embeddings_3d.png}
 	\unitlength=0.75mm
 	\special{em:linewidth 0.4pt}
 	\linethickness{0.4pt}
-	\caption{K-Means}
-	\label{fig:kmeans_clusters}
+	\caption{Embedding Vectors normalized to 3 dimensions. Every vector is labeled with the corresponding URI, which led to its placement in the vector space}
+	\label{fig:word_embeddings3D}
+\end{figure}
+
+\subsection{Clustering}
+The last part of the detection chain aims to extract the anomalies to identify them as attacks. This goal is accomplished using unsupervised clustering algorithms described in Sections X and Y. 
+
+\subsubsection{k-Means}
+The k-means clustering results are influenced by how many clusters are chosen, as the algorithm works with a fixed amount of clusters from the beginning. Another circumstance to consider is the algorithm initializing its first cluster centroids randomly. This condition could influence the result. For this reason, a fixed seed for the randomizing of centroids was found to calculate the same clusters every time. A threshold for the cluster size compared to the total amount of records of 5\% was determined to identify the anomalies. Every cluster below this threshold is considered to include attacks. This calculation led to the results shown in Table \ref{tab:results}.
+
+- Write about the results
+
+- Write about what happens, when altering the cluster amount referencing Figure \ref{fig:kmeans_clusters_2} and Figure \ref{fig:kmeans_clusters_6}
+
+
+\begin{figure}[H]
+	\caption{Word2Vec and k-Means setting 2 clusters}
+	\label{fig:kmeans_clusters_2}
+	\sffamily\footnotesize
+	\includegraphics[width=1\textwidth]{pic/k_means_2.png}
+	\unitlength=0.75mm
+	\special{em:linewidth 0.4pt}
+	\linethickness{0.4pt}
 \end{figure}
 
 \begin{figure}[H]
+	\caption{Word2Vec and k-Means setting 6 clusters}
+	\label{fig:kmeans_clusters_6}
 	\sffamily\footnotesize
-	\includegraphics[width=0.5\textwidth]{pic/SOM.png}
+	\includegraphics[width=1\textwidth]{pic/k_means_6.png}
 	\unitlength=0.75mm
 	\special{em:linewidth 0.4pt}
 	\linethickness{0.4pt}
-	\caption{SOM}
+\end{figure}
+
+\subsubsection{Self-Organizing Maps}
+\begin{itemize}
+	\item Write about hyperparameter tuning
+	\item Write about Figure \ref{fig:som_clusters}
+	\item Write about results Table \ref{tab:results}
+\end{itemize}
+
+\begin{figure}[H]
+	\caption{Word2Vec and Self-Organizing Maps}
 	\label{fig:som_clusters}
+	\sffamily\footnotesize
+	\includegraphics[width=1\textwidth]{pic/som_final.png}
+	\unitlength=0.75mm
+	\special{em:linewidth 0.4pt}
+	\linethickness{0.4pt}
 \end{figure}
 
-\todo{Use other visualization with greyscale in mind.}
 
+\subsection{Discussion}
+
+\begin{itemize}
+	\item Discussion results
+	\item (!) Discuss about data generation approach
+	\begin{itemize}
+		\item How realistic is the approach?
+	\end{itemize}
+	\item Discuss about relevance for real-world
+\end{itemize}
 
 \chapter{Conclusion}
 \label{chap:conclusion}
