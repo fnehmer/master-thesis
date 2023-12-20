@@ -77,16 +77,33 @@ Durch eine solche Zusammenfassung (im Engl. auch Abstract genannt) am Anfang der
 \tableofcontents
 
 \chapter{Introduction}
-\label{chap.introduction}
+\label{chap:introduction}
 \section{Motivation}
-\todo{Write Motivation}
-\section{Research Question}
-\todo{Write down Research Question}
+In the evolving landscape of internet services, the OAuth (Open Authorization) framework is an ever-growing popular tool that allows users to integrate their existing accounts holding personal data seamlessly into different online services. As OAuth offers diverse possibilities for various use cases to handle authorization, the standard has grown in complexity over time. There are formal analyses of the security of OAuth, which prove the security of the standard itself \cite{fett2016comprehensive}, but with this large complexity comes great responsibility when implementing the protocol. A study by Philippaerts et al. conducted in 2022 shows that 97 of 100 popular OAuth providers leave at least one known OAuth threat unmitigated, with an average of four unmitigated threats per provider \cite{philippaerts2022oauch}. This study shows that many OAuth implementations are still flawed, and it did not even include the implementation of millions of OAuth clients, which potentially could also have flawed implementations. Adding to that picture of the current OAuth threat landscape, the introduction of new browser features, as demonstrated by the number one of the top ten web hacking techniques of 2022 published by the company PortSwigger \cite{kettle2022}, revealed even newer and more niche attack vectors on OAuth as well. This concerning situation in the threat landscape of OAuth is not hopeless in any way, more than that, this condition should be the reason to be addressed appropriately. One way to achieve that is to detect intrusion attempts through OAuth flaws as early as possible to allow OAuth providers to react adequately and reduce damages. This can be achieved by utilizing anomaly detection techniques, even identifying unknown attack vectors, which is especially useful in an ever-changing threat landscape.
+
+
+\section{Research Goals}
+This research includes two primary goals. The first goal is to provide an overview of the current threat landscape of the OAuth 2.0 protocol, including potential countermeasures by suggesting a classification. 
+
+Based on the knowledge gained by evaluating the threat landscape, the second goal is to test the effectiveness of common anomaly-based intrusion detection techniques on the application layer data of the protocol. To achieve this goal, two clustering algorithms using the protocol data encoded into word embeddings are implemented and compared to each other by their effectiveness.
+
+
 \section{Outline}
-\todo{Decide if Outline is necessary}
+While this chapter served to introduce the issues with the current threat landscape of OAuth and the motivation and approach to address them, the subsequent chapters are structured as follows:
+
+Chapter \ref{chap:fundamental_knowledge} provides fundamental knowledge about the OAuth authorization framework, including its different modes of operation and its future outlook. It also introduces the theory of intrusion detection systems based on recent taxonomies. The chapter ends by describing the different algorithms utilized to implement the anomaly-based intrusion detection approach applied in this work. 
+
+Chapter \ref{chap:related_work} presents related research in the realm of OAuth security in general and intrusion detection approaches utilizing Word2Vec embeddings and clustering algorithms as this work applies them.
+
+Chapter \ref{chap:oauth_security} continues by laying out the different threats the implementation of OAuth bears and presents the current state of countermeasures to be applied. The chapter finishes with a suggestion for a classification of the various threats in the context of their countermeasures.
+
+Chapter \ref{chap:experimental_analysis} starts by giving a detailed description of the implementation of the experiments, including the OAuth environment, the dataset generation, and the algorithmic intrusion detection method. It continues by presenting and comparing the effectiveness of the different methods as the results of the experiments.
+
+Chapter \ref{chap:conclusion} ends this work with a résumé of this work and an outlook for future work.
+
 
 \chapter{Fundamental Knowledge}
-\label{chap.fundamental_knowledge}
+\label{chap:fundamental_knowledge}
 The OAuth authorization framework is complex and extensive as it has been refined and extended through several standards over the last 11 years. Securing applications using the OAuth protocol, therefore, leads to various considerations. Consequently, section 1 introduces the essential aspects and vocabulary of the OAuth authorization framework in the web context to form an understanding of the security-relevant parts of the protocol.
 
 As one of the main goals of this thesis is to experiment with techniques to detect attacks on services using OAuth, section 2 provides an exploration of intrusion detection systems and the different ways to categorize them.
@@ -191,6 +208,7 @@ the request of the desired protected resource at the resource server.
 	\caption{Authorization Code Grant without any extensions}
 	\label{fig:auth_code_grant}
 \end{figure}
+\todo{Improve all graphics resolutions}
 
 \subsubsection{Implicit Grant}
 The Implicit Grant was introduced at a time when there were no mechanisms like Cross-Origin resource sharing implemented in browsers, to share content from different domains. It is a predecessor of the authorization code flow and works similarly with the difference of leaving out the exchanging of the
@@ -327,6 +345,18 @@ An additional way for Anomaly-based IDS is the knowledge-based method. With this
 \end{figure}
 
 \section{Algorithms}
+\todo{Write intro to the algorithms}
+	
+\subsection{Word2Vec}
+\emph{Word2Vec} introduced in 2013 by Mikolov et al. is a technique in natural language processing to convert words into embeddings. An embedding is a vector carrying a semantic to represent a word as a numerical value to enable the usage of words in algorithms requiring numerical inputs. In the case of \emph{Word2Vec}, the idea is that words hold similarities based on their surrounding words in a text corpus. This concept leads to words, which often stand close together in a text, receiving vectors that point in a similar direction. There are two models which are employed by \emph{word2vec}, the \emph{Continous Bag of words (CBOW)} model and the \emph{Skip-Gram} model. Both models have in common that they apply supervised learning techniques by training a neural network to predict relationships in text corpora. In both cases, the goal is to use the weights of the hidden layer after training as word embeddings instead of utilizing the neural networks for any predictions \cite{mikolov2013efficient} \cite{rong2014word2vec}.
+
+\subsubsection{Continous Bag of Words (CBOW)}
+The continuous bag of words model trains a neural network that predicts the word in the middle based on its surrounding words. An important hyperparameter for CBOW and Skip-Gram is the window size, which describes how many words surrounding a word are considered context. 
+During training, the network receives combined one-hot-encoded vectors of surrounding words (e.g., averaging or summing them) in a tuple with the corresponding target word. When the training is completed at inference, the model gets context words as input and outputs a vector of probabilities for the predicted target word. But as mentioned above, the goal of word2vec is to extract word embeddings, which are the weights of the hidden layer of the neural network.
+
+\subsubsection{Skip-Gram}
+The skip-gram model uses the reverse strategy compared to the CBOW model. Instead of predicting a word by its surroundings, it trains a neural network that tries to predict the surroundings of a word. At training, the neural network receives word tuples of single context words and their corresponding target words one-hot-encoded. After fitting the network during inference, the model receives a one-hot-encoded word as input and produces a probability distribution over the vocabulary, which stands for the probability of a word being a surrounding word for the input. Again, in the case of word2vec, this supervised learning approach is only applied to retrieve the weights of the hidden layer as word embeddings, as word2vec is used for non-labelled data. In their research, Mikolov et al. state that skip-gram is feasible for small data sets and even considers rare occurrences of words well. In contrast, CBOW is faster in training with large datasets and better at capturing the semantics of high-frequency words. 
+
 \subsection{k-Means Clustering}
 In the field of data analysis, finding patterns and anomalies in data sets is a ubiquitous challenge. Grouping data into different clusters can be an approach to reveal useful features or meanings from the data. One common technique for clustering is k-means clustering. There are different flavors of k-means algorithms, but one of the most common k-means algorithms and the one applied in this work is Lloyd's k-means algorithm \cite{wilkin2007kmeans}. 
 \subsubsection{Lloyd's k-Means clustering}
@@ -352,20 +382,10 @@ The general goal of the algorithm is to group data by similar features into a fi
 	\end{algorithmic}
 \end{algorithm}
 \todo{Adjust with stanford formulas}
-	
-\subsection{Word2Vec}
 
-
-\emph{Word2Vec} introduced in 2013 by Mikolov et al. is a technique in natural language processing to convert words into embeddings. An embedding is a vector carrying a semantic to represent a word as a numerical value to enable the usage of words in algorithms requiring numerical inputs. In the case of \emph{Word2Vec}, the idea is that words hold similarities based on their surrounding words in a text corpus. This concept leads to words, which often stand close together in a text, receiving vectors that point in a similar direction. There are two models which are employed by \emph{word2vec}, the \emph{Continous Bag of words (CBOW)} model and the \emph{Skip-Gram} model. Both models have in common that they apply supervised learning techniques by training a neural network to predict relationships in text corpora. In both cases, the goal is to use the weights of the hidden layer after training as word embeddings instead of utilizing the neural networks for any predictions \cite{mikolov2013efficient} \cite{rong2014word2vec}.
-
-\subsubsection{Continous Bag of Words (CBOW)}
-The continuous bag of words model trains a neural network that predicts the word in the middle based on its surrounding words. An important hyperparameter for CBOW and Skip-Gram is the window size, which describes how many words surrounding a word are considered context. 
-During training, the network receives combined one-hot-encoded vectors of surrounding words (e.g., averaging or summing them) in a tuple with the corresponding target word. When the training is completed at inference, the model gets context words as input and outputs a vector of probabilities for the predicted target word. But as mentioned above, the goal of word2vec is to extract word embeddings, which are the weights of the hidden layer of the neural network.
-
-\subsubsection{Skip-Gram}
-The skip-gram model uses the reverse strategy compared to the CBOW model. Instead of predicting a word by its surroundings, it trains a neural network that tries to predict the surroundings of a word. At training, the neural network receives word tuples of single context words and their corresponding target words one-hot-encoded. After fitting the network during inference, the model receives a one-hot-encoded word as input and produces a probability distribution over the vocabulary, which stands for the probability of a word being a surrounding word for the input. Again, in the case of word2vec, this supervised learning approach is only applied to retrieve the weights of the hidden layer as word embeddings, as word2vec is used for non-labelled data. In their research, Mikolov et al. state that skip-gram is feasible for small data sets and even considers rare occurrences of words well. In contrast, CBOW is faster in training with large datasets and better at capturing the semantics of high-frequency words. 
-
-% \subsection{k-nearest neighbor}
+\subsection{Self-Organizing Maps}
+\todo{Write about Self-Organizing Maps}
+\lipsum[1-2]
 
 \chapter{Related Work}
 \label{chap:related_work}
@@ -373,47 +393,35 @@ This chapter presents important research in the realm of OAuth security and intr
 
 Section 
 
-\todo{Continue Introduction to Related Work chapter}
 \section{Theoretical Security Analysis of OAuth}
 \label{sec:fks_model}
-Security research on the OAuth standard has been conducted since its beginnings. Impactful research that unveiled security issues in the definition of OAuth 2.0 is the work by Fett et al. \cite{fett2016comprehensive}, who constructed a theoretical \emph{Dolev Yao}-style model called the FKS model and extended that model with OAuth2 capabilities. On the one hand, the FKS model mimics web standards, like HTTP/1.1 and HTML5. On the other hand, it simulates entities like browsers, including the concept of windows, documents, iframes, complex navigation rules, DNS servers, web servers, and web and network attackers. The FKS model puts entities as processes into practice, while the communication through standards is modelled via events between the processes. For OAuth 2.0, the researchers' goal is to reveal security flaws in the most secure implementation of the standard regarding all publicly known security considerations while modelling the four grant types: \emph{implicit grant}, \emph{authorization code grant}, \emph{resource owner password credentials grant}, and \{client credentials grant}. The central methodology of Fett et al. is to prove the security of the OAuth standard using their formal language, in which the standard is modelled, to find the flaws breaking the security proof. Following this methodology, the researchers uncovered four new vulnerabilities in the  OAuth standard, with the impact that the OAuth working group of IETF added these vulnerabilities and their countermeasures to the official document for security considerations for OAuth. These four vulnerabilities are later elaborated in this work in sections.
+Security research on the OAuth standard has been conducted since its beginnings. Impactful research that unveiled security issues in the definition of OAuth 2.0 is the work by Fett et al. \cite{fett2016comprehensive}, who constructed a theoretical \emph{Dolev Yao}-style model called the FKS model and extended that model with OAuth2 capabilities. On the one hand, the FKS model mimics web standards, like HTTP/1.1 and HTML5. On the other hand, it simulates entities like browsers, including the concept of windows, documents, iframes, complex navigation rules, DNS servers, web servers, and web and network attackers. The FKS model puts entities as processes into practice, while the communication through standards is modelled via events between the processes. For OAuth 2.0, the researchers' goal is to reveal security flaws in the most secure implementation of the standard regarding all publicly known security considerations while modelling the four grant types: \emph{implicit grant}, \emph{authorization code grant}, \emph{resource owner password credentials grant}, and \emph{client credentials grant}. The central methodology of Fett et al. is to prove the security of the OAuth standard using their formal language, in which the standard is modelled, to find the flaws breaking the security proof. Following this methodology, the researchers uncovered four new vulnerabilities in the  OAuth standard, with the impact that the OAuth working group of IETF added these vulnerabilities and their countermeasures to the official document for security considerations for OAuth. These four vulnerabilities are later elaborated in this work in sections .
+\todo{Add the reference to sections}
+\todo{Add the table from the research}
 
-% \ref{xD1}, \ref{xD2}, \ref{xD3}, and \ref{xD4}
+\section{Analysis of OAuth implementations}
+Through research like the one mentioned in Section \ref{sec:fks_model} by Fett et al. and the continuous work by the OAuth working group of the IETF, the OAuth standard gets enriched with several suggestions for improving the security of OAuth implementations. However, because OAuth is such a complex protocol, implementation flaws still arise, even concerning already-known threats. A recent study by Philippaerts et al. implemented an audit tool called ``OAuch'' to test the coverage of countermeasures against known threats for OAuth. It revealed that 97 of 100 popular identity providers (OAuth and Open ID Connect) leave at least one common threat completely unmitigated. The researchers also found that, on average, OAuth identity providers, in particular, did not implement 34\% of the security specifications suggested by the OAuth working group \cite{philippaerts2022oauch}. This work again shows the importance of awareness of the threat landscape when implementing and operating an OAuth provider or an OAuth client.
 
-\section{Machine Learning approach to detect OAuth vulnerabilities}
-\cite{munonye2022machine}
-\todo{Related Work: Describe approach to detect OAuth vulnerabilities}
-\section{Another One}
-\todo{Related Work: Decide on which 1-2 more articles to mention here aswell}
+\section{Word embeddings and clustering for intrusion detection}
+\todo{Write about the related work by \cite{zhuo2017network} and \cite{nalavade2014}}
+
 
 
 \chapter{OAuth Security}
+\label{chap:oauth_security}
 
 This chapter presents known threats and vulnerabilities when using the OAuth authorization framework. Section \ref{sec:oauth_threats_and_vulns} elaborates on every threat and vulnerability separately. The list is mainly based on the current draft for security best practices for OAuth from the OAuth task force at IETF and is enriched with various examples, further explanations, and a categorization of types of threats.
 
 Section \ref{sec:oauth_countermeasures} starts with a classification of OAuth threats and vulnerabilities by mitigation responsibility of the involved parties in the protocol. It then continues with a description of the specific countermeasures and mitigation strategies and ends with an overview of which threat can be mitigated by which countermeasure.
 
-Lastly, section \ref{sec:discussion_of_oauth_security} performs a short discussion about the difference. \todo{Finish this when there is an idea for section 3}
-
 \section{Threats and Vulnerabilities}
 \label{sec:oauth_threats_and_vulns}
 
-\subsection{Insufficient Redirect URI Validation \cite{lodderstedt2020oauth} \cite{wang2019make}}
-Authorization Servers need to whitelist redirection URLs in order to make sure,
-that an attacker cannot craft a hyperlink, which leads to the victim initiating
-an OAuth flow and sending the authorization code or token to an
-attacker-controlled domain. Some authorization servers may allow the usage of
-patterns in order to allow several domains at once. As well as the absence of
-any sort of whitelist mechanism even a pattern-matching functionality could
-lead to security problems. Among the possibility that a user is entering
-patterns that are too broad and allow the usage of unintended redirect URLs,
-the attack surface includes issues with the URL parsing implemented by the
-authorization server as shown by Wang et al. \cite{wang2019make}. They
-presented several techniques to trick the parser into accepting unintended
-domain names, like using squared brackets for IPv6 parsing or the \emph{Evil
-Slash Trick}, where the parser does not treat a forward slash as a path
-separator, while modern browsers do. Depending on the OAuth grant type in use
-this vulnerability leads to different possibilities to exploit it.
+\subsection{Insufficient Redirect URI Validation}
+\label{subsec:insufficient_redirect_uri_validation}
+Authorization Servers need to whitelist redirection URLs in order to make sure, that an attacker cannot craft a hyperlink, which leads to the victim initiating an OAuth flow and sending the authorization code or token to an attacker-controlled domain. Some authorization servers may allow the usage of patterns in order to allow several domains at once. As well as the absence of any sort of whitelist mechanism even a pattern-matching functionality could lead to security problems. Among the possibility that a user is entering
+patterns that are too broad and allow the usage of unintended redirect URLs, the attack surface includes issues with the URL parsing implemented by the authorization server as shown by Wang et al. \cite{wang2019make}. They presented several techniques to trick the parser into accepting unintended domain names, like using squared brackets for IPv6 parsing or the \emph{Evil Slash Trick}, where the parser does not treat a forward slash as a path
+separator, while modern browsers do. Depending on the OAuth grant type in use this vulnerability leads to different possibilities to exploit it \cite{lodderstedt2020oauth}.
 
 
 \subsubsection{Authorization Code Flow}
@@ -435,9 +443,6 @@ this vulnerability leads to different possibilities to exploit it.
         retrieve a token 
 
 \end{itemize}
-
-\subsubsection{Implicit Flow}
-\todo{Maybe write down open redirection with the implicit flow here regarding redirect\_uri check circumvention}
 
 
 \subsection{Credential Leakage via Referer Headers}
@@ -696,19 +701,24 @@ The first classification displayed in figure \ref{tab:txc} is visualizing, which
         TV14 & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & x \\ \hline
     \end{tabular}
 \end{table}
+\todo{Put vertical names countermeasures}
+\todo{Create caption for table}
+
+\subsection{Threats by mitigation responsibility}
+\todo{Add the table for threats by mitigation responsibility}
 
 \chapter{Experimental Analysis}
-\label{chap:exp}
-This chapter examines the capabilities of the intrusion detection techniques and algorithms presented in chapter \ref{chap:exp}.
+\label{chap:experimental_analysis}
+This chapter examines the capabilities of the intrusion detection techniques and algorithms presented in chapter \ref{chap:experimental_analysis}.
 
 Initially, section \ref{sec:exp_setup} describes generally the structure of the experimental environment for dataset generation and analysis. This section is subdivided into three parts to describe the multi-step process that was implemented to generate and analyze datasets for the experiments.
 
-\section{Implementation of the experiment environment}
+\section{Implementation of the data generation environment}
 \label{sec:exp_setup}
 
 An essential piece for this research and its experiments is a complete testing environment for OAuth as at the time of this writing a dataset of network logs with specific attacks on OAuth does not exist. To generate a dataset to analyze it, an experimental environment was implemented containing multiple components as illustrated in figure \ref{fig:experimental_setup}. It consists of three main parts, the first part being the main OAuth services, which are the authorization server, the resource server, and the client, to make OAuth network traffic in general possible. The second part is the dataset generation part, which is done through fuzzing requests in the OAuth environment, which produces logs in the form of ``.pcap''-files through the logger services. The third and last part is the analysis part, which is initialized through the preprocessing of zeek, which produces several log files from which the ``http.log'' files are getting processed in the analyzer component. The analyzer component executes the implemented algorithms to detect anomalies.
 
-\begin{figure}[ht]
+\begin{figure}[H]
 	\sffamily\footnotesize
 	\includegraphics[width=0.5\textwidth]{pic/experimental_setup.png}
 	\unitlength=0.75mm
@@ -717,12 +727,13 @@ An essential piece for this research and its experiments is a complete testing e
 	\caption{Overview of the environment for the experiments}
 	\label{fig:experimental_setup}
 \end{figure}
+\todo{Change k-Means to clustering in graphic}
 
-\subsection{OAuth flow execution and Logging}
-For this first part, an OAuth environment was implemented, which consists of several subsystems that are needed to execute the OAuth protocol flow. It consists of two independent networks. The first network contains the authorization provider, resource server and a logging service, and the second network contains the OAuth client service and a logging service. The loggers produce .pcap-files of all activity in their network using "tcpdump". The OAuth authorization framework is practice-oriented. Therefore, the network logs are divided between the auth provider and the client, as in practice, mostly two different parties run these services. 
+\subsection{OAuth setup}
+For this first part, an OAuth environment was implemented, which consists of several subsystems that are needed to execute the OAuth protocol flow. It consists of two independent networks. The first network contains the authorization provider, resource server and a logging service, and the second network contains the OAuth client service and a logging service. The loggers produce .pcap-files of all activity in their network using \emph{tcpdump}. The OAuth authorization framework is practice-oriented. Therefore, the network logs are divided between the auth provider and the client, as in practice, mostly two different parties run these services. 
 
 \subsubsection{Authorization Server and Resource Server}
-The implementation of the authorization server and resource server is forked from the \emph{authlib} project version 1.2.1 \cite{authlib2023}. More specifically the ``Flask OAuth Providers'' component is utilized for the authorization and resource server. To make the authorization process more vulnerable the mandatory PKCE feature was deactivated. Making adjustments like this, was the reason for forking the project. In addition the authorization server implementation offers four OAuth grants out of the box, which are among the most essential grants, namely "Implicit Grant", "Authorization Code Grant", "Client Credentials Grant", and "Password Grant". It also implements extensions like the "Refresh Token Grant" and the "PKCE"-extension. Besides the authorization capabilities, the authlib implementation also offers a protected resource in the form of an API, which is only accessible by authorized clients. The protected endpoint is '/api/me' and returns the username of the authenticated and authorized user.
+The implementation of the authorization server and resource server is forked from the \emph{authlib} project version 1.2.1 \cite{authlib2023}. More specifically the ``Flask OAuth Providers'' component is utilized for the authorization and resource server. To make the authorization process more vulnerable the mandatory PKCE feature was deactivated. Having the possibility to make adjustments like this, was the reason for forking the project, instead of importing it as a library. The authorization server implementation of \emph{authlib} offers four OAuth grants out of the box, which are among the most essential grants, namely ``Implicit Grant'', ``Authorization Code Grant'', ``Client Credentials Grant'', and ``Password Grant''. It also implements extensions like the ``Refresh Token Grant'' and the ``PKCE''-extension. Besides the authorization capabilities, the authlib implementation also offers a protected resource in the form of an API, which is only accessible by authorized clients. The protected endpoint it offers returns the username of the currently authorized user.
 
 \subsubsection{Client}
 The client is a simple static webpage that handles the authorization code flow. It can be used to generate traffic manually, but its primary purpose is to handle redirections as part of the different flows. It is written in HTML, CSS, and Javascript to utilize the Fetch API and the Browser Storage API. An implementation of redirect handling is shown in figure \ref{lst:redirect_handler}. The client is checking if the code query parameter is present in the currently active URL (line 6) when the page loads. If it is present it extracts it and retrieves an access token from the authorization server.
@@ -747,9 +758,21 @@ window.onload = function() {
 }
 \end{lstlisting}
 
+\subsection{Network setup and logging}
+All services are hosted using containers in a docker environment. Technically these services are part of the same network at the docker host they are run on, but the logging services build overlay networks on the services they are observing. As visualized in figure \ref{fig:experimental_setup} there exist two logging services, one for the authorization and resource server and one for the client network. When the experiment environment is active, the logging services stream all network events to a .pcap file, which is accessible on the docker host machine through a volume. All communication is executed without TLS to be able to analyze all packets. In a real-world scenario this would not be the case, but mechanisms like proxies, who are acting as man-in-the middle would be able to inspect the network traffic unencrypted in that case as well.
 
-\subsubsection{Attacker Callback}
-Another service that is implemented using the Python ``http.server'' library is the attacker server, which serves the purpose of a callback handler for attacks that redirect the victim's OAuth flows to the attacker. This means if an authorization code or access token ends up being redirected to this callback server it immediately completes OAuth flows with the stolen authorization codes or access tokens and generates traffic at the auth provider like this. An example implementation for such an attacker server is shown in figure \ref{lst:attacker_server}. The ``do\_GET'' method (line 2) is executed, whenever a GET request reaches the attacker server. If this request contains an authorization code parameter (line 7), the server tries to redeem it at the authorization server (line 16). The server then tries to access protected data at the resource server (line 21).
+\begin{minipage}\linewidth
+\begin{lstlisting}[language={bash}, caption={Logger process}, label={lst:logging_service}] 
+$ ethtool -K eth0 rx off tx off tso off;tcpdump -i eth0 -w /log/"$filename_prefix"-log-$(date +"%Y%m%d_%H-%M-%S").pcap
+\end{lstlisting}
+\end{minipage}
+
+\subsection{Attacks}
+\label{subsec:attacks}
+For the attacks on OAuth several pre-conditions were established to make the OAuth environment vulnerable. PKCE as mentioned earlier has been made optional. There is not any CSRF protection in place, utilizing the state parameter. This leads to the attacks being harder to detect as omitting these parameters as an attacker, will not make a difference anymore compared to the usual traffic. Another assumption is that an attacker is at all times able to circumvent any whitelist for redirect URIs. This is simulated by allowing the URI of the attacker server in the securely implemented whitelist of \emph{authlib}. In addition, it is assumed that an attacker, who crafts a malicious link can make the victim use the malicious link, through phishing or similar techniques. Another precondition is that the victim is logged in at all times and if it is not logged in it will immediately complete the login process. To facilitate the attacks an attacker callback server has been implemented as well. Also, every HTTP request involved in an attack, even the ones where the victim is visiting a maliciously crafted URL is labeled with a special header \emph{X-Is-Attack} with the name of the attack as its value.
+
+\subsubsection{Attacker callback server}
+The attacker callback server is a service implemented using the Python ``http.server'' library, which serves the purpose of a callback handler for attacks that redirect the victim's OAuth flows to the attacker. This means if an authorization code or access token ends up being redirected to this callback server it immediately completes OAuth flows with the stolen authorization codes or access tokens and generates traffic at the auth orization server like this. An example implementation for such a callback handler is shown in figure \ref{lst:attacker_server}. The ``do\_GET'' method (line 2) is executed, whenever a GET request reaches the attacker server. If this request contains an authorization code parameter (line 7), the server tries to redeem it at the authorization server (line 16). The server then tries to access protected data at the resource server (line 21).
 
 \begin{minipage}\linewidth
 \begin{lstlisting}[language={python}, caption={Example implementation of an attacker server, which handles redirections}, label={lst:attacker_server}] 
@@ -778,18 +801,111 @@ class OAuthCallback(BaseHTTPRequestHandler):
 \end{lstlisting}
 \end{minipage}
 
-\subsection{Fuzzing}
-The above-described services create a complete environment for executing valid OAuth flows and attacks on OAuth. A generator service was implemented in Python to utilize this whole setup to produce network logs. The generator uses fuzzing to generate network traffic, including attacks randomly, which then gets logged by the logger services attached to the networks of the auth provider and client. The generator also logs whenever an attack is executed in its process output.
+\subsubsection{Arbitrary redirect URI}
+The first attack implemented is making the victim start an OAuth flow using the authorization code grant, but redirecting it to the attacker callback server after authorization. This is done by simply exchanging the value of \emph{redirect\_uri} parameter to the location of the attacker callback server. The callback server then uses the received authorization to redeem an access token at the authorization server as displayed and already explained in figure \ref{lst:attacker_server}. The attacker then uses the access token to fetch protected resources. This is a very basic attack and assumes that there is not any kind of whitelist in place like it is simulated in the experiment environment. However, there are more sophisticated versions of this attack utilizing the e.g. \emph{Evil Slash} \cite{wang2019make} trick mentioned in Section \ref{subsec:insufficient_redirect_uri_validation}. 
 
-\subsection{Analysis}
-The last piece of the experimental setup is the intrusion detection mechanism. This part is again a multi-step process. In the beginning, the network logs of the logger services are statically analyzed by the "zeek" IDS using the "--readfile" option of zeek. Zeek then produces so-called "zeek-logs". In order to process the zeek-logs, the "zat" library is used to load the data into Python "pandas" data frames. The reason for this is that "pandas" is a popular Python data analysis library, which already implements several valuable functions, like clustering or model-based algorithms.
+\subsubsection{Arbitrary redirect URI using ``Evil Slash''}
+The evil slash attack is based on the fact that the parsing of URLs of browsers might mismatch the way the parser for a whitelist parses a given URL. There are two examples given by the research of Wang et al. that are related to handling forward and backward slashes as path separators. Suppose either the whitelist parser or the browser URL parser treats some slash as a path separator while the other parser does not. In that case, this behaviour can be exploited to circumvent the whitelist of the authorization server. These two versions were implemented in the experiments by crafting a URL, which relies on this type of vulnerability.
 
-\section{Evaluation}
+\subsection{Network data generation}
+The above-described services create a complete environment for executing valid OAuth flows and attacks on OAuth. To generate the data set for the analysis, a generator script was implemented in Python to utilize the whole setup to produce network logs. The approach for the generation is to mostly produce random valid traffic in the network. Meanwhile, at random some amount of attacks are executed as well, with a probability of 5\%, to simulate subtle attacks on the authorization. As the logging services are always listening, they produce network log files, which are then extracted after a reasonable amount of time.
+
+\section{Implementation of analysis algorithms}
+The last remaining part of the experimental setup is the intrusion detection mechanism. Based on the type of attacks implemented the decision was made, to analyze the logs produced by the authorization server, because the attack traffic appears in the network of this entity. The input for this part of the experiments is therefore the network log file produced by the logger of the authorization server overlay network. This file is passed to the data preprocessing step initiated by \emph{zeek}. The approach for the next step after the preprocessing, the detection step is based on previous studies \cite{carrasco2018unsupervised} \cite{zhuo2017network}, which had success in utilizing word2vec word embeddings to detect malicious network traffic even in small datasets. Therefore the same idea was chosen for this work to encode textual data, to enable clustering methods of the logs to reveal anomalies in the network data.
+
+\subsection{Data preprocessing}The first step of processing the data is to run it through the \emph{zeek IDS} to produce ``zeek-logs''. Zeek splits the data into different processed log files depending on the protocol of the packets. Since this research focuses on attacks on a specific protocol in the application layer, all logs, except for the http-log, get omitted. Another important detail is, that while producing the zeek-logs a ``zeek-script'' is loaded to preserve the HTTP headers in the HTTP log of zeek, as the headers include the labeling for the attacks and are not included by default in the zeek http-logs. The next steps of processing and the entire analysis from now on are executed using Python and popular data science libraries, which are mostly available for this programming language. Zeek supports the \emph{zat} library for Python, which allows for converting the zeek log into a data frame for the popular data-science library \emph{pandas}. After converting the zeek logs to a data frame a column gets added called ``is\_attack''. The column holds a flag for the row in the log if it is involved in an attack. The values for ``is\_attack'' get generated, by checking if the ``client\_header'' row includes a header called ``X-Is-Attack''. Afterwards, the ``X-Is-Attack''-header gets cleared from the header columns, as they are not a natural part of the traffic. The resulting matrix contains 34 columns, which carry different kinds of data like the URI of the request, the source and destination IPs, the HTTP method used, etc (compare Table \ref{tab:dataframe} for a full list of columns).
+
+
+\begin{table}[]
+	\caption{List of all features, which represent a column in the network data matrix after the first pre-processing step.}
+	\label{tab:dataframe}
+		\begin{tabular}{|l|l|l|}
+		\hline
+		\begin{tabular}[c]{@{}l@{}}uid\\ id.orig\_h\\ id.orig\_p\\ id.resp\_h\\ id.resp\_p\\ trans\_depth\\ method\\ host\\ uri\\ referrer\\ version\\ user\_agent\end{tabular} & \begin{tabular}[c]{@{}l@{}}origin\\ request\_body\_len\\ response\_body\_len\\ status\_code\\ status\_msg\\ info\_code\\ info\_msg\\ tags\\ username\\ password\\ proxied\end{tabular} & \begin{tabular}[c]{@{}l@{}}orig\_fuids\\ orig\_filenames\\ orig\_mime\_types\\ resp\_fuids\\ resp\_filenames\\ resp\_mime\_types\\ client\_header\_names\\ client\_header\_values\\ server\_header\_names\\ server\_header\_values\\ is\_attack\end{tabular} \\ \hline
+		\end{tabular}
+		\end{table}
+
+\subsection{Encoding of URI data using word embeddings}
+The attacks in this experiment (see Section \ref{subsec:attacks}) are based on tampering with the application layer data by manipulating the HTTP request-line and its query parameters. This data, therefore, is crucial for achieving the goal of detecting anomalies in the network logs. Hence, the previously prepared data frame columns, which hold the relevant data, are the \emph{uri} and the \emph{method} columns. Listing \ref{lst:tokenization} now shows the first necessary step for implementing the Word2Vec embeddings, the tokenization. Line two of the listing shows an important decision for the tokenization approach. The URI string is split into multiple parts by isolating every query parameter and separating every value from its query parameter key.
+
+\begin{minipage}\linewidth
+	\begin{lstlisting}[language={python}, caption={Tokenization of the features for word embeddings}, label={lst:tokenization}] 
+		# Create token input list of all 'uri' and 'method' values for the word2vec model
+		tokenized_uri = selected_features_df['uri'].apply(lambda x: re.split('[/?&=]', x))
+		tokenized_method = selected_features_df['method'].apply(lambda x: [x])
+		all_tokens = tokenized_method + tokenized_uri
+	\end{lstlisting}
+\end{minipage}
+
+
+With the now acquired list of token combinations, a Word2Vec model is trained using the \emph{gensim.models} library \cite{gensim2021}. The model's hyperparameters get configured by setting the parameters of the constructor of the Word2Vec class. In this case, shown in Listing \ref{lst:word2vec} in line 1, the \emph{min\_count} variable is set to \emph{1} because, especially for anomaly detection, it makes sense to include one-time occurrences of words for the model's training, which would be omitted otherwise. The \emph{window\_size} defines what distance of words is still considered as the context of a given word. Finding the optimal value for this hyperparameter is the subject of the experiments and is discussed later in the results. The \emph{vector\_size} parameter determines the size of the dimension of the word embeddings produced by the model. Higher values produce more nuanced embeddings but also require more computational effort. Similar previously cited research by Zhou et al. \cite{zhuo2017network} uses a vector size of 300, which is why this number was chosen for the experiments of this work as well. The last parameter, the \emph{workers} parameter, describes the number of CPU cores to be involved in the training in parallel. With the previously generated tokens and the chosen hyperparameters, a Word2Vec model gets trained, and the embeddings are created and saved to a new column called \emph{embeddings} (see lines 4-9).
+
+
+\begin{minipage}\linewidth
+	\begin{lstlisting}[language={python}, caption={Creation of Word2Vec model and word embeddings}, label={lst:word2vec}] 
+		# Create word2vec model
+		word2vec_model = Word2Vec(all_tokens, vector_size=300, window=7, min_count=1, workers=4)
+		
+		# Utilize the Word2Vec model to apply embeddings to 'uri' and 'method' values
+		selected_features_df['uri_embedding'] = tokenized_uri.apply(lambda x: sum(word2vec_model.wv[t] for t in x))
+		selected_features_df['method_embedding'] = tokenized_method.apply(lambda x: sum(word2vec_model.wv[t] for t in x))
+		
+		# Combine embeddings into a single feature for clustering
+		selected_features_df['embedding'] = selected_features_df.apply(lambda row: row['uri_embedding'] + row['method_embedding'], axis=1)
+	\end{lstlisting}
+\end{minipage}
+
+\subsection{Clustering}
+\todo{Write about the implementation of k-Means and Self-Organizing Maps}
+Two clustering algorithms for anomaly detection are implemented to test the detection rate of attacks in the network logs based on previously generated word embeddings. The first algorithm is the \emph{k-Means clustering algorithm}, and the second is self-organizing maps. For classifying the clusters, a similarly simple approach to that used in the work of Nalavade et al. \cite{nalavade2014} is chosen by defining a threshold for the cluster size, after which a cluster is labeled as an attack cluster.
+
+\subsubsection{k-Means}
+
+\subsubsection{Self-organizing maps}
+
 \section{Results}
+\todo{Write text for the results}
 
+- Talk about size and properties of dataset
+
+- Visualize generated dataset
+
+- Talk about window size of Word2Vec
+
+- Visualize Word embeddings
+
+- Add better visualizations for clusters
+
+- Compare the found Yield and Accuracy
+
+
+\begin{figure}[H]
+	\sffamily\footnotesize
+	\includegraphics[width=0.5\textwidth]{pic/kmeans.png}
+	\unitlength=0.75mm
+	\special{em:linewidth 0.4pt}
+	\linethickness{0.4pt}
+	\caption{K-Means}
+	\label{fig:kmeans_clusters}
+\end{figure}
+
+\begin{figure}[H]
+	\sffamily\footnotesize
+	\includegraphics[width=0.5\textwidth]{pic/SOM.png}
+	\unitlength=0.75mm
+	\special{em:linewidth 0.4pt}
+	\linethickness{0.4pt}
+	\caption{SOM}
+	\label{fig:som_clusters}
+\end{figure}
+
+\todo{Use other visualization with greyscale in mind.}
 
 
 \chapter{Conclusion}
+\label{chap:conclusion}
+\todo{Write Conclusion}
+
 
 
 % =============================Literaturverzeichnis=============================
@@ -831,6 +947,7 @@ The last piece of the experimental setup is the intrusion detection mechanism. T
 			Clickjacking & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & x \\ \hline
 		\end{xltabular}
 \end{sidewaystable}
+\todo{Fix sideways table}
 		
 % ===========================Selbstständigkeitserklärung======================
 \chapter*{Eidesstattliche Versicherung} % war: Selbständigkeitserklärung
