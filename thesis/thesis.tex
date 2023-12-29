@@ -409,12 +409,56 @@ Through research like the one mentioned in Section \ref{subsec:fks_model} by Fet
 In the realm of intrusion detection, anomaly-based intrusion detection is a popular research topic, as this type of detection bears one important advantage. Anomaly-based intrusion detection possibly detects unknown attacks in network traffic. Over the last two decades, research in this area has been conducted on benchmark datasets like the \emph{KDD’99} dataset \cite{kdd1999} and updated versions of it. Even though this work uses a self-simulated dataset, because of the lack of existing OAuth intrusion network data, techniques applied in such research can be transferred to the scenario of this work. Relevant research for these techniques is showcased in the following sections.
 
 \subsection{Word embeddings for feature extraction}
-\cite{zhuo2017network} and \cite{nalavade2014}
+One issue to overcome, when working with data logs is to extract relevant features and convert them into a form, that is digestible for machine learning algorithms. Especially textual data, which may hold semantic meaning poses a challenge in that regard. The research by Corizzo et al. \cite{corizzo2020feature} focuses exactly on tackling this issue, by proposing methods, where raw system calls get encoded by different NLP algorithms. The researchers tested their methods on three different datasets and concluded that an approach combining Word2Vec and TF-IDF performs the best. As visualized in Figure \ref{fig:w2v_feat_extr} even just applying Word2Vec performed in the same area of results as the combination with TF-IDF. Even though the work by Corrizzo et al. concludes that the results are not vast enough, it shows that there is potential in this technique to carry out intrusion detection tasks.
+
+\begin{figure}[H]
+	\sffamily\footnotesize
+	\includegraphics[width=1\textwidth]{pic/w2v_feat_extr.png}
+	\unitlength=0.75mm
+	\special{em:linewidth 0.4pt}
+	\linethickness{0.4pt}
+	\caption{Results of applying different NLP techniques for feature extraction on three different datasets of Host-based intrusion data \cite{corizzo2020feature}}
+	\label{fig:w2v_feat_extr}
+\end{figure}
+
 
 \subsection{K-Means and intrusion detection}
+\label{subsec:k_means_intrusion_detection}
+Clustering algorithms, like k-Means, have their place in the anomaly-based intrusion detection research landscape for several years. Earlier research focuses on solely applying these algorithms to filter out anomalous traffic by calculating cluster centroids using k-means and measuring the distance from every datapoint to every centroid to determine outliers for anomaly detection \cite{munz2007traffic}. The research by Nalavade et al. \cite{nalavade2014} is an example of applying the k-Means algorithm for network intrusion detection again using the famous \emph{KDD`99} dataset \cite{kdd1999}. The researchers preprocess the data by determining features, that hold more relevance than others and increasing their weights for the clustering, by altering their distance metric during clustering. The results depicted in Figure X show that Navalde et al. had some success detecting certain types of attacks like Denial of Service. 
+
+\begin{figure}[H]
+	\sffamily\footnotesize
+	\includegraphics[width=0.5\textwidth]{pic/navalde_k_means.png}
+	\unitlength=0.75mm
+	\special{em:linewidth 0.4pt}
+	\linethickness{0.4pt}
+	\caption{Results by Navalde et al. applying k-Means for different cluster sizes $K$ to the KDD`99 dataset after pre-processing the data for intrusion detection \cite{nalavade2014}}
+	\label{fig:k_means_navalde}
+\end{figure}
+
 
 \subsection{Self-organizing Maps and intrusion detection}
+Besides k-Means other clustering approaches are frequently researched for intrusion detection. One of these other clustering algorithms is the Self-Organizing Maps algorithm. A survey by Qu et al. \cite{qu2021survey} provides a taxonomy of different SOM approaches for network intrusion (see Figure \ref{fig:som_taxonomy}). The researchers present generally three main categories, where static SOMs are not able to adapt dynamically to new input data, whereas dynamic SOMs have this capability. The hybrid SOMs are a combination of SOMs with any other technique. One example of such a hybrid SOM is the combination of SOM and k-Means, which improves the overall performance in intrusion detection on the KDD`99 dataset (see Figure \ref{fig:som_kmeans}) based on the results of different studies gathered by the survey. Figure \ref{fig:som_kmeans} also shows that the results for k-Means without SOM are significantly better than the results presented in section \ref{subsec:k_means_intrusion_detection}. This further emphasizes that the preprocessing of the data is a very important step for intrusion detection.
 
+\begin{figure}[H]
+	\sffamily\footnotesize
+	\includegraphics[width=0.5\textwidth]{pic/som_taxonomy.png}
+	\unitlength=0.5mm
+	\special{em:linewidth 0.4pt}
+	\linethickness{0.4pt}
+	\caption{Taxonomy of different approaches for implementing Self-Organizing Maps \cite{qu2021survey}}
+	\label{fig:som_taxonomy}
+\end{figure}
+
+\begin{figure}[H]
+	\sffamily\footnotesize
+	\includegraphics[width=0.9\textwidth]{pic/som_kmeans.png}
+	\unitlength=0.5mm
+	\special{em:linewidth 0.4pt}
+	\linethickness{0.4pt}
+	\caption{Results of different research, applying SOM methods for intrusion detection on the KDD`99 dataset (\emph{DR=detection rate, FR=false positive rate}) \cite{qu2021survey}}
+	\label{fig:som_kmeans}
+\end{figure}
 
 
 \chapter{OAuth Threat Landscape}
