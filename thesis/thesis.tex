@@ -464,23 +464,28 @@ Besides k-Means other clustering approaches are frequently researched for intrus
 \chapter{OAuth Threat Landscape}
 \label{chap:oauth_security}
 
-This chapter presents known threats when using the OAuth authorization framework. Section \ref{sec:oauth_threats_and_vulns} elaborates on every threat and vulnerability separately. The list is mainly based on the current draft for security best practices for OAuth from the OAuth task force at IETF and is enriched with various examples, further explanations, and a categorization of types of threats.
+This chapter presents an overview of the currently known threat landscape when using the OAuth framework. Section \ref{sec:oauth_threats_and_vulns} elaborates on every threat separately. The list is mainly based on the current draft for security best practices for OAuth from the OAuth task force at IETF \cite{lodderstedt2020oauth} and is enriched with examples and further explanations.
 
-Section \ref{sec:oauth_countermeasures} starts with a classification of OAuth threats and vulnerabilities by mitigation responsibility of the involved parties in the protocol. It then continues with a description of the specific countermeasures and mitigation strategies and ends with an overview of which threat can be mitigated by which countermeasure.
+Section \ref{sec:oauth_countermeasures} showcases different countermeasures, which can be applied to mitigate the presented threats. 
 
-\section{Threats and Vulnerabilities}
-\label{sec:oauth_threats_and_vulns}
+Finally Section \ref{sec:oauth_classification} presents two schemas to classify the OAuth threats and countermeasures.
 
-\subsection{Insufficient Redirect URI Validation}
-\label{subsec:insufficient_redirect_uri_validation}
+\section{Threats}
+\label{sec:oauth_threats}
+Over the 11 years of the existence of OAuth 2.0, there has been always an effort to learn about threats and vulnerabilities, when applying the protocol. When the standard was introduced in 2012 browsers did not have the feature set they have today. This implies on the one hand, that new browser features could lead to new threats and on the other hand that new browser features could help mitigate older threats, which the standard of course could not foresee when it was created. An elaborate source for getting informing about the status of the OAuth threat landscape is the ongoing draft by the OAuth working group of IETF about the best current practice in OAuth security \cite{lodderstedt2020oauth}. As mentioned in Section \ref{subsec:fks_model} the draft is influenced by state-of-the-art research about OAuth security in a collaboration effort. This is the reason this section is mostly based on this draft and enriched with examples of other research work at appropriate places. Also every threat explained in this section receives an encoding in the form of \emph{T<number>} to reference them in later tables. These encodings can be found at the end of every paragraph.
+
+
+\subsection[Insufficient Redirect URI Validation]{Insufficient Redirect URI Validation (T1)}
+\label{threat:T1}
 Authorization Servers need to whitelist redirection URLs in order to make sure, that an attacker cannot craft a hyperlink, which leads to the victim initiating an OAuth flow and sending the authorization code or token to an attacker-controlled domain. Some authorization servers may allow the usage of patterns in order to allow several domains at once. As well as the absence of any sort of whitelist mechanism even a pattern-matching functionality could lead to security problems. Among the possibility that a user is entering
 patterns that are too broad and allow the usage of unintended redirect URLs, the attack surface includes issues with the URL parsing implemented by the authorization server as shown by Wang et al. \cite{wang2019make}. They presented several techniques to trick the parser into accepting unintended domain names, like using squared brackets for IPv6 parsing or the \emph{Evil Slash Trick}, where the parser does not treat a forward slash as a path
 separator, while modern browsers do. Depending on the OAuth grant type in use this vulnerability leads to different possibilities to exploit it \cite{lodderstedt2020oauth}.
 
 
 \subsubsection{Authorization Code Flow}
-\begin{itemize}
+Using the example of the authorization code flow the threat of insufficient redirect URI validation can be exploited by crafting arbitrary redirect URIs in the following way:
 
+\begin{enumerate}
     \item The attacker uses techniques like phishing to make its victim open an
         attacker-controlled webpage, which initiates an OAuth flow with the
         vulnerable authorization server.
@@ -495,12 +500,11 @@ separator, while modern browsers do. Depending on the OAuth grant type in use th
 	
     \item The attacker page can now use the received authorization code, to
         retrieve a token 
+\end{enumerate}
 
-\end{itemize}
 
-
-\subsection{Credential Leakage via Referer Headers}
-\label{subsec:cred_leak_ref_headers}
+\subsection[Credential Leakage via Referer Headers]{Credential Leakage via Referer Headers (T2)}
+\label{threat:T2}
 The Referer HTTP header is a potential attack surface. It can be utilized by a
 malicious actor to capture query parameters, which are sent via the front
 channel, like the state and the authorization code. The authorization code may
@@ -522,15 +526,16 @@ the page. This may be an issue when the state contains a CSRF token as
 explained by Fett at al \cite{fett2016comprehensive}.
 
 
-\subsection{Credential Leakage via History Logs}
-\label{subsec:cred_leak_browser_history}
+\subsection[Credential Leakage via History Logs]{Credential Leakage via History Logs (T3)}
+\label{threat:T3}
 OAuth potentially transports sensitive data via the request-URI, like the access token, as is the case when the implicit grant is used or if other grant types optionally allow the transportation of access tokens or authorization codes via URI parameters. Therefore, a person accessing the user's browser can extract this sensitive data and try to replay it. The same threat is present when a logging server is present, for example, in a corporate network \cite{lodderstedt2020oauth}. Research about browser history security focuses mainly on accessing information about the victim's history by comparing cache timings if a page was visited \cite{bansalcache}. This type of threat is irrelevant in the OAuth context because an attacker would need to guess the access token, which the attacker could endeavor outside the browser history as well. However, recent studies on the security of browser extensions show that malicious browser extensions could access the browser history, or data could be leaked by utilizing vulnerable browser extensions \cite{eriksson2022}.
 
-\subsection{Mix-Up Attack}
-\label{subsec:mix_up}
+\subsection[Mix-Up Attack]{Mix-Up Attack (T4)}
+\label{threat:T4}
 In this attack, at least two authorization providers are involved. The target AP and the attacker AP. The OAuth standard allows the resource provider to interact with multiple authorization providers, one of which could be malicious, so the security for such interactions must also be provided. The attack is feasible for the implicit and authorization code grants and works similarly for both. Another precondition is that the resource owner registers the same redirect URI at both authorization providers, which is typical for Open ID Connect dynamic client registration \cite{hosseyni2023formal}. With these preconditions present, the attacker now waits until the target initializes an OAuth flow with the attacker AP. The attacker then intercepts the initialization request and exchanges the target AP with its attacker AP. When the target client gets redirected to the attacker AP, the target gets immediately redirected back to the target AP for authentication. At the same time, the client ID in the query parameters of the redirection URL gets replaced with the one registered at the target AP. Suppose the target user authenticates because it did not detect that it intended to authenticate at another AP. In that case, an authorization code gets issued to the client when the authorization code grant used. The client then proceeds to try to redeem an access token at the attacker AP, as the client still thinks that it initiated an OAuth flow with the attacker AP. The attacker can now use the received authorization code to redeem an access token at the target AP. \cite{fett2016comprehensive}
 
-\subsection{Authorization Code Injection \cite{philippaerts2022oauch}} 
+\subsection[Authorization Code Injection]{Authorization Code Injection (T5)}
+\label{threat:T5} 
 The precondition for an authorization code injection is that an attacker has
 successfully stolen an authorization code. This can be accomplished in various
 ways for example by tricking the user into installing a malicious browser
@@ -541,7 +546,8 @@ In the case, that the client is using the authorization code flow the attacker
 can use the stolen authorization code to fetch an access token before the
 client does.
 
-\subsection{Access Token Injection}
+\subsection[Access Token Injection]{Access Token Injection (T6)}
+\label{threat:T6}
 This kind of attack describes the process of an attacker using a stolen access
 token in a legitimate authentication flow, to impersonate the client. If the
 implicit flow is available, the attacker can now start a new flow and simply
@@ -550,15 +556,16 @@ circumvent any CSRF protection, as there is no difference to a non-compromised
 flow. \cite{lodderstedt2020oauth}
 
 
-\subsection{Cross Site Request Forgery}
-\label{subsec:csrf}
+\subsection[Cross Site Request Forgery]{Cross Site Request Forgery (T7)}
+\label{threat:T7}
 This type of attack, often referred to by its abbreviation ``CSRF"", is about
 the attacker executing a request in the name of the user, by tricking the user
 into executing requests for the attacker including all required authentication,
 or authorization information. The default OAuth protocol does not include
 protection mechanisms against this type of attack. 
 
-\subsection{PKCE Downgrade Attacks}
+\subsection[PKCE Downgrade Attacks]{PKCE Downgrade Attacks (T8)}
+\label{threat:T8}
 If an authorization server is not implemented to require PKCE for all its
 flows, it is susceptible to being vulnerable to PKCE downgrade attacks
 \cite{philippaerts2022oauch}. Even if it is documented otherwise, attackers
@@ -566,20 +573,21 @@ might try to omit PKCE parameters, as the current OAuth 2.0 standard does not
 require the usage of the PKCE extension \cite{hardt2012rfc}. 
 
 
-\subsection{Access Token Leakage at the Ressource Server}
+\subsection[Access Token Leakage at the Ressource Server]{Access Token Leakage at the Ressource Server (T9)}
+\label{threat:T9}
 In the scenario that clients can dynamically connect to resource servers at runtime, as is the case in mail or banking applications, an attacker could create a malicious resource server and trick the user into sending valid access tokens for the target data to the malicious resource server. It could also be the case that the client application is misconfigured to send access tokens to a dynamically created resource server. Another vector for Access token leakage at the resource server is when the server itself gets compromised, so the attacker receives access tokens by analysing connections to the server itself \cite{lodderstedt2020oauth}.
 
-\subsection{307 Redirect}
-\label{subsec:307}
+\subsection[307 Redirect]{307 Redirect (T10)}
+\label{threat:T10}
 The OAuth standard does not specify which type of HTTP redirect should be implemented to redirect the user back to the client after the authentication at the authorization provider is successful. As the HTTP 307 redirect reuses the header and the body of the original request \cite{fielding1999rfc2616}, a malicious client could extract the username and password of the initial form submission action because it receives this data as part of the redirection \cite{fett2016comprehensive}.
 
-\subsection{Client Impersonating Resource Owner}
-\label{subsec:client_impers_res_own}
+\subsection[Client Impersonating Resource Owner]{Client Impersonating Resource Owner (T11)}
+\label{threat:T11}
 In the scenario that an authorization server allows for multiple grant types, including the client credentials grant and another typical grant like the authorization code grant, the threat of a malicious client impersonating a resource owner can be present in certain implementations. One example is when the authorization server allows for dynamic registration of clients, with the possibility of setting a client ID. A client could set its ID to the value of an identifying value of a resource owner. To build the example further, Open ID Connect uses a token's subject property to identify a user \cite{sakimura2014openid}. A client could use the subject value as its client ID. Improper implementations of resource servers, which do not distinguish between token types by grant type, could mistake an access token issued to a resource owner with a token issued to a client, which allows the malicious client to access the protected data of the resource owner \cite{lodderstedt2020oauth}.
 
 
-\subsection{Authorization Server Redirecting to Phishing Site}
-\label{sub:authorization_server_redirecting_to_phishing_site}
+\subsection[Authorization Server Redirecting to Phishing Site]{Authorization Server Redirecting to Phishing Site (T12)}
+\label{threat:T12}
 When the authorization server allows dynamic client registration, an attacker could create a valid client to which the authorization server could redirect. The attacker then crafts a malicious authorization request that will always fail by appending an invalid \emph{scope} value and then will redirect to the phishing site. An example of such a malicious authorization request is depicted in Figure \ref{fig:phishing_requests}. As the authorization attempt using this crafted URL is always invalid because of the \emph{scope}, the victim immediately gets redirected back to the site given by the \emph{redirect\_uri} parameter, which legally got enlisted through dynamic client registration. This site could be a copy of the valid login page to trick the user into entering its credentials. This way of phishing is very subtle as the domain of the phishing link is valid and known by the victim. The victim would need to identify that the \emph{redirect\_uri} query parameter is invalid and realize that it gets redirected to this URL after clicking on the link with the valid domain \cite{lodderstedt2020oauth}.
 
 
@@ -592,18 +600,21 @@ When the authorization server allows dynamic client registration, an attacker co
 	\label{fig:phishing_requests}
 \end{figure}
 
-\subsection{Unvalidated Redirects and Forwards}
-\label{subsec:open_redirect}
-This type of vulnerability, known as \emph{Unvalidated Redirects and Forwards} (URF) as well as \emph{Open Redirect}, exists when a web application exposes redirection or forward capabilities to untrusted user input, for example, through query parameters. An attacker could generally utilize URF vulnerabilities to craft phishing links that are masked with valid, trustworthy domains \cite{wang2015urfds}. Especially in connection with OAuth, an attacker using an existing URF vulnerability in a client can potentially circumvent whitelists for redirection URIs, by masking the redirect to a malicious client with a valid client exposing an open redirect in the query parameter \cite{lodderstedt2020oauth}. Section \ref{sub:authorization_server_redirecting_to_phishing_site} describes a different attack aimed at masking a phishing attack utilizing a mechanism specific to OAuth that is similar to an open redirection at the authorization server and therefore a threat, which is introduced by the implementation of OAuth itself.
+\subsection[Unvalidated Redirects and Forwards]{Unvalidated Redirects and Forwards (T13)}
+\label{threat:T13}
+This type of vulnerability, known as \emph{Unvalidated Redirects and Forwards} (URF) as well as \emph{Open Redirect}, exists when a web application exposes redirection or forward capabilities to untrusted user input, for example, through query parameters. An attacker could generally utilize URF vulnerabilities to craft phishing links that are masked with valid, trustworthy domains \cite{wang2015urfds}. Especially in connection with OAuth, an attacker using an existing URF vulnerability in a client can potentially circumvent whitelists for redirection URIs, by masking the redirect to a malicious client with a valid client exposing an open redirect in the query parameter \cite{lodderstedt2020oauth}. Section \ref{threat:T12} describes a different attack aimed at masking a phishing attack utilizing a mechanism specific to OAuth that is similar to an open redirection at the authorization server and therefore a threat, which is introduced by the implementation of OAuth itself.
 
-\subsection{Clickjacking}
-\label{subsec:clickjacking}
+\subsection[Clickjacking]{Clickjacking (T14)}
+\label{threat:T14}
 As authorization providers authorize applications to access confidential data, they are susceptible to being targeted by clickjacking attacks. Clickjacking attacks trick users into performing clicks on elements on a web page the users did not intend to interact with, e.g., by overlaying invisible iframes. In the case of OAuth, an attacker could create a malicious application and register it at the authorization provider of the target. The attacker also prepares a webpage that tricks the user into clicking on an invisible iframe of the authorization provider. The iframe could contain the grant access step of allowing the malicious application to access the user's confidential data. If the user has an active session at the authorization provider, a single click is enough to fulfill this action \cite{gibbons2014security}. 
 
 
 \section{Countermeasures}
 \label{sec:oauth_countermeasures}
-\subsection{Mandatory PKCE}
+Addressing the issue of the ever-evolving threat landscape of OAuth several countermeasures have been established in a head-to-head race with the exploitations of vulnerable OAuth implementations. The countermeasures profit from the same circumstance of ongoing browser development as the threats. Countermeasures today can leverage new protection features, which were not present in the past. These countermeasures are also well documented by the OAuth working group of IETF \cite{lodderstedt2020oauth}. In this section, these common countermeasures are briefly explained. Again they receive an encoding at the end of their section's headline for later reference.
+
+\subsection[Mandatory PKCE]{Mandatory PKCE (C1)}
+\label{counter:C1}
 As an extension to OAuth defined by RFC 7636, \emph{Proof Key for Code Exchange (PKCE)} is a technique to mitigate several OAuth threats \cite{bradley2015rfc}. The main problem PKCE solves for the authorization code grant is verifying that only the original client who started an OAuth flow receives the access token, so a stolen authorization code cannot just get exchanged with an access token by the entity who stole the code. Figure \ref{fig:pkce} shows the way PKCE works \cite{siriwardena_oauth_2020}:
 
 \begin{enumerate}
@@ -631,135 +642,123 @@ The PKCE mechanism mitigates several threats and vulnerabilities, as shown in Ta
 	\label{fig:pkce}
 \end{figure}
 
-\subsection{Random value state}
-\label{sec:countermeasure:state}
+\subsection[Random value state]{Random value state (C2)}
+\label{counter:C2}
 Another method to protect against Cross-Site request forgery is by taking advantage of the state parameter the OAuth standard offers. When the client initiates an authorization request, it generates a random value of sufficient length, attaches it to the current session and sets it as the state parameter for the request. After authentication, the authorization server has to attach the previously received state parameter to the redirection URI as a query parameter. The client can now validate the received state value with the one it attached to its session earlier to ensure the redirection stems from the authorization flow it initiated \cite{ferry2015security}. When PKCE for the authorization code grant is already implemented, this measure does not add any benefit regarding CSRF protection \cite{bradley2015rfc}. In conclusion, the usages of state's main difference to PKCE is that the client knows that the received authorization code is connected to its initial authorization request before redeeming an access token with the code\_verifier, where the authorization server relates the client's requests to each other with the code\_challenge and the code\_verifier.
 
 
-\subsection{Invalidation of access tokens}
+\subsection[Invalidation of access tokens]{Invalidation of access tokens (C3)}
+\label{counter:C3}
 The OAuth framework requires an authorization code to be redeemed only once for an access token. Therefore, an authorization code needs to be invalidated after its first usage. However, this does not stop an attacker from receiving an access token with a stolen authorization code before the valid user does it. The original OAuth standard recommends invalidating a previous access token if there was an attempt to receive an access token at least twice for the same authorization code \cite{hardt2012rfc}. Invalidation of access tokens if an authorization code gets redeemed twice helps mitigate the threats of credential leakage via referer headers (T2) and credential leakage via browser history (T3) \cite{lodderstedt2020oauth}, as for these threats, exposed authorization codes were already redeemed in most cases.
+\todo{Auth code injection? Check table Mitigation responsibility}
 
-\subsection{Simple string comparision}
+\subsection[Simple string comparision]{Simple string comparision (C4)}
+\label{counter:C4}
 A technique to completely circumvent the threat of insufficient redirect URI validation (T1) is to disallow whitelisting redirect URIs using regular expressions. Instead, exact string comparison should be the way to allow redirections \cite{lodderstedt2020oauth}.
 
-\subsection{Avoid usage of grant types}
-Threats like credential leakage via referer headers (T2) or browser history (T3) can be avoided when the implicit grant is not used at all, as the access token would not be in the URI of a request. Access token injection (T6) using the implicit grant makes it easy for any attacker to circumvent CSRF protection through the state parameter (see Section \ref{sec:countermeasure:state}) since, for the client, it does not make a difference what access token is used for the state check \cite{lodderstedt2020oauth}. For these reasons, the OAuth task force removed the implicit grant in the draft for OAuth 2.1 \cite{hardt2023rfc}. In the past the main benefit of the implicit flow was that it was possible to implement it for clients that did not utilize cross-origin resource sharing (CORS). CORS was finalized in 2014 by the W3C and superseded by the fetch standard afterwards \cite{vanKesteren2014}. As the OAuth standard dates back to 2012 \cite{hardt2012rfc}, the implicit grant could be implemented for applications that did not support CORS yet.
+\subsection[Avoid usage of grant types]{Avoid usage of grant types (C5)}
+\label{counter:C5}
+Threats like credential leakage via referer headers (T2) or browser history (T3) can be avoided when the implicit grant is not used at all, as the access token would not be in the URI of a request. Access token injection (T6) using the implicit grant makes it easy for any attacker to circumvent CSRF protection through the state parameter (see Section \ref{counter:C2}) since, for the client, it does not make a difference what access token is used for the state check \cite{lodderstedt2020oauth}. For these reasons, the OAuth task force removed the implicit grant in the draft for OAuth 2.1 \cite{hardt2023rfc}. In the past the main benefit of the implicit flow was that it was possible to implement it for clients that did not utilize cross-origin resource sharing (CORS). CORS was finalized in 2014 by the W3C and superseded by the fetch standard afterwards \cite{vanKesteren2014}. As the OAuth standard dates back to 2012 \cite{hardt2012rfc}, the implicit grant could be implemented for applications that did not support CORS yet.
 
 \subsection{Constrained access tokens}
+\label{counter:C6_7}
+\todo{Make clear misuse of stolen access token}
 This countermeasure aims to harden the protocol against the misuse of stolen access tokens if they are leaked, for example, at the resource server (T9) or through credential leakage via the browser history (T3) and or referer headers (T2). It reaches this goal by narrowing the access permissions of the access token in two ways \cite{lodderstedt2020oauth}:
 \begin{itemize}
-	\item \emph{Sender-constrained access token}: The token contains cryptographical material to identify the client who redeems the access token, which opens the possibility of only allowing specific clients.
-	\item \emph{Audience-constrained access token}: Access tokens are constrained to particular resource servers. The resource owner executes the audience configuration at the resource server, and the resource server performs the audience verification. If the access token, in addition, bears user-identifying data, different audiences can be defined at the resource server level to further restrain access to the protected data.
+	\item \emph{Sender-constrained access token (C6)}: The token contains cryptographical material to identify the client who redeems the access token, which opens the possibility of only allowing specific clients.
+	\item \emph{Audience-constrained access token (C7)}: Access tokens are constrained to particular resource servers. The resource owner executes the audience configuration at the resource server, and the resource server performs the audience verification. If the access token, in addition, bears user-identifying data, different audiences can be defined at the resource server level to further restrain access to the protected data.
 \end{itemize}
 
  
-\subsection{Issuer identification}
+\subsection[Issuer identification]{Issuer identification (C8)}
+\label{counter:C8}
 Per default, the OAuth authorization grants do not include mechanisms for clients to identify an authorization server, which sends them an authorization response through redirection. This circumstance leads to threats like Mix-Up attacks (T4), when multiple authorization servers are involved. Issuer identification has been introduced to tackle this issue with RFC9207 in 2022. The issuer identifier \emph {iss} is a parameter which must be sent to the client in every response, even if it is an error response. The \emph{iss} parameter contains the URL, which points to the metadata of the authorization server. This metadata has to include an ``issuer'' property, which contains a value identical to the value of the \emph{iss} property. The client, which supports issuer identification, has to store the identifier locally when initiating an interaction with an authorization server. The client then must compare the stored value with the one it receives from the authorization response with a simple string comparison. The client is also responsible for ensuring that every authorization server it interacts with holds a unique issuer identifier \cite{meyer2022rfc}.
 
 
 \subsection{Implementation details}
+\label{counter:C9_10_11_12_13_14}
 
 There are several countermeasures that one can categorize as implementation details, as they are applied through small decisions during client or authorization server implementation. The following is a brief list of these measures as suggested by Lodderstedt et al. \cite{lodderstedt2020oauth} and the classification of which involved party is responsible for implementing the measure.
 \begin{itemize}
 
-\item \emph{303 redirect}: As mentioned in \ref{subsec:307}, the OAuth standard does not mandate the type of HTTP redirect to use for authorization servers. To circumvent issues with improper redirect handling leading to security issues, the authorization server should use 303 redirects.
+\item \emph{303 redirect (C9)}: As mentioned in \ref{threat:T10}, the OAuth standard does not mandate the type of HTTP redirect to use for authorization servers. To circumvent issues with improper redirect handling leading to security issues, the authorization server should use 303 redirects.
 
-\item \emph{Client\_ID not choosable by user}: To mitigate threats that arise through the possibility of a client choosing its own client ID, as described in \ref{subsec:client_impers_res_own}, the client ID should always be chosen at random by the authorization server, where the clients are getting registered.
+\item \emph{Client\_ID not choosable by user (C10)}: To mitigate threats that arise through the possibility of a client choosing its own client ID, as described in \ref{threat:T11}, the client ID should always be chosen at random by the authorization server, where the clients are getting registered.
 
-\item \emph{No redirect before authentication at authorization provider}: Some threats arise because authorization servers might be implemented in a way that they are redirecting the user agent in error cases, even without complying with the redirect URI whitelists in some cases. This behaviour could lead to advanced phishing attacks described in \ref{subsec:mix_up}. Therefore, authorization servers should be implemented in a way that they only redirect the user agent if the authentication of the resource owner has been successful.
+\item \emph{No redirect before authentication at authorization provider (C11)}: Some threats arise because authorization servers might be implemented in a way that they are redirecting the user agent in error cases, even without complying with the redirect URI whitelists in some cases. This behaviour could lead to advanced phishing attacks described in \ref{threat:T4}. Therefore, authorization servers should be implemented in a way that they only redirect the user agent if the authentication of the resource owner has been successful.
 
-\item \emph{No access token in uri}: The OAuth standard allows for access tokens to be transported in the request URI from the client to the authorization server when accessing protected data. This option leads to threats concerning leakage of the access token through browser history \ref{subsec:cred_leak_browser_history} or referer headers \ref{subsec:cred_leak_ref_headers}. Therefore, an authorization server should implement the transporting of the access token through a request body as mandatory.
+\item \emph{No access token in uri (C12)}: The OAuth standard allows for access tokens to be transported in the request URI from the client to the authorization server when accessing protected data, even when the authorization code grant is in use. This option leads to threats concerning leakage of the access token through browser history \ref{threat:T3} or referer headers \ref{threat:T2}. Therefore, an authorization server should implement the transporting of the access token through a request body as mandatory.
 
-\item \emph{Avoid third-party content on pages involved with OAuth}:
+\item \emph{Avoid third-party content on pages involved with OAuth (C13)}:
 \label{item:avoid3rd}
-Malicious advertisements in iframes or attacker-generated hyperlinks on pages an OAuth flow redirects to could lead to leakage of access tokens or authorization codes through referer headers \ref{subsec:cred_leak_ref_headers}. Therefore, authorization servers and clients must ensure that no third-party content is allowed for the redirection endpoint at the client and authentication page at the authorization server.
+Malicious advertisements in iframes or attacker-generated hyperlinks on pages an OAuth flow redirects to could lead to leakage of access tokens or authorization codes through referer headers \ref{threat:T2}. Therefore, authorization servers and clients must ensure that no third-party content is allowed for the redirection endpoint at the client and authentication page at the authorization server.
 
-\item \emph{Appropriate Referer Policy}: On top of the measure described above about rendering of third-party content, to mitigate credential leakage via referer headers, an appropriate referer header policy should be implemented like the ``Referrer-Policy: no-referrer'' header in authorization requests or as a meta tag in HTML documents.
+\item \emph{Appropriate Referer Policy (C14)}: On top of the measure described above about rendering of third-party content, to mitigate credential leakage via referer headers, an appropriate referer header policy should be implemented like the ``Referrer-Policy: no-referrer'' header in authorization requests or as a meta tag in HTML documents.
 
 \end{itemize}
 
 \subsection{General web security countermeasures}
-After laying out several mitigations for attack vectors of OAuth, there are still general web security threats, which are especially important for OAuth, like clickjacking \ref{subsec:clickjacking}, open redirections \ref{subsec:open_redirect} or CSRF \ref{subsec:csrf}. The reason why these common web security vulnerabilities are critical in the case of OAuth has been laid out in their specific sections. The countermeasures for those types of vulnerabilities, however, are very context-specific and are out of the scope of this work. Hence, in further portrayals of threats and countermeasures in this work, they are described as countermeasures against clickjacking, open redirect and CSRF, but do not include specifics.
+\label{counter:C15_16}
+After laying out several mitigations for attack vectors of OAuth, there are still general web security threats, which are especially important for OAuth, like clickjacking \ref{threat:T14}, open redirections \ref{threat:T13} or CSRF \ref{threat:T7}. The reason why these common web security vulnerabilities are critical in the case of OAuth has been laid out in their specific sections. The countermeasures for those types of vulnerabilities, however, are very context-specific and are out of the scope of this work. Hence, in further portrayals of threats and countermeasures in this work, they are described as countermeasures against clickjacking (C16), open redirect (C15) and CSRF, but do not include specifics.
 
 \section{Classification of OAuth threats and vulnerabilities}
-The OAuth authorization framework tries to solve a lot of practical authorization use cases at once and, therefore, offers a very flexible and diverse set of definitions for such use cases. Hence, it follows that the threat space and attack vectors are also complex and diverse, as laid out in the previous two sections \ref{} and \ref{}. To facilitate a general, more tangible overview of the threat situation of OAuth, this work presents a brief taxonomy based on the perspective of the involved parties.
-
-\subsection{Encoding of threats, vulnerabilities and countermeasures}
-To improve the visibility in tables for the following depictions the OAuth threats and vulnerabilities are encoded with the following scheme:
-\begin{itemize}
-	\item TV1: Insufficient Redirect URI Validation
-	\item TV2: Credential Leakage via Referer Headers
-	\item TV3: Credential Leakage via Browser History
-	\item TV4: Mix-Up Attacks
-	\item TV5: Authorization Code Injection
-	\item TV6: Access Token Injection
-	\item TV7: Cross-Site Request Forgery
-	\item TV8: PKCE Downgrade Attack
-	\item TV9: Access Token Leakage at the Resource Server
-	\item TV10: 307 Redirect
-	\item TV11: Client Impersonating Resource Owner
-	\item TV12: Authorization Server Redirecting to Phishing Site
-	\item TV13: Unvalidated Redirects and Forwards
-	\item TV14: Clickjacking
-\end{itemize}
-
-for the same reason, the countermeasures are encoded as well using the following scheme:
-
-\begin{itemize}
-	\item C1: Mandatory PKCE
-	\item C2: Random value state
-	\item C3: Invalidation of access tokens
-	\item C4: Invalidation of state value
-	\item C5: Simple String comparison
-	\item C6: Avoid usage of grant types
-	\item C7: Sender Constraint Access Token
-	\item C8: Audience Constrained Access Token
-	\item C9: Issuer identification
-	\item C10: 303 Redirect
-	\item C11: Not choosable client\_ID
-	\item C12: No redirect before authentication
-	\item C13: No access token in URI
-	\item C14: No third-party content on pages involved with OAuth
-	\item C15: Appropriate Referer Policy
-	\item C16: Open redirection countermeasures
-	\item C17: Clickjacking countermeasures
-\end{itemize}
-
-Non-encoded versions of the tables are added to the appendix and referenced from the encoded versions of the tables.
+\label{sec:oauth_classification}
+The OAuth authorization framework tries to solve a lot of practical authorization use cases at once and, therefore, offers a very flexible and diverse set of definitions for such use cases. Hence, it follows that the threat space and attack vectors are also complex and diverse, as laid out in the previous two sections \ref{sec:oauth_threats} and \ref{sec:oauth_countermeasures}. To facilitate a general, more tangible overview of the threat situation of OAuth, this work presents a brief taxonomy based on the perspective of the involved parties.
 
 \subsection{Threats and their countermeasures}
 
-The first classification displayed in figure \ref{tab:txc} is visualizing, which countermeasure mitigates aspects of which threat or vulnerability. 
+The first classification displayed in Table \ref{tab:txc} is visualizing, which countermeasure mitigates aspects of which threat when using OAuth. The table shows that most countermeasures are specific to single threats. However, there are two countermeasures, which mitigate at least three threats. These countermeasures are mandatory PKCE and avoiding the usage of specific grant types. Looking at the problems these two countermeasures solve, one can identify the two main weaknesses of the OAuth 2.0 standard. The first one being grant types like the implicit grant, which communicate confidential messages via the front channel. The second weakness being the session integrity of the protocol, as multiple connections are involved via redirects. Both these countermeasures will be enforced by the OAuth 2.1 standard \cite{hardt2023rfc}, which makes conforming implementations potentially a lot more secure in the future.
 
-\begin{table}[!ht]
-    \centering
-	\caption{CXT}
+\begin{table}[H]
+	\caption{Classification of which countermeasure mitigates which threat to OAuth. \emph{The encoding T1-T14 corresponds to the threats described in Section \ref{sec:oauth_threats}}.}
 	\label{tab:txc}
-	\setlength\tabcolsep{1.5pt}
-    \begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
-    \hline
-        ~ & \rot{Maybe like this?} & C2 & C3 & C4 & C5 & C6 & C7 & C8 & C9 & C10 & C11 & C12 & C13 & C14 & C15 & C16 & C17 \\ \hline
-        TV1 & ~ & ~ & ~ & ~ & x & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & x & ~ \\ \hline
-        TV2 & x & ~ & x & x & ~ & x & ~ & ~ & ~ & ~ & ~ & ~ & ~ & x & x & ~ & ~ \\ \hline
-        TV3 & ~ & ~ & x & ~ & ~ & x & ~ & ~ & ~ & ~ & ~ & ~ & x & ~ & ~ & ~ & ~ \\ \hline
-        TV4 & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & x & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ \\ \hline
-        TV5 & x & x & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ \\ \hline
-        TV6 & ~ & ~ & ~ & ~ & ~ & x & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ \\ \hline
-        TV7 & x & x & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ \\ \hline
-        TV8 & x & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ \\ \hline
-        TV9 & ~ & ~ & ~ & ~ & ~ & ~ & x & x & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ \\ \hline
-        TV10 & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & x & ~ & ~ & ~ & ~ & ~ & ~ & ~ \\ \hline
-        TV11 & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & x & ~ & ~ & ~ & ~ & ~ & ~ \\ \hline
-        TV12 & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & x & ~ & ~ & ~ & ~ & ~ \\ \hline
-        TV13 & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & x & ~ \\ \hline
-        TV14 & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & x \\ \hline
-    \end{tabular}
-\end{table}
-\todo{Put vertical names countermeasures}
-\todo{Create caption for table}
+	\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+	\hline
+	 & \rot{\hyperref[counter:C1]{\textbf{Mandatory PKCE}}} & \rot{\hyperref[counter:C2]{\textbf{Random value state}}} & \rot{\hyperref[counter:C3]{\textbf{Invalidation of access tokens}}} & \rot{\hyperref[counter:C4]{\textbf{Simple string comparision}}} & \rot{\hyperref[counter:C5]{\textbf{Avoid usage of grant types}}} & \rot{\hyperref[counter:C6_7]{\textbf{Sender-constrained access token}}} & \rot{\hyperref[counter:C6_7]{\textbf{Audience-constrained access token}}} & \rot{\hyperref[counter:C8]{\textbf{Issuer identification}}} & \rot{\hyperref[counter:C9_10_11_12_13_14]{\textbf{303 redirect}}} & \rot{\hyperref[counter:C9_10_11_12_13_14]{\textbf{Client\_ID not choosable by user}}} & \rot{\hyperref[counter:C9_10_11_12_13_14]{\textbf{No redirect before authentication at AS }}} & \rot{\hyperref[counter:C9_10_11_12_13_14]{\textbf{No access token in URI}}} & \rot{\hyperref[counter:C9_10_11_12_13_14]{\textbf{Avoid third-party content}}} & \rot{\hyperref[counter:C9_10_11_12_13_14]{\textbf{Appropriate referer policy}}} & \rot{\hyperref[counter:C15_16]{\textbf{Open redirect countermeasure}}} & \rot{\hyperref[counter:C15_16]{\textbf{Clickjacking countermeasure}}} \\ \hline
+	\hyperref[threat:T1]{\textbf{T1}}             &             &             &             & x           &             &    &    &    &    &     &     &     &     &     & x   &     \\ \hline
+	\hyperref[threat:T2]{\textbf{T2}}              & x           &             & x           &             & x           &    &    &    &    &     &     &     & x   & x   &     &     \\ \hline
+	\hyperref[threat:T3]{\textbf{T3}}              &             &             & x           &             & x           &    &    &    &    &     &     & x   &     &     &     &     \\ \hline
+	\hyperref[threat:T4]{\textbf{T4}}              &             &             &             &             &             &    &    & x  &    &     &     &     &     &     &     &     \\ \hline
+	\hyperref[threat:T5]{\textbf{T5}}              & x           & x           &             &             &             &    &    &    &    &     &     &     &     &     &     &     \\ \hline
+	\hyperref[threat:T6]{\textbf{T6}}              &             &             &             &             & x           &    &    &    &    &     &     &     &     &     &     &     \\ \hline
+	\hyperref[threat:T7]{\textbf{T7}}              & x           & x           &             &             &             &    &    &    &    &     &     &     &     &     &     &     \\ \hline
+	\hyperref[threat:T8]{\textbf{T8}}              & x           &             &             &             &             &    &    &    &    &     &     &     &     &     &     &     \\ \hline
+	\hyperref[threat:T9]{\textbf{T9}}              &             &             &             &             &             & x  & x  &    &    &     &     &     &     &     &     &     \\ \hline
+	\hyperref[threat:T10]{\textbf{T10}}             &             &             &             &             &             &    &    &    & x  &     &     &     &     &     &     &     \\ \hline
+	\hyperref[threat:T11]{\textbf{T11}}             &             &             &             &             &             &    &    &    &    & x   &     &     &     &     &     &     \\ \hline
+	\hyperref[threat:T12]{\textbf{T12}}             &             &             &             &             &             &    &    &    &    &     & x   &     &     &     &     &     \\ \hline
+	\hyperref[threat:T13]{\textbf{T13}}             &             &             &             &             &             &    &    &    &    &     &     &     &     &     & x   &     \\ \hline
+	\hyperref[threat:T14]{\textbf{T14}}             &             &             &             &             &             &    &    &    &    &     &     &     &     &     &     & x   \\ \hline
+	\end{tabular}
+	\end{table}
 
 \subsection{Threats by mitigation responsibility}
-\todo{Add the table for threats by mitigation responsibility}
+Another way to put the threat landscape into perspective is by categorizing the different threats by the entities, which are responsible for mitigation. Depicted in Table \ref{tab:mitigation_responsibility} it is visible, that most threats need to be mitigated by the client and the authorization server together. This is not surprising as one goal of OAuth is to provide a modular authorization workflow, so the resource server for example only needs to provide a token verification ability for the protocol. Important to note is that most countermeasures are enforced by the authorization server as the client is more or less a consumer of the authorization service. If an authorization server decides to enforce countermeasures like PKCE (\hyperref[counter:C1]{C1}) a client has to adapt to this requirement. Therefore even if many of the countermeasures need to be realized by client and authorization server together, in practice the authorization server bears the main responsibility for fulfilling mitigation efforts. An additional aspect of the table to consider is that there are still threat aspects, that only the client can handle. The general web security threats like unvalidated redirects and forwards (open redirects) and clickjacking are threats that could be chained together with other OAuth threats for exploitation. These are examples of dangers the authorization server cannot influence.
+
+\begin{table}[H]
+	\caption{Classification of threats by mitigation responsibility. \emph{The encoding C1-C16 corresponds to the countermeasures described in Section \ref{sec:oauth_countermeasures}}.}
+	\label{tab:mitigation_responsibility}
+	\begin{tabular}{|l|l|l|l|}
+	\hline
+	\textbf{Threat}                                                                                       & \textit{Client}                                                 & \textit{Authorization Server}                                                 & \textit{Resource Server} \\ \hline
+	\textit{Insufficient Redirect URI Validation}                                                         &                                                                 & C4                                                                            &                          \\ \hline
+	\textit{\begin{tabular}[c]{@{}l@{}}Credential Leakage via \\ Referer Headers\end{tabular}}            & \begin{tabular}[c]{@{}l@{}}C1, C5, C12,\\ C13, C14\end{tabular} & \begin{tabular}[c]{@{}l@{}}C1, C3, C5,\\ C6, C7, C12,\\ C13, C14\end{tabular} &                          \\ \hline
+	\textit{\begin{tabular}[c]{@{}l@{}}Credential Leakage via \\ History Logs\end{tabular}}               & C5, C12                                                         & C3, C5, C12                                                                   &                          \\ \hline
+	\textit{Mix-Up Attacks}                                                                               & C8                                                              & C8                                                                            &                          \\ \hline
+	\textit{Authorization Code Injection}                                                                 & C1                                                              & C1, C3                                                                        &                          \\ \hline
+	\textit{Access Token Injection}                                                                       & C5                                                              & C5                                                                            &                          \\ \hline
+	\textit{Cross-site Request Forgery}                                                                   & C1, C2                                                          & C1, C2                                                                        &                          \\ \hline
+	\textit{PKCE Downgrade Attacks}                                                                       & C1                                                              & C1                                                                            &                          \\ \hline
+	\textit{\begin{tabular}[c]{@{}l@{}}Access Token Leakage \\ at the Ressource Server\end{tabular}}      & C6, C7                                                          & C6, C7                                                                        & C6, C7                   \\ \hline
+	\textit{307 Redirect}                                                                                 &                                                                 & C9                                                                            &                          \\ \hline
+	\textit{Client impersonating resource owner}                                                          &                                                                 & C10                                                                           &                          \\ \hline
+	\textit{\begin{tabular}[c]{@{}l@{}}Authorization Server \\ Redirecting to Phishing Site\end{tabular}} &                                                                 & C11                                                                           &                          \\ \hline
+	\textit{Unvalidated Redirects and Forwards}                                                           & C15                                                             &                                                                               &                          \\ \hline
+	\textit{Clickjacking}                                                                                 & C16                                                             & C16                                                                           &                          \\ \hline
+	\end{tabular}
+	\end{table}
+
+
 
 \chapter{Experimental Analysis}
 \label{chap:experimental_analysis}
@@ -856,7 +855,7 @@ class OAuthCallback(BaseHTTPRequestHandler):
 \end{minipage}
 
 \subsubsection{Arbitrary redirect URI}
-The first attack implemented is making the victim start an OAuth flow using the authorization code grant, but redirecting it to the attacker callback server after authorization. This is done by simply exchanging the value of \emph{redirect\_uri} parameter to the location of the attacker callback server. The callback server then uses the received authorization to redeem an access token at the authorization server as displayed and already explained in figure \ref{lst:attacker_server}. The attacker then uses the access token to fetch protected resources. This is a very basic attack and assumes that there is not any kind of whitelist in place like it is simulated in the experiment environment. However, there are more sophisticated versions of this attack utilizing the e.g. \emph{Evil Slash} \cite{wang2019make} trick mentioned in Section \ref{subsec:insufficient_redirect_uri_validation}. 
+The first attack implemented is making the victim start an OAuth flow using the authorization code grant, but redirecting it to the attacker callback server after authorization. This is done by simply exchanging the value of \emph{redirect\_uri} parameter to the location of the attacker callback server. The callback server then uses the received authorization to redeem an access token at the authorization server as displayed and already explained in figure \ref{lst:attacker_server}. The attacker then uses the access token to fetch protected resources. This is a very basic attack and assumes that there is not any kind of whitelist in place like it is simulated in the experiment environment. However, there are more sophisticated versions of this attack utilizing the e.g. \emph{Evil Slash} \cite{wang2019make} trick mentioned in Section \ref{threat:T1}. 
 
 \subsubsection{Arbitrary redirect URI using ``Evil Slash''}
 The evil slash attack is based on the fact that the parsing of URLs of browsers might mismatch the way the parser for a whitelist parses a given URL. There are two examples given by the research of Wang et al. that are related to handling forward and backward slashes as path separators. Suppose either the whitelist parser or the browser URL parser treats some slash as a path separator while the other parser does not. In that case, this behaviour can be exploited to circumvent the whitelist of the authorization server. These two versions were implemented in the experiments by crafting a URL, which relies on this type of vulnerability.
