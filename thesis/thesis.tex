@@ -381,6 +381,7 @@ The general goal of the algorithm is to group data by similar features into a fi
 \end{algorithm}
 
 \subsection{Self-Organizing Maps}
+\label{subsec:self-organizing_maps}
 A Self-Organizing Map (SOM) is an unsupervised machine-learning algorithm that aims to reduce the dimensions of high-dimensional data. SOMs were introduced in 1990 by the Finnish engineer and senior member of the IEEE Teuvo Kohonen. As described in the initial publication, Self-Organizing Maps not only help with dimension reduction but also "One novel result is that the self-organization process can also discover semantic relationships in sentences". This aspect, in particular, is one reason the algorithm is applied in fields other than data visualization as well, like natural language processing and intrusion detection. At its core, a Self-Organizing Map is based on an artificial neural network that is trained using competitive learning. The network's input layer usually has many more dimensions than the output layer, which aligns with the algorithm's goal to reduce the dimensions of data. Then, there is an inner layer called the Kohonen Layer, a grid of neurons with the desired output's dimensions. This layer of neurons gets initialized at random in the beginning. The training process now works as follows:
 \begin{enumerate}
 	\item An input vector of the sample high-dimensional data gets randomly chosen. The neuron in the Kohonen layer, whose weight is most similar to the input vector, gets chosen by calculating the Euclidean distance: $$D(w, x) = \sqrt{\sum_{i=1}^{N} (w_i - x_i)^2}$$ for weight vector $w$, input vector $x$ for $N$ dimensions. The weight vector, which is chosen this way, is called the \emph{winner} or the \emph{Best Matching Unit (BMU)}.
@@ -780,7 +781,6 @@ An essential piece for this research and its experiments is a complete testing e
 	\caption{Overview of the environment for the experiments}
 	\label{fig:experimental_setup}
 \end{figure}
-\todo{Change k-Means to clustering in graphic}
 
 \subsection{OAuth setup}
 For this first part, an OAuth environment was implemented, which consists of several subsystems that are needed to execute the OAuth protocol flow. It consists of two independent networks. The first network contains the authorization provider, resource server and a logging service, and the second network contains the OAuth client service and a logging service. The loggers produce .pcap-files of all activity in their network using \emph{tcpdump}. The OAuth authorization framework is practice-oriented. Therefore, the network logs are divided between the auth provider and the client, as in practice, mostly two different parties run these services. 
@@ -791,6 +791,7 @@ The implementation of the authorization server and resource server is forked fro
 \subsubsection{Client}
 The client is a simple static webpage that handles the authorization code flow. It can be used to generate traffic manually, but its primary purpose is to handle redirections as part of the different flows. It is written in HTML, CSS, and Javascript to utilize the Fetch API and the Browser Storage API. An implementation of redirect handling is shown in figure \ref{lst:redirect_handler}. The client is checking if the code query parameter is present in the currently active URL (line 6) when the page loads. If it is present it extracts it and retrieves an access token from the authorization server.
 
+\begin{minipage}\linewidth
 \begin{lstlisting}[language={java}, caption={Example implementation of authorization code handling at the client}, label={lst:redirect_handler}]
 // fetch access token on page load, if the code query param is present
 window.onload = function() {
@@ -810,6 +811,7 @@ window.onload = function() {
 	}
 }
 \end{lstlisting}
+\end{minipage}
 
 \subsection{Network setup and logging}
 All services are hosted using containers in a docker environment. Technically these services are part of the same network at the docker host they are run on, but the logging services build overlay networks on the services they are observing. As visualized in figure \ref{fig:experimental_setup} there exist two logging services, one for the authorization and resource server and one for the client network. When the experiment environment is active, the logging services stream all network events to a .pcap file, which is accessible on the docker host machine through a volume. All communication is executed without TLS to be able to analyze all packets. In a real-world scenario this would not be the case, but mechanisms like proxies, who are acting as man-in-the middle would be able to inspect the network traffic unencrypted in that case as well.
@@ -863,7 +865,7 @@ The evil slash attack is based on the fact that the parsing of URLs of browsers 
 \subsection{Network data generation}
 The above-described services create a complete environment for executing valid OAuth flows and attacks on OAuth. To generate the data set for the analysis, a generator script was implemented in Python to utilize the whole setup to produce network logs. The approach for the generation is to mostly produce random valid traffic in the network. Meanwhile, at random some amount of attacks are executed as well, with a probability of 5\%, to simulate subtle attacks on the authorization. As the logging services are always listening, they produce network log files, which are then extracted after a reasonable amount of time.
 
-\section{Implementation of analysis algorithms}
+\section{Implementation of analysis approaches}
 The last remaining part of the experimental setup is the intrusion detection mechanism. Based on the type of attacks implemented the decision was made, to analyze the logs produced by the authorization server, because the attack traffic appears in the network of this entity. The input for this part of the experiments is therefore the network log file produced by the logger of the authorization server overlay network. This file is passed to the data preprocessing step initiated by \emph{zeek}. The approach for the next step after the preprocessing, the detection step is based on previous studies \cite{carrasco2018unsupervised} \cite{zhuo2017network}, which had success in utilizing word2vec word embeddings to detect malicious network traffic even in small datasets. Therefore the same idea was chosen for this work to encode textual data, to enable clustering methods of the logs to reveal anomalies in the network data.
 
 \subsection{Data preprocessing}
@@ -911,15 +913,64 @@ With the now acquired list of token combinations, a Word2Vec model is trained us
 \end{minipage}
 
 \subsection{Clustering}
-\todo{Write about the implementation of k-Means and Self-Organizing Maps}
-Two clustering algorithms for anomaly detection are implemented to test the detection rate of attacks in the network logs based on previously generated word embeddings. The first algorithm is the \emph{k-Means clustering algorithm}, and the second is self-organizing maps. For classifying the clusters, a similarly simple approach to that used in the work of Nalavade et al. \cite{nalavade2014} is chosen by defining a threshold for the cluster size, after which a cluster is labeled as an attack cluster.
+Two clustering algorithms for anomaly detection are implemented to test the detection rate of attacks in the network logs based on previously generated word embeddings. The first algorithm is the \emph{k-Means clustering algorithm}, and the second is self-organizing maps. For classifying the clusters, a similarly simple approach to that used in the work of Nalavade et al. \cite{nalavade2014} is chosen by defining a threshold for the cluster size, after which a cluster is labeled as an attack cluster. The performance metrics are described in detail in Section \ref{subsec:performance_metrics}.
 
 \subsubsection{k-Means}
+The first approach chosen to cluster the records is the k-means clustering algorithm, a popular clustering method in the intrusion detection research space, as presented in Section \ref{subsec:k_means_intrusion_detection} and Figure \ref{fig:som_kmeans}. The \emph{scikit-learn} \cite{scikitlearn2011} library was utilized for the k-means clustering approach in the experiment environment as it implements Lloyd's k-mean algorithm compatible with the \emph{pandas} data frames. Using the prepared embeddings, the implementation of k-Means boils down to two lines of code as depicted in Listing \ref{lst:k_means}. Line 1 shows the initialization of the clustering algorithm given the number of clusters it should calculate and an optional \emph{random\_state} parameter, which gets utilized to initialize the pseudo-random number generator, which is responsible for calculating the randomness for the first set of cluster centroids. Setting this parameter makes it possible to reproduce the experiment results precisely. Line 2 shows the execution of the algorithm on the previously initialized \emph{kmeans} object. A new column gets added to the data frame, that includes the clustering features, which holds the result of the clustering for every record. 
+
+\begin{minipage}\linewidth
+	\begin{lstlisting}[language={python}, caption={Application of k-means clustering on the previously calculated embeddings}, label={lst:k_means}] 
+		kmeans = KMeans(n_clusters=5, random_state=10)
+		zeek_log_df['cluster'] = kmeans.fit_predict(selected_features_df['embedding'].tolist())
+	\end{lstlisting}
+\end{minipage}
+
+
 
 \subsubsection{Self-organizing maps}
+The second approach implemented for clustering is the self-organizing maps algorithm. Again, a \emph{pandas} and \emph{numpy} compatible library was chosen for integrating this approach into the experiment environment. The selected \emph{MiniSom} library \cite{vettigliminisom} offers a minimalistic implementation of self-organizing maps. With the help of this library, the implementation showcased in Listing \ref{lst:som} comes down to the initialization of the SOM algorithm in Line 1, where multiple parameters are provided:
+\begin{enumerate}
+	\item \emph{x} and \emph{y}: The number of neurons of the SOM grid initialized at the x-axis and the y-axis.
+	\item \emph{input\_len}: The dimensionality of the input vectors, given by the dimensionality of the word embedding vectors.
+	\item \emph{sigma}: The radius of influence in the neighborhood, when a BMU gets updated with the neighborhood function as explained in Section \ref{subsec:self-organizing_maps}.
+	\item \emph{learning\_rate}: The order of magnitude for the update of the weights during the learning process. A higher value results in more impact at the training, but only initially, as the update function is a decay function.
+	\item \emph{random\_seed}: The seed for the pseudo-random number generator, which is responsible for the randomness when picking the next input vector for every training epoch. Setting this parameter leads to reproducible experiment results.
+\end{enumerate}
+
+Line 2 applies the algorithm utilizing the previously initialized \emph{som} class to train the weights for the SOM grid. The parameter \emph{num\_iterations} is provided to set the number of training iterations. The results are saved by overwriting the \emph{embedding}-column. Finally, Line 4 assigns clusters to every record by using the x-coordinate of the BMU representing a cluster and writing it to a new \emph{cluster}-column.
+
+\begin{minipage}\linewidth
+	\begin{lstlisting}[language={python}, caption={Application of the SOM clustering approach on the previously calculated embeddings}, label={lst:som}] 
+		som = MiniSom(x=3, y=3, input_len=300, sigma=0.8, learning_rate=0.2, random_seed=10)
+		som_weights = som.train_batch(selected_features_df['embedding'].tolist(), num_iteration=100)
+		
+		zeek_log_df['cluster'] = [som.winner(x)[0] for x in selected_features_df['embedding'].tolist()]
+	\end{lstlisting}
+\end{minipage}
+
+\subsection{Performance metrics}
+\label{subsec:performance_metrics}
+
+Several standard performance metrics are employed on the clustering results to evaluate the effectiveness of the intrusion detection approaches. The key performance metrics considered in this work are \emph{yield}, \emph{accuracy} and \emph{precision}. These key metrics are derived from four more general measures:
+\begin{enumerate}
+	\item \emph{True Positive (TP)}: An attack record correctly identified as an attack.
+	\item \emph{True Negative (TN)}: A non-attack record correctly identified as a non-attack-record.
+	\item \emph{False Positive (FP)}: A non-attack record incorrectly identified as an attack record.
+	\item \emph{False Negative (FN)}: An attack record incorrectly identified as a non-attack record.
+\end{enumerate}
+
+Based on these measures, the yield, accuracy, and precision are calculated in the following way:
+\begin{enumerate}
+    \item $\text{Yield} = \frac{\text{TP}}{\text{Total amount of attack records in dataset}}$
+    \item $\text{Accuracy} = \frac{\text{TP + TN}}{\text{Total amount of records in dataset}}$
+    \item $\text{Precision} = \frac{\text{TP}}{\text{TP + FP}}$
+\end{enumerate}
+The yield evaluates how many records are identified as an attack out of all attack records. The accuracy gives an overview of the overall performance of the intrusion detection approach by factoring in the true positives and true negatives. The precision shows how many records detected as attacks actually are attack records. This measure, in particular, bears much relevance for practical use cases as every record labeled as an attack record could mean that work resources must be invested into handling them.
+
+
 
 \section{Results}
-This section describes the results of the intrusion detection approach conducted in this work on the self-generated dataset.
+This section describes the results of the dataset generation and intrusion detection approaches conducted in this work.
 
 \begin{table}[H]
 	\caption{Results of Intrusion Detection using Word2Vec and Clustering algorithms}
@@ -934,15 +985,15 @@ This section describes the results of the intrusion detection approach conducted
 \end{table}
 
 \subsection{Dataset generation}
-The dataset, as described in Section \ref{subsec:dataset}, consists of records representing the generated HTTP network traffic over a fixed period of time. For this analysis, a dataset containing 3627 records is generated containing 44 records, which are requests involved in the attacks on the OAuth protocol. All implemented attacks are based on tampering with the query parameters of the requests to interfere with the OAuth redirection flow. As the goal of the analysis is to detect anomalies in the traffic, the dataset is generated in a way that at random around one percent of the generated traffic is attacker traffic. Table \ref{tab:record_attack} shows an example of an attack record, while Table \ref{tab:record_traffic} shows examples of non-attack records.
+The resulting dataset, as described in Section \ref{subsec:dataset}, consists of records representing the HTTP network traffic over a fixed period of time. For this analysis, a dataset containing 3627 records is generated containing 44 records, which are requests involved in the attacks on the OAuth protocol. Thus, the resulting attack rate in this generated dataset amounts to 1,12\%. Table \ref{tab:record_attack} shows an example of an attack record, while Table \ref{tab:record_traffic} shows examples of non-attack records.
 
 \begin{table}[H]
 	\caption{Representation of a record of the dataset containing a request involved in an attack}
 	\label{tab:record_attack}
-	\begin{tabular}{|l|l|l|l|}
-	\hline
-	\textbf{method} & \textbf{uri}                                                                                                                                                    & \textbf{is\_attack} & \textbf{cluster} \\ \hline
-	GET             & \begin{tabular}[c]{@{}l@{}}/oauth/authorize\\ ?response\_type=code\\ \&client\_id=A30qfzW7fbvhAN4OtIq4ZNFR\\ \&redirect\_uri=http://localhost:8081\end{tabular} & 1                   & 2                \\ \hline
+	\begin{tabular}{|l|l|l|}
+		\hline
+		\textbf{Method} & \textbf{URI}                                                                                                                                                                                           & \textbf{IsAttack} \\ \hline
+	GET & \begin{tabular}[c]{@{}l@{}}/oauth/authorize\\ ?response\_type=code\\ \&client\_id=A30qfzW7fbvhAN4OtIq4ZNFR\\ \&redirect\_uri=https://evil-server.com\end{tabular} & 1 \\ \hline
 	\end{tabular}
 \end{table}
 
@@ -950,17 +1001,18 @@ The dataset, as described in Section \ref{subsec:dataset}, consists of records r
 \begin{table}[H]
 	\caption{Representation of records of the dataset containing requests involved in usual traffic}
 	\label{tab:record_traffic}
-	\begin{tabular}{|l|l|l|l|}
+	\begin{tabular}{|l|l|l|}
 	\hline
-	\textbf{method} & \textbf{uri}                                                                                                                                                                                           & \textbf{is\_attack} & \textbf{cluster} \\ \hline
-	GET             & \begin{tabular}[c]{@{}l@{}}/?next=http://localhost:5123/oauth/authorize\\ ?response\_type=code\\ \&client\_id=A30qfzW7fbvhAN4OtIq4ZNFR\\ \&redirect\_uri=http://localhost:8080/index.html\end{tabular} & 0                   & 0                \\ \hline
-	GET             & /                                                                                                                                                                                                      & 0                   & 0                \\ \hline
-	POST            & /create\_client                                                                                                                                                                                        & 0                   & 0                \\ \hline
+	\textbf{Method} & \textbf{URI}                                                                                                                                                                                           & \textbf{IsAttack} \\ \hline
+	GET             & \begin{tabular}[c]{@{}l@{}}/?next=http://localhost:5123/oauth/authorize\\ ?response\_type=code\\ \&client\_id=A30qfzW7fbvhAN4OtIq4ZNFR\\ \&redirect\_uri=http://localhost:8080/index.html\end{tabular} & 0 \\ \hline
+	GET             & / & 0 \\ \hline
+	POST            & / & 0 \\ \hline
+	POST & create\_client & 0 \\ \hline
 	\end{tabular}
 \end{table}
 
 \subsection{Word2Vec embeddings}
-The Word2Vec embeddings for the textual data are the most crucial step for the detection, as the clustering algorithms work with the vectors produced by the word2vec algorithm. The vectors hold the knowledge about the relation of the individual pieces of the URIs and methods. Finding the best Word2Vec embeddings is achieved by tuning the window size hyperparameter. This parameter controls how many words around a word are considered related. In the case of the URI, this is the decision of whether, for example, a query parameter key should only relate to its direct value or if the combination of multiple query parameter key-value pairs is considered related. Experimenting with the window size hyperparameter shows that it does not affect the detection rate for both clustering algorithms in this environment of generated data. This circumstance could result from the short repetitive strings given to the algorithm as input. Even though there is randomization in the generated traffic for user IDs, Figure \ref{fig:word_embeddings3D} shows a very dense cluster for most of the non-attack traffic, meaning these embeddings have a close semantic meaning. Following along with the representation in Figure \ref{fig:word_embeddings3D} it stands out that there is a large cluster and some smaller outliers. The goal of the clustering algorithms in the next step is to capture this observation.
+The tuning of the main hyperparameter for the word2vec embeddings, namely the window size, led to the result that experimenting with it did not influence the performance of the intrusion detection for both clustering algorithms in this environment of generated data. This circumstance could result from the short repetitive strings given to the algorithm as input, so extending the window size to include more than one neighboring word does not make a difference. The result of the embeddings is showcased in Figure \ref{fig:word_embeddings3D} normalized to three dimensions. It is visible that one large group of records exists with several small outlier groups with a relatively large distance to the cluster. This observation shows that the encoding using word2vec embeddings profoundly impacts the results, as there are already visually distinguishable clusters of records, which need to be identified by the clustering algorithms in the next step.
 
 \begin{figure}[H]
 	\sffamily\footnotesize
@@ -968,7 +1020,7 @@ The Word2Vec embeddings for the textual data are the most crucial step for the d
 	\unitlength=0.75mm
 	\special{em:linewidth 0.4pt}
 	\linethickness{0.4pt}
-	\caption{Embedding Vectors normalized to 3 dimensions. Every vector is labeled with the corresponding URI, which led to its placement in the vector space}
+	\caption{Embedding Vectors normalized to three dimensions. Every point in the plot represents one record of the dataset. The word2vec embedding approach leads to a clear group and some sets of outliers.}
 	\label{fig:word_embeddings3D}
 \end{figure}
 
@@ -1053,31 +1105,6 @@ The k-means clustering results are influenced by how many clusters are chosen, a
 \setcounter{table}{0}
 \renewcommand\thetable{A.\arabic{table}}
 \newpage
-% ===
-
-\chapter{Non encoded tables}
-
-\begin{sidewaystable}
-		\begin{xltabular}{\linewidth}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|X|}
-		\hline
-			~ & Mandatory PKCE & Random value state & Invalidation of access token & Invalidate state value & Simple String comparision & Avoid usage of grant types & Sender Constraint Access Token & Audience Constrained Access Token & Issuer identification & 303 Redirect & Not choosable client\_id & No redirect before authentication & No access token in uri & No third-party content on pages involved with OAuth & Appropriate Referer Policy & Open redirection countermeasures & Clickjacking countermeasures \\ \hline
-			Insufficient Redirect URI Validation & ~ & ~ & ~ & ~ & x & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & x & ~ \\ \hline
-			Credential Leakage via Referer Headers & x & ~ & x & x & ~ & x & ~ & ~ & ~ & ~ & ~ & ~ & ~ & x & x & ~ & ~ \\ \hline
-			Credential Leakage via Browser History & ~ & ~ & x & ~ & ~ & x & ~ & ~ & ~ & ~ & ~ & ~ & x & ~ & ~ & ~ & ~ \\ \hline
-			Mix-Up Attacks & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & x & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ \\ \hline
-			Authorization Code Injection & x & x & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ \\ \hline
-			Access Token Injection & ~ & ~ & ~ & ~ & ~ & x & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ \\ \hline
-			Cross-Site Request Forgery & x & x & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ \\ \hline
-			PKCE Downgrade Attack & x & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ \\ \hline
-			Access Token Leakage at the Resource Server & ~ & ~ & ~ & ~ & ~ & ~ & x & x & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ \\ \hline
-			307 Redirect & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & x & ~ & ~ & ~ & ~ & ~ & ~ & ~ \\ \hline
-			Client Impersonating Resource Owner & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & x & ~ & ~ & ~ & ~ & ~ & ~ \\ \hline
-			Authorization Server Redirecting to Phishing Site & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & x & ~ & ~ & ~ & ~ & ~ \\ \hline
-			Unvalidated Redirects and Forwards & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & x & ~ \\ \hline
-			Clickjacking & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & ~ & x \\ \hline
-		\end{xltabular}
-\end{sidewaystable}
-\todo{Fix sideways table}
 		
 % ===========================Selbstständigkeitserklärung======================
 \chapter*{Eidesstattliche Versicherung} % war: Selbständigkeitserklärung
@@ -1111,19 +1138,14 @@ Hamburg, den {\@date}
 
 
 % ================================Literaturliste-Muster==============================
-\newpage
-\thispagestyle{empty}
-\label{sec:literaturliste}
-\par\textbf{\textsf{Thema:}} Privacy Enhancing Technologies zum Schutz von Kommunikationsbeziehungen
-\par\textbf{\textsf{Bearbeiter:}} Eva Musterfrau, Heinz Mustermann
-\par\textbf{\textsf{Datum:}} \today
-\bigskip
-% ====> Delete me
-\begin{tikzpicture}[overlay]
-    \node[draw, blue, font=\sffamily\Large, xshift=70mm, yshift=0mm, rounded corners=1mm]{Muster der Literaturliste};
-\end{tikzpicture}
-% <==== /Delete me
-\par\textbf{\Large\textsf{Literaturliste}}
+% \newpage
+% \thispagestyle{empty}
+% \label{sec:literaturliste}
+% \par\textbf{\textsf{Thema:}} Privacy Enhancing Technologies zum Schutz von Kommunikationsbeziehungen
+% \par\textbf{\textsf{Bearbeiter:}} Eva Musterfrau, Heinz Mustermann
+% \par\textbf{\textsf{Datum:}} \today
+% \bigskip
+% \par\textbf{\Large\textsf{Literaturliste}}
 
 % ================================Todo list==============================
 \listoftodos
