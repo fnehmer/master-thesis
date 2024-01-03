@@ -1079,21 +1079,29 @@ The self-organizing maps clustering approach leads to the same results as the k-
 \end{figure}
 
 
-\subsection{Discussion}
+\subsection{Discussion of methodology and results}
 \label{subsec:results_discussion}
 
-\begin{itemize}
-	\item Discussion results
-	\item (!) Discuss about data generation approach
-	\begin{itemize}
-		\item How realistic is the approach?
-	\end{itemize}
-	\item Discuss about relevance for real-world
-\end{itemize}
+The results clearly show that the embedding approach greatly impacts the results in the given scenario. The scenario itself, however, is artificial and created through simulating traffic. This approach is arguably too sparse, but a dataset containing specific attacks on the OAuth protocol was not available at the time of this writing. Hence, this model for intrusion detection was created for this work. The dataset simulates real-world HTTP packet data using valid implementations of the OAuth protocol. It does not model metadata of the network traffic, as it does not model real-world timings and flow data of different actors and attackers accessing a network. Consequently, this research focuses on analyzing the semantics of the involved HTTP application data instead of the states and transitions of the protocol flow. 
+
+The attack type integrated into the dataset was chosen because attacks on OAuth manipulating the redirect flow are highly impactful concerning the takeover of accounts and extracting confidential data. Attacks involving multiple auth providers, like Mix-Up attacks, were not included as detecting these kinds of attacks would require sophisticated data about the timings and transitions of the network data, which is not provided by the modelled dataset and could only realistically be provided by a real-world network, which was not available for the scope of this work.
+
+The encoding of the application data, based on previous research by Corizzo et al. \cite{corizzo2020feature}, is a highly promising approach for extracting features for network data, which is why it was applied in this work. However, the low diversity of attacks outside the OAuth traffic influences the performance of this approach in this modeled data. Several classifier methods were tested to improve the anomaly detection performance before choosing the clustering approach for this work. Supervised learning classifiers like support vector machines were tested but not further researched as the narrow model of network data quickly led to overfitting and a classifier that would have a 100\% precision rate inside the modeled data. Consequently, researching clustering methods with word embeddings was the most promising approach to detecting anomalies, meaning detecting even unknown attacks outside the modeled dataset.
+
+As protocols for the internet like OAuth 2.0 grow in complexity over time, the approach of detecting anomalies in the application data of the protocol gains importance as well since some types of attacks exploit subtle logical implementation flaws, like the redirect manipulation attacks implemented in this work. Therefore, this research bears relevance for future methods in detecting anomalies in application data, even though the dataset is artificially generated.
+
 
 \chapter{Conclusion}
 \label{chap:conclusion}
-\todo{Write Conclusion}
+
+\section{Summary}
+This thesis presented an overview of the OAuth threat landscape and showcased a methodology for anomaly intrusion detection analyzing semantics in HTTP application data on the example of OAuth protocol attacks.
+
+The work within this thesis was motivated by the profound impact vulnerabilities in authorization systems could bear and recent analysis that shows that for many authorization providers, known mitigation measures still need to be implemented. Therefore, this work aimed to give an overview of this threat landscape and classify it from different perspectives, which could help understand it better, as well as the responsibilities that appear when applying the protocol.
+
+Building on top of the knowledge gained on the main weaknesses of the OAuth 2.0 protocol, this work presented and implemented an anomaly intrusion detection approach to help handle possible attacks an authorization provider could face. This approach was based on identifying semantics in HTTP application data using word2vec embeddings, which convert textual data, which commonly stands together into vectors that point in similar directions. To determine the anomalies in these word2vec representations, two clustering approaches were applied, which led to the observation that they both depend on the quality of the embeddings, which the word2vec algorithm creates beforehand, as both clustering algorithms produce the same results.
+
+\section{Future Work}
 
 
 
