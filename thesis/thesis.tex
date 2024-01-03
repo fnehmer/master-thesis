@@ -972,18 +972,6 @@ The yield evaluates how many records are identified as an attack out of all atta
 \section{Results}
 This section describes the results of the dataset generation and intrusion detection approaches conducted in this work.
 
-\begin{table}[H]
-	\caption{Results of Intrusion Detection using Word2Vec and Clustering algorithms}
-	\label{tab:results}
-	\begin{tabular}{|l|l|l|}
-	\hline
-					   & \textbf{k-Means} & \textbf{Self-Organizing Maps} \\ \hline
-	\textbf{Accuracy}  & 0.993            & 0.987                         \\ \hline
-	\textbf{Yield}     & 1.0              & 1.0                           \\ \hline
-	\textbf{Precision} & 0.637            & 0.463                         \\ \hline
-	\end{tabular}
-\end{table}
-
 \subsection{Dataset generation}
 The resulting dataset, as described in Section \ref{subsec:dataset}, consists of records representing the HTTP network traffic over a fixed period of time. For this analysis, a dataset containing 3627 records is generated containing 44 records, which are requests involved in the attacks on the OAuth protocol. Thus, the resulting attack rate in this generated dataset amounts to 1,12\%. Table \ref{tab:record_attack} shows an example of an attack record, while Table \ref{tab:record_traffic} shows examples of non-attack records.
 
@@ -1024,16 +1012,36 @@ The tuning of the main hyperparameter for the word2vec embeddings, namely the wi
 	\label{fig:word_embeddings3D}
 \end{figure}
 
-\subsection{Clustering}
-The last part of the detection chain aims to extract the anomalies to identify them as attacks. This goal is accomplished using unsupervised clustering algorithms described in Sections X and Y. 
+\subsection{Overall anomaly detection results}
+The overall results after clustering are showcased in Table \ref{tab:results}. Both clustering algorithms achieve the same results with a high accuracy of >99\% but, in relation, only attain a low precision score after the word2vec embedding. The main observation which leads to these results is that the implemented approaches perform well in filtering out traffic not involved in OAuth but do not achieve the same quality of detection in more subtle differences in the OAuth traffic itself. Also, achieving the same results for both clustering algorithms could mean that the main impact for anomaly detection in this scenario lies in the encoding step with word2vec. These observations are discussed further in Section \ref{subsec:results_discussion} after the following sections explain how the clustering algorithms achieve their results.
 
-\subsubsection{k-Means}
-The k-means clustering results are influenced by how many clusters are chosen, as the algorithm works with a fixed amount of clusters from the beginning. Another circumstance to consider is the algorithm initializing its first cluster centroids randomly. This condition could influence the result. For this reason, a fixed seed for the randomizing of centroids was found to calculate the same clusters every time. A threshold for the cluster size compared to the total amount of records of 5\% was determined to identify the anomalies. Every cluster below this threshold is considered to include attacks. This calculation led to the results shown in Table \ref{tab:results}.
+\begin{table}[H]
+	\caption{Results of Intrusion Detection using Word2Vec and Clustering algorithms}
+	\label{tab:results}
+	\begin{tabular}{|l|l|l|}
+	\hline
+					   & \textbf{k-Means} & \textbf{Self-Organizing Maps} \\ \hline
+	\textbf{Accuracy}  & 0.993            & 0.993                         \\ \hline
+	\textbf{Yield}     & 1.0              & 1.0                           \\ \hline
+	\textbf{Precision} & 0.637            & 0.637                         \\ \hline
+	\end{tabular}
+\end{table}
 
-- Write about the results
+\subsubsection{Anomaly detection with k-Means}
+\label{subsubsec:anom_k_means}
+The first observation on the k-Means clustering results is the behaviour when setting different cluster sizes for the algorithm for an anomaly threshold of 5\%. The results show that after slowly increasing the number of clusters k-means calculates, a decay of accuracy and precision appears after 7 clusters as depicted in Table \ref{tab:k-means_clusters}. The reason is that k-means starts to split larger groups of records into clusters small enough to be detected as anomalous at some point and many of these larger groups are non-attack traffic. As depicted in Figure \ref{fig:kmeans_clusters_2}, when only two clusters are calculated, a large group of non-attack traffic records exist near the origin, and some smaller outlier groups, including attack traffic, appear further away from the origin. Figure \ref{fig:kmeans_clusters_6} shows that k-Means starts to split the large cluster of non-attack traffic near the origin into smaller clusters when the cluster number is set to 6. Experimenting with the threshold on a higher number of clusters also leads to the highest achievable precision of 0,637\%, for example, when setting the number of clusters to 24 and the threshold to 0,39\%.
 
-- Write about what happens, when altering the cluster amount referencing Figure \ref{fig:kmeans_clusters_2} and Figure \ref{fig:kmeans_clusters_6}
-
+\begin{table}[H]
+	\caption{Setting a higher number of k-Means clusters to calculate leads to decay in accuracy and precision starting at 8 clusters with an anomaly threshold of 5\%}
+	\label{tab:k-means_clusters}
+	\begin{tabular}{|l|c|c|c|c|c|c|c|c|c|c|}
+	\hline
+	\textbf{k-Means Clusters}   & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{6} & \textbf{7} & \textbf{8} & \textbf{17} & \textbf{20} & \textbf{24} \\ \hline
+	\textbf{Anomalous Clusters} & 1          & 2          & 2          & 2          & 3          & 4          & 5          & 10          & 12          & 18          \\ \hline
+	\textbf{Accuracy}           & 0,99       & 0,99       & 0,99       & 0,99       & 0,99       & 0,99       & 0,97       & 0,92        & 0,89        & 0.71        \\ \hline
+	\textbf{Precision}          & 0,63       & 0,63       & 0,63       & 0,63       & 0,63       & 0,63       & 0,34       & 0,13        & 0,11        & 0,05        \\ \hline
+	\end{tabular}
+\end{table}
 
 \begin{figure}[H]
 	\caption{Word2Vec and k-Means setting 2 clusters}
@@ -1055,12 +1063,10 @@ The k-means clustering results are influenced by how many clusters are chosen, a
 	\linethickness{0.4pt}
 \end{figure}
 
-\subsubsection{Self-Organizing Maps}
-\begin{itemize}
-	\item Write about hyperparameter tuning
-	\item Write about Figure \ref{fig:som_clusters}
-	\item Write about results Table \ref{tab:results}
-\end{itemize}
+\subsubsection{Anomaly detection with self-organizing maps}
+The self-organizing maps clustering approach leads to the same results as the k-means clustering algorithm. Figure \ref{fig:som_clusters} shows that the algorithm creates three clusters, one of which is an attack cluster. In the figure, it is also visible that SOM is splitting the main group of records near the origin, a non-attack traffic group, into two clusters that are large enough to be considered non-anomalous. Tuning the hyperparameters only leads to the result that fewer iterations of training are needed to achieve the same best accuracy and precision. 
+
+
 
 \begin{figure}[H]
 	\caption{Word2Vec and Self-Organizing Maps}
@@ -1074,6 +1080,7 @@ The k-means clustering results are influenced by how many clusters are chosen, a
 
 
 \subsection{Discussion}
+\label{subsec:results_discussion}
 
 \begin{itemize}
 	\item Discussion results
