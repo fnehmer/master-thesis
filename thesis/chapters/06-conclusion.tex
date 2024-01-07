@@ -1,0 +1,26 @@
+This chapter concludes the thesis by summarising the content presented in the previous chapters in Section \ref{sec:summary}  and providing an outlook to future research in the area of anomaly intrusion detection in application layer data in Section \ref{sec:future_work}.
+
+\section{Summary}
+\label{sec:summary}
+This thesis presented an overview of the OAuth threat landscape and showcased a methodology for anomaly intrusion detection analyzing semantics in HTTP application data on the example of OAuth protocol attacks.
+
+The work within this thesis was motivated by the profound impact vulnerabilities in authorization systems could bear and recent analysis that shows that for many authorization providers, known mitigation measures still needed to be implemented.
+
+Initially, a baseline of fundamental knowledge has been established in Chapter \ref{chap:fundamental_knowledge}. It included a broad overview of the  OAuth 2.0 protocol, its different protocol modes, and an outlook on the future of OAuth 2.1. Furthermore, the chapter had an insight into intrusion detection and the involved algorithms for the approach implemented in this work for the detection of attacks on OAuth. 
+
+To further support the initial motivation with data, Chapter
+\ref{chap:related_work} presented related research in the realm of OAuth security research and the intrusion detection techniques applied in this work's experiments.
+
+In Chapter \ref{chap:oauth_security}, the work proceeded to present the main known threats when utilizing the OAuth 2.0 authorization framework and the countermeasures to mitigate them. It put these threats into different perspectives to further emphasize the responsibilities of authorization providers and clients implementing the protocol and to work out the main weaknesses of the protocol.
+
+Building on top of the knowledge gained on the main threats for the OAuth 2.0 protocol, this work presented and implemented an anomaly intrusion detection approach to help handle possible attacks an authorization provider could face. This implementation also included a complete network environment to generate OAuth interactions and attacks on OAuth to record network logs of these events. Chapter \ref{chap:experimental_analysis} began by explaining the full implementation of the environment and the methodology employed in this work for anomaly intrusion detection.
+This intrusion detection approach was based on identifying semantics in HTTP application data using word2vec embeddings, which convert textual data, which commonly stands together into vectors that point in similar directions. Two clustering approaches were applied to determine the anomalies in these word2vec representations. The methods used led to the observation that they both depend on the quality of the embeddings, which the word2vec algorithm creates beforehand, as both clustering algorithms produced the same results. Since the implemented approach was efficient in singling out sparse OAuth traffic but was not able to determine subtle anomalies in the OAuth traffic itself to detect the attacks, it is clear that this approach needs further research in certain aspects formulated in the next section.
+
+\section{Future Work}
+\label{sec:future_work}
+
+The main contribution to this area of research in the future would be the creation of a real-world dataset that includes attacks on OAuth. There are several methods to achieve that kind of goal. One would be that staged attacks are executed and logged in a real network. Even an attempt of an attack could produce valuable data. The ideal scenario, however, would be acquiring data from a real-world network where verifiably flaws in the OAuth implementation were exploited to gain access to confidential data. This data could then be utilized to test the approach presented by this work in a real-world scenario.
+
+Another area where the research could be continued is testing further encoding methods of HTTP application data for feature extraction. The results produced by the Word2Vec embeddings left room for improvement. Hence, other textual data encoding methods may also be researched. On top of that, further classification methods could be employed, like supervised learning approaches on more diverse datasets, including OAuth attacks.
+
+Ultimately, the challenge is to design sophisticated intrusion detection methods that identify subtle anomalies in protocols that grow increasingly complex.

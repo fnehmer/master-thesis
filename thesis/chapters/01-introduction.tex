@@ -1,0 +1,28 @@
+
+In the evolving landscape of internet services, the OAuth (Open Authorization) framework is an ever-growing popular tool that allows users to integrate their existing accounts holding personal data seamlessly into different online services. As OAuth offers diverse possibilities for various use cases to handle authorization, the standard has grown in complexity over time. There are formal analyses of the security of OAuth, which aim to improve the security of the standard itself \cite{fett2016comprehensive} by formally proving the security of the standard to unveil flaws. However, the implementation of this complex protocol still could lead to oversights, which could cause vulnerabilities in practice.
+
+A recent 2022 study by Philippaerts et al. shows that 97 of 100 popular OAuth providers leave at least one commonly known OAuth threat unmitigated, with an average of four unmitigated threats per provider \cite{philippaerts2022oauch}. This study shows that many OAuth implementations are still flawed, and it did not even include the realization of many thousands of OAuth clients, which potentially could also have flawed implementations. 
+
+Adding to that picture of the current OAuth threat landscape, the introduction of new browser security features leads to new emerging threats using other areas of browser feature sets. As demonstrated by the number one of the top ten web hacking techniques of 2022 published by the company PortSwigger \cite{kettle2022}, newer and more niche attack vectors like the misuse of cross-origin in-browser communication flows could be utilized to leak authorization data as well.
+
+This current situation in the threat landscape of OAuth is not hopeless in any way, more than that, this condition should be the reason that it gets addressed appropriately. Besides the efforts to update the standard to incorporate new security measures, one way to achieve more trust in operating OAuth services is to detect intrusion attempts through OAuth flaws as early as possible to allow OAuth providers to react adequately and reduce damages. This can be achieved by utilizing anomaly intrusion detection techniques, even identifying unknown attack vectors, which is especially useful in an ever-changing threat landscape.
+
+
+\section{Research Goals}
+This research includes two primary goals. The first goal is to provide an overview of the current threat landscape of the OAuth 2.0 protocol, including potential countermeasures by suggesting a classification. 
+
+Building upon the insights gained from evaluating the threat landscape, the second goal is to test the effectiveness of common anomaly-based intrusion detection techniques on the application layer data of the protocol. To achieve this goal, two clustering algorithms using the protocol data encoded into word embeddings are implemented and compared to each other by their effectiveness.
+
+
+\section{Outline}
+While this chapter served to introduce the issues with the current threat landscape of OAuth and the motivation and approach to address them, the subsequent chapters are structured as follows:
+
+Chapter \ref{chap:fundamental_knowledge} provides fundamental knowledge about the OAuth authorization framework, including its different modes of operation and its future outlook. It also introduces the theory of intrusion detection systems based on recent taxonomies. The chapter ends by describing the different algorithms utilized to implement the anomaly-based intrusion detection approach applied in this work. 
+
+Chapter \ref{chap:related_work} presents related research in the realm of OAuth security in general and intrusion detection approaches utilizing Word2Vec embeddings and clustering algorithms as this work applies them.
+
+Chapter \ref{chap:oauth_security} continues by laying out the different threats the implementation of OAuth bears and presents the current state of countermeasures to be applied. The chapter finishes with suggestions for classifications of the various threats in the context of their countermeasures.
+
+Chapter \ref{chap:experimental_analysis} starts by giving a detailed description of the implementation of the experiments, including the OAuth environment, the dataset generation, and the algorithmic intrusion detection method. It continues by presenting the effectiveness of the methods applied as the results of the experiments. It ends with a discussion of the results in the experimental environment.
+
+Chapter \ref{chap:conclusion} ends with a summary of this work and an outlook on future possible research topics.

@@ -5,7 +5,7 @@ docname="thesis"
 echo Building...
 
 pdflatex -synctex=1 -interaction=nonstopmode -file-line-error -recorder ${docname}.tex
-biber -f ${docname}
+biber ${docname}
 pdflatex -synctex=1 -interaction=nonstopmode -file-line-error -recorder ${docname}.tex
 pdflatex -synctex=1 -interaction=nonstopmode -file-line-error -recorder ${docname}.tex
 
