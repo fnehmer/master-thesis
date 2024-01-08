@@ -64,7 +64,7 @@ OAuth [RFC6749] is a widely used authentication protocol, which is typically use
 The tasks of this thesis are as follows: Firstly, a systematic literature study should be performed on existing properties and attacks on the OAuth protocol or its implementations. Secondly, the thesis should design protection strategies for the threats that are not sufficiently solved in existing solutions. Two options for this step are (i) the utilization of anomaly-based intrusion detection for OAuth and (ii) specification-based intrusion detection for OAuth. Thirdly, the thesis should evaluate the security of the designed architecture and compare it to other solutions.
 
 \chapter*{Abstract}
-OAuth 2.0 is an authorization framework that has rapidly grown in popularity over the last decade. Whenever internet users click a ``Login with...'' button on a webpage, they implicitly engage in the OAuth protocol and allow a webpage to access their often times confidential data stored at another service. Therefore, authorization providers and their consuming clients must provide a robust and secure implementation of the OAuth protocol, as well as network security measures to protect their users' data from attackers. To aid in this responsibility, this thesis presents an overview and classification of common threats and countermeasures when implementing the OAuth 2.0 protocol. This overview shows that flaws in OAuth leading to misuse of the redirection flow of the protocol are among the most impactful threats, and the most sophisticated countermeasures have been established to mitigate them. Based on these observations, this work presents and implements an intrusion detection approach to identify such attacks in a self-generated dataset. The approach utilizes Word2Vec embeddings to encode the HTTP application data of the network traffic into a numerical representation based on their context semantics. These embeddings then get clustered using the k-means and the self-organizing map algorithm to detect anomalies in the network data. The implemented approach resulted in a detection accuracy of 99,3\%, with a precision of 63\% and a yield of 100\%. The results show that the approach generally can sort out the scarce OAuth traffic but has room for improvement in detecting subtle differences inside the OAuth network traffic itself.
+OAuth 2.0 is an authorization framework that has rapidly grown in popularity over the last decade. Whenever internet users click a ``Login with...'' button on a webpage, they implicitly engage in the OAuth protocol and allow a webpage to access their often times confidential data stored at another service. Therefore, authorization providers and their consuming clients must provide a robust and secure implementation of the OAuth protocol, as well as network security measures to protect their users' data from attackers. To aid in this responsibility, this thesis presents an overview and classification of common threats and countermeasures when implementing the OAuth 2.0 protocol. This overview shows that flaws in OAuth leading to misuse of the redirection flow of the protocol are among the most impactful threats, and the most sophisticated countermeasures have been established to mitigate them. Based on these observations, this work presents and implements an intrusion detection approach to identify such attacks in a self-generated dataset. The approach utilizes word2vec embeddings to encode the HTTP application data of the network traffic into a numerical representation based on their context semantics. These embeddings then get clustered using the k-means and the self-organizing map algorithm to detect anomalies in the network data. The implemented approach resulted in a detection accuracy of 99,3\%, with a precision of 63\% and a yield of 100\%. The results show that the approach generally can sort out the scarce OAuth traffic but has room for improvement in detecting subtle differences inside the OAuth network traffic itself.
 
 \tableofcontents
 
@@ -102,35 +102,35 @@ OAuth 2.0 is an authorization framework that has rapidly grown in popularity ove
 
 
 % ===================================Anhang=====================================
-\appendix
-\setcounter{figure}{0}
-\renewcommand\thetable{A.\arabic{figure}}
-\setcounter{table}{0}
-\renewcommand\thetable{A.\arabic{table}}
-\newpage
+% \appendix
+% \setcounter{figure}{0}
+% \renewcommand\thetable{A.\arabic{figure}}
+% \setcounter{table}{0}
+% \renewcommand\thetable{A.\arabic{table}}
+% \newpage
 		
-% ===========================Selbstständigkeitserklärung======================
-\chapter*{Eidesstattliche Versicherung} % war: Selbständigkeitserklärung
-\vspace{1cm}
-%
-Hiermit versichere ich an Eides statt, dass ich die vorliegende Arbeit im
-Masterstudiengang Informatik selbstständig verfasst
-und keine anderen als die angegebenen Hilfsmittel – insbesondere keine
-im Quellenverzeichnis nicht benannten Internet-Quellen – benutzt
-habe. Alle Stellen, die wörtlich oder sinngemäß aus Veröffentlichungen
-entnommen wurden, sind als solche kenntlich gemacht. Ich versichere
-weiterhin, dass ich die Arbeit vorher nicht in einem anderen
-Prüfungsverfahren eingereicht habe.
+% % ===========================Selbstständigkeitserklärung======================
+% \chapter*{Eidesstattliche Versicherung} % war: Selbständigkeitserklärung
+% \vspace{1cm}
+% %
+% Hiermit versichere ich an Eides statt, dass ich die vorliegende Arbeit im
+% Masterstudiengang Informatik selbstständig verfasst
+% und keine anderen als die angegebenen Hilfsmittel – insbesondere keine
+% im Quellenverzeichnis nicht benannten Internet-Quellen – benutzt
+% habe. Alle Stellen, die wörtlich oder sinngemäß aus Veröffentlichungen
+% entnommen wurden, sind als solche kenntlich gemacht. Ich versichere
+% weiterhin, dass ich die Arbeit vorher nicht in einem anderen
+% Prüfungsverfahren eingereicht habe.
 
-\makeatletter
-Hamburg, den {\@date}
-\makeatother
+% \makeatletter
+% Hamburg, den {\@date}
+% \makeatother
 
-\vspace{2cm}
-\rule{6cm}{0.25pt}\\
-\makeatletter
-{\@author} \par
-\makeatother
+% \vspace{2cm}
+% \rule{6cm}{0.25pt}\\
+% \makeatletter
+% {\@author} \par
+% \makeatother
 
 
 

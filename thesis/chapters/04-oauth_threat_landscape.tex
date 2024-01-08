@@ -1,4 +1,4 @@
-This chapter presents an overview of the currently known threat landscape when applying the OAuth protocol. The goal is not only to provide an overview of the threat situation but also to build a base for the decision on which threat category the further experiments of this work focus. Section \ref{sec:oauth_threats} elaborates on every threat separately. The list is mainly based on the current draft for security best practices for OAuth from the OAuth task force at IETF \cite{lodderstedt2020oauth} and is enriched with examples and further explanations.
+This chapter presents an overview of the currently known threat landscape when applying the OAuth protocol. The goal is not only to provide an overview of the threat situation but also to build a base for the decision on which threat category the further experiments of this work focus. Section \ref{sec:oauth_threats} elaborates on every threat separately. The list is mainly based on the current draft for security best practices for OAuth from the OAuth task force at IETF \cite{lodderstedt2020oauth}.
 
 Section \ref{sec:oauth_countermeasures} showcases different countermeasures, which can be applied to mitigate the presented threats. 
 
@@ -6,7 +6,7 @@ Finally Section \ref{sec:oauth_classification} presents three classifications fo
 
 \section{Threats}
 \label{sec:oauth_threats}
-Over the 11 years of the existence of OAuth 2.0, there always has been effort dedicated to learning about threats and vulnerabilities, when applying the OAuth 2.0 protocol. When the standard was introduced in 2012 browsers did not have the feature set they provide today, which is important to consider, when analyzing current OAuth threats. Therefore, an elaborate source for getting information about the status of the OAuth threat landscape is the ongoing draft by the OAuth working group of IETF about the best current practice in OAuth security \cite{lodderstedt2020oauth}. As mentioned in Section \ref{subsec:fks_model} the draft is influenced by state-of-the-art research about OAuth security in a collaboration effort. This is the reason this section is mostly based on this draft and enriched with examples of other research work at appropriate places.
+Over the 11 years of the existence of OAuth 2.0, there always has been effort dedicated to learning about threats and vulnerabilities, when applying the OAuth 2.0 protocol. When the standard was introduced in 2012 browsers did not have the feature set they provide today, which is important to consider, when analyzing current OAuth threats. Therefore, an elaborate source for getting information about the status of the OAuth threat landscape is the ongoing draft by the OAuth working group of IETF about the best current practice in OAuth security \cite{lodderstedt2020oauth}. As mentioned in Section \ref{subsec:fks_model} the draft is influenced by state-of-the-art research about OAuth security in a collaboration effort. This is the reason this section is mostly based on this draft and enriched with observations of other research work at appropriate places.
 
 Every threat explained in this section receives an encoding in the form of \emph{T<number>} to reference them in later tables. These encodings can be found at the end of the headlines of the following paragraphs.
 
@@ -81,7 +81,7 @@ protection mechanisms against this type of threat.
 
 \subsection[PKCE Downgrade Attacks]{PKCE Downgrade Attacks (T8)}
 \label{threat:T8}
-If an authorization server is not implemented to require PKCE for all its
+If an authorization server is not implemented to require PKCE, which is a countermeasure explained later in Section \ref{counter:C1}, for all its
 flows, it is susceptible to being vulnerable to PKCE downgrade attacks
 \cite{philippaerts2022oauch}. Even if it is documented otherwise, attackers
 might try to omit PKCE parameters, as the current OAuth 2.0 standard does not
@@ -111,7 +111,7 @@ When the authorization server allows dynamic client registration, an attacker co
 	\url{https://valid-site.com/authorize?scope=invalid&redirect_uri=https://phishing-site.com/login&client_id=client_id_of_malicious_client}
 	\special{em:linewidth 0.4pt}
 	\linethickness{0.4pt}
-	\caption{Phishing request}
+	\caption{Phishing request with an invalid scope value, leading to an error state.}
 	\label{fig:phishing_requests}
 \end{figure}
 
@@ -133,9 +133,9 @@ Addressing the issue of the ever-evolving threat landscape of OAuth several coun
 As an extension to OAuth defined by RFC 7636, \emph{Proof Key for Code Exchange (PKCE)} is a technique to mitigate several OAuth threats \cite{bradley2015rfc}. The main problem PKCE solves for the authorization code grant is verifying that only the original client who started an OAuth flow receives the access token, so a stolen authorization code cannot just get exchanged with an access token by the entity who stole the code. Figure \ref{fig:pkce} shows the way PKCE works \cite{siriwardena_oauth_2020}:
 
 \begin{enumerate}
-	\item Initially, before the client redirects the resource owner\'s user agent to the authorization server, it generates a random string of length 43 at minimum, called the \emph{code\_verifier}. It then calculates the hash value of the \emph{code\_verifier} and encodes it with base64 without padding. The hash algorithm in use should be currently regarded as secure and known by the authorization server. The resulting value is called the \emph{code\_challenge}
+	\item Initially, before the client redirects the resource owner\'s user agent to the authorization server, it generates a random string of length 43 at minimum, called the \emph{code\_verifier}. It then calculates the hash value of the \emph{code\_verifier} and encodes it with base64 without padding. The hash algorithm in use should be currently regarded as secure and known by the authorization server. The resulting value is called the \emph{code\_challenge}.
 	
-	\item At redirection to the authorization server, the client appends the \emph{code\_challenge} and the hashing algorithm, which it has used to create the \emph{code\_challenge} to the redirection URL as query parameters.
+	\item At redirection to the authorization server, the client appends the \emph{code\_challenge} and the name of the hashing algorithm, which it has used to create the \emph{code\_challenge} to the redirection URL as query parameters.
 	
 	\item After successful authentication, the authorization server creates a record of \emph{code\_challenge} and the corresponding authorization code it generates and redirects the user agent back to the client. Alternatively, it may append the \emph{code\_challenge} to the authorization code and create the record this way.
 	
@@ -157,38 +157,38 @@ The PKCE mechanism mitigates several threats and vulnerabilities. It mitigates c
 	\label{fig:pkce}
 \end{figure}
 
-\subsection[Random value state]{Random value state (C2)}
+\subsection[Random Value State]{Random Value State (C2)}
 \label{counter:C2}
-Another method to protect against Cross-Site request forgery is by taking advantage of the state parameter the OAuth standard offers. When the client initiates an authorization request, it generates a random value of sufficient length, attaches it to the current session and sets it as the state parameter for the request. After authentication, the authorization server has to attach the previously received state parameter to the redirection URI as a query parameter. The client can now validate the received state value with the one it attached to its session earlier to ensure the redirection stems from the authorization flow it initiated \cite{ferry2015security}. When PKCE for the authorization code grant is already implemented, this measure does not add any benefit regarding CSRF protection \cite{bradley2015rfc}. In conclusion, the usages of state's main difference to PKCE is that the client knows that the received authorization code is connected to its initial authorization request before redeeming an access token with the \emph{code\_verifier}, where the authorization server relates the client's requests to each other with the \emph{code\_challenge} and the \emph{code\_verifier}.
+Another method to protect against cross-site request forgery is by taking advantage of the state parameter the OAuth standard offers. When the client initiates an authorization request, it generates a random value of sufficient length, attaches it to the current session and sets it as the state parameter for the request. After authentication, the authorization server has to attach the previously received state parameter to the redirection URI as a query parameter. The client can now validate the received state value with the one it attached to its session earlier to ensure the redirection stems from the authorization flow it initiated \cite{ferry2015security}. When PKCE for the authorization code grant is already implemented, this measure does not add any benefit regarding CSRF protection \cite{bradley2015rfc}. In conclusion, the usages of state's main difference to PKCE is that the client knows that the received authorization code is connected to its initial authorization request before redeeming an access token with the \emph{code\_verifier}, where the authorization server relates the client's requests to each other with the \emph{code\_challenge} and the \emph{code\_verifier}.
 
 
-\subsection[Invalidation of access tokens]{Invalidation of access tokens (C3)}
+\subsection[Invalidation of Access Tokens]{Invalidation of Access Tokens (C3)}
 \label{counter:C3}
 The OAuth framework requires an authorization code to be redeemed only once for an access token. Therefore, an authorization code needs to be invalidated after its first usage. However, this does not stop an attacker from receiving an access token with a stolen authorization code before the valid user does it. The original OAuth 2.0 standard recommends invalidating a previous access token if there was an attempt to receive an access token at least twice for the same authorization code \cite{hardt2012rfc}. Invalidation of access tokens if an authorization code gets redeemed twice helps mitigate the threats of credential leakage via referer headers and credential leakage via browser history \cite{lodderstedt2020oauth}, as for these threats, exposed authorization codes were already redeemed in most cases.
 
-\subsection[Simple string comparision]{Simple string comparision (C4)}
+\subsection[Simple String Comparision]{Simple string comparision (C4)}
 \label{counter:C4}
-A technique to completely circumvent the threat of insufficient redirect URI validation is to disallow whitelisting redirect URIs using regular expressions. Instead, exact string comparison is a way to prevent tampering with the redirect URI parameter \cite{lodderstedt2020oauth}.
+A technique to completely circumvent the threat of insufficient redirect URI validation is to disallow whitelisting redirect URIs using regular expressions. Instead, exact string comparison is a way to prevent most types of tampering with the redirect URI parameter \cite{lodderstedt2020oauth}.
 
-\subsection[Avoid usage of grant types]{Avoid usage of grant types (C5)}
+\subsection[Avoid Usage of Grant Types]{Avoid usage of grant types (C5)}
 \label{counter:C5}
-Threats like credential leakage via referer headers or browser history can be avoided when the implicit grant is not used at all, as the access token would not be exposed in the URI of a request. Access token injection using the implicit grant makes it easy for any attacker to circumvent CSRF protection through the state parameter (see Section \ref{counter:C2}) since, for the client, it does not make a difference what access token is used for the state check, so an adversary could just start a new implicit grant interaction and inject the token there with a valid state \cite{lodderstedt2020oauth}. For these reasons, the OAuth task force removed the implicit grant in the draft for OAuth 2.1 \cite{hardt2023rfc}. In the past, the main benefit of the implicit grant was that it was possible to implement it for clients that did not utilize cross-origin resource sharing (CORS). CORS was finalized in 2014 by the W3C and superseded by the fetch standard afterward \cite{vanKesteren2014}. As the OAuth standard dates back to 2012 \cite{hardt2012rfc}, the implicit grant could be implemented for applications that did not support CORS yet.
+Threats like credential leakage via referer headers or browser history can be severely mitigated when the implicit grant is not used at all, as the access token would not be exposed in the URI of a request. Access token injection using the implicit grant makes it easy for any attacker to circumvent CSRF protection through the state parameter (see Section \ref{counter:C2}) since, for the client, it does not make a difference what access token is used for the state check, so an adversary could just start a new implicit grant interaction and inject the token there with a valid state \cite{lodderstedt2020oauth}. For these reasons, the OAuth task force removed the implicit grant in the draft for OAuth 2.1 \cite{hardt2023rfc}. In the past, the main benefit of the implicit grant was that it was possible to implement it for clients that did not utilize cross-origin resource sharing (CORS). CORS was finalized in 2014 by the W3C and superseded by the fetch standard afterward \cite{vanKesteren2014}. As the OAuth standard dates back to 2012 \cite{hardt2012rfc}, the implicit grant could be implemented for applications that did not support CORS yet.
 
-\subsection{Constrained access tokens}
+\subsection{Constrained Access Tokens}
 \label{counter:C6_7}
 This countermeasure aims to harden the protocol against the misuse of stolen access tokens if they are leaked, for example, at the resource server or through credential leakage via the browser history and or referer headers. It reaches this goal by narrowing the access permissions of the access token in two ways \cite{lodderstedt2020oauth}:
 \begin{itemize}
-	\item \emph{Sender-constrained access token (C6)}: The token contains cryptographical material to identify the client who redeems the access token, which opens the possibility of only allowing specific clients.
-	\item \emph{Audience-constrained access token (C7)}: Access tokens are constrained to particular resource servers. The resource owner executes the audience configuration at the resource server, and the resource server performs the audience verification. If the access token, in addition, bears user-identifying data, different audiences can be defined at the resource server level to further restrain access to the protected data.
+	\item \emph{Sender-constrained Access Token (C6)}: The token contains cryptographical material to identify the client who redeems the access token, which opens the possibility of only allowing specific clients.
+	\item \emph{Audience-constrained Access Token (C7)}: Access tokens are constrained to particular resource servers. The resource owner executes the audience configuration at the resource server, and the resource server performs the audience verification. If the access token, in addition, bears user-identifying data, different audiences can be defined at the resource server level to further restrain access to the protected data.
 \end{itemize}
 
  
-\subsection[Issuer identification]{Issuer identification (C8)}
+\subsection[Issuer Identification]{Issuer Identification (C8)}
 \label{counter:C8}
 Per default, the OAuth authorization grants do not include mechanisms for clients to identify an authorization server, which sends them an authorization response through redirection. This circumstance leads to threats like Mix-Up attacks when multiple authorization servers are involved. Issuer identification has been introduced to tackle this issue with RFC9207 in 2022. The issuer identifier \emph {iss} is a parameter that must be sent to the client in every response, even if it is an error response. The \emph{iss} parameter contains the URL, which points to the metadata of the authorization server. This metadata has to include an \emph{issuer} property, which contains a value identical to the value of the \emph{iss} property. The client, which supports issuer identification, has to store the identifier locally when initiating an interaction with an authorization server. The client then must compare the stored value with the one it receives from the authorization response with a simple string comparison. The client is also responsible for ensuring that every authorization server it interacts with holds a unique issuer identifier \cite{meyer2022rfc}.
 
 
-\subsection{Implementation details}
+\subsection{Implementation Details}
 \label{counter:C9_10_11_12_13_14}
 
 There are several countermeasures that one can categorize as implementation details, as they are applied through small decisions during client or authorization server implementation. The following is a brief list of these measures and the classification of which involved party is responsible for implementing the measure.
@@ -210,7 +210,7 @@ Malicious advertisements in iframes or attacker-generated hyperlinks on pages an
 
 \end{itemize}
 
-\subsection{General web security countermeasures}
+\subsection{General Web Security Countermeasures}
 \label{counter:C15_16}
 After laying out several mitigations for attack vectors of OAuth, there are still general web security threats, which are especially important for OAuth, like clickjacking or open redirections. The reason why these common web security vulnerabilities are critical in the case of OAuth has been laid out in their specific sections. The countermeasures for those types of vulnerabilities, however, are very context-specific and are out of the scope of this work. Hence, in further portrayals of threats and countermeasures in this work, they are described as countermeasures against clickjacking (C16), and open redirect (C15), but do not include specifics.
 
@@ -218,7 +218,7 @@ After laying out several mitigations for attack vectors of OAuth, there are stil
 \label{sec:oauth_classification}
 After laying out the threats and their respecting countermeasures, it is evident that the OAuth authorization framework tries to solve a lot of practical authorization use cases at once which leads to different threats in different situations, requiring adequate countermeasures. To form a general, even more tangible overview of the threat situation of OAuth, this work proceeds to provide different perspectives on the threat landscape, as well as a broad categorization of similar threat types.
 
-\subsection{Threats and their countermeasures}
+\subsection{Threats and their Countermeasures}
 
 The first classification displayed in Table \ref{tab:txc} is visualizing, which countermeasure mitigates aspects of which threat when using OAuth. The table shows that most countermeasures are specific to single threats. However, there are two countermeasures, which mitigate at least three threats. These countermeasures are mandatory PKCE and avoiding the usage of specific grant types. Looking at the problems these two countermeasures solve, one can identify the two main weaknesses of the OAuth 2.0 standard. The first one being grant types like the implicit grant, which communicate confidential messages via the front-channel. The second weakness being the session integrity of the protocol, as multiple connections are involved via redirections. Both these countermeasures will be enforced by the OAuth 2.1 standard \cite{hardt2023rfc}, which makes conforming implementations potentially a lot more secure in the future.
 
@@ -245,8 +245,8 @@ The first classification displayed in Table \ref{tab:txc} is visualizing, which 
 	\end{tabular}
 	\end{table}
 
-\subsection{Threats by mitigation responsibility}
-Another way to put the threat landscape into perspective is by categorizing the different threats by the entities, which are responsible for mitigation. Depicted in Table \ref{tab:mitigation_responsibility} it is visible, that most threats need to be mitigated by the client and the authorization server together. This is not surprising as one goal of OAuth is to provide a modular authorization workflow, so the resource server for example only needs to provide a token verification ability for the protocol. Important to note is that most countermeasures are enforced by the authorization server as the client is more or less a consumer of the authorization service. If an authorization server decides to enforce countermeasures like PKCE (\hyperref[counter:C1]{C1}) a client has to adapt to this requirement. Therefore even if many of the countermeasures need to be realized by the client and authorization server together, in practice the authorization server bears the main responsibility for fulfilling mitigation efforts. An additional aspect of the table to consider is that there are still threat aspects, that only the client can handle. General web security threats like unvalidated redirects and forwards (open redirects) and clickjacking are threats that could be chained together with other OAuth threats for exploitation. These are examples of dangers the authorization server cannot influence.
+\subsection{Threats by Mitigation Responsibility}
+Another way to put the threat landscape into perspective is by categorizing the different threats by the entities, which are responsible for mitigation. Depicted in Table \ref{tab:mitigation_responsibility} it is visible, that most threats need to be mitigated by the client and the authorization server together. This is not surprising as one goal of OAuth is to provide a modular authorization workflow, so the resource server for example only needs to provide a token verification ability for the protocol. Important to note is that most countermeasures are enforced by the authorization server as the client is more or less a consumer of the authorization service. If an authorization server decides to enforce countermeasures like mandatory PKCE a client has to adapt to this requirement. Therefore even if many of the countermeasures need to be realized by the client and authorization server together, in practice the authorization server bears the main responsibility for fulfilling mitigation efforts. An additional aspect of the table to consider is that there are still threat aspects, that only the client can handle. General web security threats like unvalidated redirects and forwards (open redirects) and clickjacking are threats that could be chained together with other OAuth threats for exploitation. These are examples of dangers the authorization server cannot influence.
 
 \begin{table}[H]
 	\caption{Classification of threats by mitigation responsibility. \emph{The encoding C1-C16 corresponds to the countermeasures described in Section \ref{sec:oauth_countermeasures}}.}
@@ -271,7 +271,7 @@ Another way to put the threat landscape into perspective is by categorizing the 
 	\end{tabular}
 	\end{table}
 
-\subsection{Threats by properties in common}
+\subsection{Threats by Properties in Common}
 Another way for classification proposed by this work is to sort the different threats by common properties to determine threat categories and possibly identify more impactful groups of threats. One possible categorization is portrayed in Figure \ref{fig:threat_taxonomy}:
 \begin{enumerate}
 	\item \emph{Credential leakage and session hijacking}: Threats . that have in common that through different web technologies, like HTTP, HTML, and browser features such as history logs and certain implementation flaws, the credentials of a user, or an active session could get leaked to an adversary. These threats must be mitigated by different mechanisms these web technologies offer, like strict content security policies, adequate referer header policies and measures that prevent the use of stolen authorization codes and access tokens. 

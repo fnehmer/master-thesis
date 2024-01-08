@@ -8,7 +8,7 @@ Section \ref{sec:impl_analysis} continues with describing the implementation of 
 Finally Section \ref{sec:exp_results} presents and discusses the results of the implemented intrusion detection approach on the generated dataset.
 
 
-\section{Implementation of the data generation environment}
+\section{Implementation of the Data Generation Environment}
 \label{sec:exp_setup}
 
 An essential piece for this research and its experiments is a complete testing environment for OAuth as at the time of this writing a dataset of network logs with specific attacks on OAuth does not exist. To generate a dataset to analyze it, an experimental environment was implemented containing multiple components as illustrated in figure \ref{fig:experimental_setup}. It consists of three main parts, the first part being the main OAuth services, which are the authorization server, the resource server, and the client, to make OAuth network traffic in general possible. The second part is the dataset generation part, which is done through fuzzing requests in the OAuth environment, which produces logs in the form of \emph{.pcap}-files through the logger services. The third and last part is the analysis part, which is initialized through the preprocessing of zeek, which produces several log files from which the created \emph{http.log}-files are getting processed in the analyzer component. The analyzer component executes the implemented algorithms to detect anomalies. It consists of an encoding step, where some textual data of the \emph{http.log} file get converted to a numerical representation using word embeddings, followed by clustering algorithms that try to detect anomalies in the encoded data.
@@ -23,7 +23,7 @@ An essential piece for this research and its experiments is a complete testing e
 	\label{fig:experimental_setup}
 \end{figure}
 
-\subsection{OAuth setup}
+\subsection{OAuth Setup}
 For this first part, an OAuth environment was implemented, which consists of several subsystems that are needed to execute the OAuth protocol flow. It consists of two independent networks. The first network contains the authorization provider, resource server and a logging service, and the second network contains the OAuth client service and a logging service. The loggers produce \emph{.pcap}-files of all activity in their network using the popular tool \emph{tcpdump}, which is already available in most UNIX-based operating systems. The OAuth authorization framework is mostly modular. Therefore, the network logs are divided between the authorization server and the client, as in practice, mostly two different parties run these services. 
 
 \subsubsection{Authorization Server and Resource Server}
@@ -54,7 +54,7 @@ window.onload = function() {
 \end{lstlisting}
 \end{minipage}
 
-\subsection{Network setup and logging}
+\subsection{Network Setup and Logging}
 All services are hosted using containers in a docker environment. Technically these services are part of the same network at the docker host they are run on, but the logging services build overlay networks on the services they are observing. As visualized in figure \ref{fig:experimental_setup} there exist two logging services, one for the authorization and resource server and one for the client network. When the experiment environment is active, the logging services stream all network events to a \emph{.pcap}- file, which is accessible at the docker host through a volume. All communication is executed without TLS to be able to analyze all packets. In a real-world scenario this would not be the case, but mechanisms like internal proxies, who are acting as man-in-the middle would be able to inspect the network traffic unencrypted in that case as well.
 
 \begin{minipage}\linewidth
@@ -103,14 +103,14 @@ The first attack implemented is making the victim start an OAuth flow using the 
 \subsubsection{Arbitrary redirect URI using \emph{Evil Slash}}
 The evil slash attack is based on the fact that the parsing of URLs of browsers might mismatch the way the parser for a whitelist parses a given URL. There are two examples given by the research of Wang et al. that are related to handling forward and backward slashes as path separators. Suppose either the whitelist parser or the browser URL parser treats some slash as a path separator while the other parser does not. In that case, this behavior can be exploited to circumvent the whitelist of the authorization server. These two versions were simulated in the experiments by crafting a random URL, which relies on this type of vulnerability.
 
-\subsection{Network data generation}
+\subsection{Network Data Generation}
 The above-described services create a complete environment for executing valid OAuth flows and attacks on OAuth. To generate the data set for the analysis, a generator script was implemented in Python to utilize the whole setup to produce network logs. The approach for the generation is to mostly produce random valid traffic in the network. Meanwhile, at random some amount of attacks are executed as well, with a probability of $\approx 1\%$, to simulate subtle attacks on the authorization. As the logging services are always listening, they produce network log files, which are then extracted after a reasonable amount of time.
 
-\section{Implementation of analysis approaches}
+\section{Implementation of Analysis Approaches}
 \label{sec:impl_analysis}
-The last remaining part of the experimental setup is the intrusion detection mechanism. Based on the type of attacks implemented the decision was made, to analyze the logs produced by the authorization server, because the attack traffic appears in the network of this entity. The input for this part of the experiments is therefore the network log file produced by the logger of the authorization server overlay network. This file is passed to the data preprocessing step initiated by \emph{zeek}. The approach for the next step after the preprocessing, the detection step is based on previous studies \cite{corizzo2020feature}, which had success in utilizing word2vec word embeddings to extract meaningful features from network data, even in small datasets. Therefore the same idea was chosen for this work to encode textual data, to enable clustering methods of the logs to reveal anomalies in the network data.
+The last remaining part of the experimental setup is the intrusion detection mechanism. Based on the type of attacks implemented the decision was made, to analyze the logs produced by the authorization server, because the attack traffic appears in the network of this entity. The input for this part of the experiments is therefore the network log file produced by the logger of the authorization server overlay network. This file is passed to the data preprocessing step initiated by \emph{zeek}. The approach for the next step after the preprocessing, the detection step is based on previous studies \cite{corizzo2020feature}, which had success in utilizing word2vec word embeddings to extract meaningful features from system call data, even in small datasets. Therefore the same idea was chosen for this work to encode textual data, to enable clustering methods of the logs to reveal anomalies in the textual network data.
 
-\subsection{Data preprocessing}
+\subsection{Data Preprocessing}
 \label{subsec:dataset}
 The first step of processing the data is to run it through the \emph{zeek IDS} to produce \emph{zeek-logs}. Zeek splits the data into different processed log files depending on the protocol of the packets. Since this research focuses on attacks on a specific protocol in the application layer, all logs, except for the \emph{http.log}, get omitted. Another important detail is, that while producing the zeek-logs a \emph{zeek-script} is loaded to preserve the HTTP headers in the HTTP log of zeek, as the headers include the labeling for the attacks and are not included by default in the zeek \emph{http.log}. For this purpose, an existing zeek script has been forked and slightly adjusted for the experiment environment \cite{hall2012zeek}. The next steps of processing and the entire analysis from now on are executed using Python and popular data science libraries, which are mostly available for this programming language. Zeek supports the \emph{zat} library for Python, which allows for converting the zeek log into a data frame for the popular data-science libraries \emph{pandas} and \emph{numpy}. After converting the zeek logs to a data frame a column gets added called \emph{is\_attack}. The column holds a flag for the row in the log if it is involved in an attack. The values for \emph{is\_attack} get generated, by checking if the \emph{client\_header} row includes a header called \emph{X-Is-Attack}. Afterward, the \emph{X-Is-Attack}-header gets cleared from the header columns, as they are not a natural part of the traffic. The resulting matrix contains 34 columns, which carry different kinds of data like the URI of the request, the source and destination IPs, the HTTP method used, and many more (compare Table \ref{tab:dataframe} for a full list of columns).
 
@@ -124,8 +124,8 @@ The first step of processing the data is to run it through the \emph{zeek IDS} t
 		\end{tabular}
 		\end{table}
 
-\subsection{Encoding of URI data using word embeddings}
-The attacks in this experiment (see Section \ref{subsec:attacks}) are based on tampering with the application layer data by manipulating the HTTP request-line and its query parameters. This data, therefore, is crucial for achieving the goal of detecting anomalies in the network logs. Hence, the previously prepared data frame columns, which hold the relevant data, are the \emph{uri} and the \emph{method} columns. Listing \ref{lst:tokenization} now shows the first necessary step for implementing the Word2Vec embeddings, the tokenization for creating the input for the word2vec model. Line 2 of the listing shows an important decision for the tokenization approach. The URI string is split into multiple parts by isolating every query parameter and separating every value from its query parameter key. 
+\subsection{Encoding of URI Data using Word Embeddings}
+The attacks in this experiment (see Section \ref{subsec:attacks}) are based on tampering with the application layer data by manipulating the HTTP request-line and its query parameters. This data, therefore, is crucial for achieving the goal of detecting anomalies in the network logs. Hence, the previously prepared data frame columns, which hold the relevant data, are the \emph{uri} and the \emph{method} columns. Listing \ref{lst:tokenization} now shows the first necessary step for implementing the word2vec embeddings, the tokenization for creating the input for the word2vec model. Line 2 of the listing shows an important decision for the tokenization approach. The URI string is split into multiple parts by isolating every query parameter and separating every value from its query parameter key. 
 
 \begin{minipage}\linewidth
 	\begin{lstlisting}[language={python}, caption={Tokenization of the features for word embeddings}, label={lst:tokenization}] 
@@ -137,7 +137,7 @@ The attacks in this experiment (see Section \ref{subsec:attacks}) are based on t
 \end{minipage}
 
 
-With the now acquired list of token combinations, a Word2Vec model is trained using the \emph{gensim.models} library \cite{gensim2021}. The model's hyperparameters get configured by setting the parameters of the constructor of the Word2Vec class. In this case, shown in Listing \ref{lst:word2vec} in line 1, the \emph{min\_count} variable is set to \emph{1} because, especially for anomaly detection, it makes sense to include one-time occurrences of words for the model's training, which would be omitted otherwise. The \emph{window\_size} defines what distance of words is still considered as the context of a given word. Finding the optimal value for this hyperparameter is the subject of the experiments and is discussed later in the results. The \emph{vector\_size} parameter determines the size of the dimension of the word embeddings produced by the model. Higher values produce more nuanced embeddings but also require more computational effort. Similar previously cited research by Zhou et al. \cite{zhuo2017network} uses a vector size of 300, which is why this number was chosen for the experiments of this work as well. The last parameter, the \emph{workers} parameter, describes the number of CPU cores to be involved in the training in parallel. With the previously generated tokens and the chosen hyperparameters, a Word2Vec model gets trained, and the embeddings are created and saved to a new column called \emph{embeddings} (see lines 4-6).
+With the now acquired list of token combinations, a Word2Vec model is trained using the \emph{gensim.models} library \cite{gensim2021}. The model's hyperparameters get configured by setting the parameters of the constructor of the word2vec class. In this case, shown in Listing \ref{lst:word2vec} in line 1, the \emph{min\_count} variable is set to \emph{1} because, especially for anomaly detection, it makes sense to include one-time occurrences of words for the model's training, which would be omitted otherwise. The \emph{window\_size} defines what distance of words is still considered as the context of a given word. Finding the optimal value for this hyperparameter is the subject of the experiments and is discussed later in the results. The \emph{vector\_size} parameter determines the size of the dimension of the word embeddings produced by the model. Higher values produce more nuanced embeddings but also require more computational effort. Similar research by Zhou et al. \cite{zhuo2017network} uses a vector size of 300, which is why this number was chosen for the experiments of this work as well. The last parameter, the \emph{workers} parameter, describes the number of CPU cores to be involved in the training in parallel. With the previously generated tokens and the chosen hyperparameters, a Word2Vec model gets trained, and the embeddings are created and saved to a new column called \emph{embeddings} (see lines 4-6).
 
 
 \begin{minipage}\linewidth
@@ -190,7 +190,7 @@ Line 3 applies the algorithm utilizing the previously initialized \emph{som} cla
 	\end{lstlisting}
 \end{minipage}
 
-\subsection{Performance metrics}
+\subsection{Performance Metrics}
 \label{subsec:performance_metrics}
 
 Several standard performance metrics are employed on the clustering results to evaluate the effectiveness of the intrusion detection approaches. The key performance metrics considered in this work are \emph{yield}, \emph{accuracy} and \emph{precision}. These key metrics are derived from four more general measures:
@@ -215,7 +215,7 @@ The yield evaluates how many records are identified as an attack out of all atta
 \label{sec:exp_results}
 This section describes the results of the dataset generation and intrusion detection approaches conducted in this work.
 
-\subsection{Dataset generation}
+\subsection{Dataset Generation}
 The resulting dataset, as described in Section \ref{subsec:dataset}, consists of records representing the HTTP network traffic over a fixed period of time. For this analysis, a dataset containing 3627 records is generated containing 44 records, which are requests involved in the attacks on the OAuth protocol. Thus, the resulting attack rate in this generated dataset amounts to 1,12\%. Table \ref{tab:record_attack} shows an example of an attack record, while Table \ref{tab:record_traffic} shows examples of non-attack records.
 
 \begin{table}[H]
@@ -242,7 +242,7 @@ The resulting dataset, as described in Section \ref{subsec:dataset}, consists of
 	\end{tabular}
 \end{table}
 
-\subsection{Word2Vec embeddings}
+\subsection{Word2Vec Embeddings}
 The tuning of the main hyperparameter for the word2vec embeddings, namely the window size, led to the result that experimenting with it did not influence the performance of the intrusion detection for both clustering algorithms in this environment of generated data. This circumstance could result from the short repetitive strings given to the algorithm as input, so extending the window size to include more than one neighboring word does not make a difference. The result of the embeddings is showcased in Figure \ref{fig:word_embeddings3D} normalized to three dimensions. It is visible that one large group of records exists with several small outlier groups with a relatively large distance to the cluster. This observation shows that the encoding using word2vec embeddings profoundly impacts the results, as there are already visually distinguishable clusters of records, which need to be identified by the clustering algorithms in the next step.
 
 \begin{figure}[H]
@@ -255,7 +255,7 @@ The tuning of the main hyperparameter for the word2vec embeddings, namely the wi
 	\label{fig:word_embeddings3D}
 \end{figure}
 
-\subsection{Overall anomaly detection results}
+\subsection{Overall Anomaly Detection Results}
 The overall results after clustering are showcased in Table \ref{tab:results}. Both clustering algorithms achieve the same results with a high accuracy of >99\% but, in relation, only attain a low precision score after the word2vec embedding. The main observation which leads to these results is that the implemented approaches perform well in filtering out traffic not involved in OAuth but do not achieve the same quality of detection in more subtle differences in the OAuth traffic itself. Also, achieving the same results for both clustering algorithms could mean that the main impact for anomaly detection in this scenario lies in the encoding step with word2vec. These observations are discussed further in Section \ref{subsec:results_discussion} after the following sections explain how the clustering algorithms achieve their results.
 
 \begin{table}[H]
@@ -322,7 +322,7 @@ The self-organizing maps clustering approach leads to the same results as the k-
 \end{figure}
 
 
-\subsection{Discussion of methodology and results}
+\subsection{Discussion of Methodology and Results}
 \label{subsec:results_discussion}
 
 The results clearly show that the embedding approach greatly impacts the results in the given scenario. The scenario itself, however, is artificial and created through simulating traffic. This approach is arguably too sparse, but a dataset containing specific attacks on the OAuth protocol was not available at the time of this writing. Hence, this model for intrusion detection was created for this work. The dataset simulates real-world HTTP packet data using valid implementations of the OAuth protocol. It does not model metadata of the network traffic, as it does not model real-world timings and flow data of different actors and attackers accessing a network. Consequently, this research focuses on analyzing the semantics of the involved HTTP application data instead of the states and transitions of the protocol flow. 
