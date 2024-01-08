@@ -7,7 +7,7 @@
     bibliography=totoc,
     numbers=noenddot,       % Entfernt den letzten Punkt der Kapitelnummern.
     open=any,               % Kapitel kann auf jeder Seite beginnen.
-%   final                   % Entfernt alle todonotes und den Entwurfstempel.
+	final                   % Entfernt alle todonotes und den Entwurfstempel.
     ]{scrreprt}
 % ===================================Praeambel==================================
 \include{stylesvs}
@@ -15,7 +15,7 @@
 
 \title{Intrusion detection for OAuth}
 \author{Florian Nehmer}
-\date{06.01.2023} % Falls ein bestimmtes Datum eingesetzt werden soll, einfach
+\date{08.01.2023} % Falls ein bestimmtes Datum eingesetzt werden soll, einfach
                     %  diese Zeile aktivieren.
 
 \begin{document}
@@ -24,38 +24,38 @@
 	\includegraphics[width=6.8cm]{./pic/up-uhh-logo-u-2010-u-farbe-u-rgb.pdf}
 	\begin{center}\Large
 		\vfill
-		Masterarbeit
+		Master Thesis
 		\vfill
 		\makeatletter
 		{\Large\textsf{\textbf{\@title}}\par}
 		\makeatother
 		\vfill
-		vorgelegt von
+		presented by
 		\par\bigskip
 		\makeatletter
 		{\@author} \par
 		\makeatother
-		Matrikelnummer 6417446 \par
-		Studiengang Informatik
+		Student ID 6417446 \par
+		Course of Studies M.Sc. Informatik
 		\vfill
-		MIN-Fakultät \par
-		Fachbereich Informatik
+		MIN Faculty \par
+		Department of Informatics
 		\vfill
 		\makeatletter
-		eingereicht am {\@date}
+		submitted on {\@date}
 		\makeatother
 		\vfill
-		Betreuer: Pascal Wichmann, M.\,Sc. Informatik \par
-		Erstgutachter: Prof. Dr.-Ing. Hannes Federrath \par
-		Zweitgutachter: Pascal Wichmann, M.\,Sc. Informatik.
+		Supervisor: M.\,Sc. Pascal Wichmann \par
+		First Reviewer: Prof. Dr.-Ing. Hannes Federrath \par
+		Second Reviewer: M.\,Sc. Pascal Wichmann
 	\end{center}
-	\ifoptionfinal{}{
-	\begin{tikzpicture}[remember picture, overlay]
-		\node[draw, red, font=\ttfamily\bfseries\Large, xshift=30mm, yshift=238mm,
-			rotate=340, text centered, text width=6cm, very thick, rounded
-			corners=4mm] at (current page.south) {Entwurf vom \today};
-	\end{tikzpicture}
-	}
+	% \ifoptionfinal{}{
+	% \begin{tikzpicture}[remember picture, overlay]
+	% 	\node[draw, red, font=\ttfamily\bfseries\Large, xshift=30mm, yshift=238mm,
+	% 		rotate=340, text centered, text width=6cm, very thick, rounded
+	% 		corners=4mm] at (current page.south) {Entwurf vom \today};
+	% \end{tikzpicture}
+	% }
 \end{titlepage}% }}}
 
 \chapter*{Research task}
@@ -64,7 +64,7 @@ OAuth [RFC6749] is a widely used authentication protocol, which is typically use
 The tasks of this thesis are as follows: Firstly, a systematic literature study should be performed on existing properties and attacks on the OAuth protocol or its implementations. Secondly, the thesis should design protection strategies for the threats that are not sufficiently solved in existing solutions. Two options for this step are (i) the utilization of anomaly-based intrusion detection for OAuth and (ii) specification-based intrusion detection for OAuth. Thirdly, the thesis should evaluate the security of the designed architecture and compare it to other solutions.
 
 \chapter*{Abstract}
-OAuth 2.0 is an authorization framework that has rapidly grown in popularity over the last decade. Whenever internet users click a ``Login with...'' button on a webpage, they implicitly engage in the OAuth protocol and allow a webpage to access their sometimes confidential data somewhere stored at another service. Therefore, authorization providers and their consuming clients must provide a robust and secure implementation of the OAuth protocol, as well as network security measures to protect their users' data from attackers. To aid in this responsibility, this thesis presents an overview and classification of common threats and countermeasures when implementing the OAuth 2.0 protocol. This overview shows that flaws in OAuth leading to misuse of the redirection flow of the protocol are among the most impactful threats, and the most sophisticated countermeasures have been established to mitigate them. Based on these observations, this work presents and implements an intrusion detection approach to identify such attacks in a self-generated dataset. The approach utilizes Word2Vec embeddings to encode the HTTP application data of the network traffic into a numerical representation based on their context semantics. These embeddings then get clustered using the k-means and the self-organizing map algorithm to detect anomalies in the network data. The implemented approach resulted in a detection accuracy of 99,3\%, with a precision of 63\% and a yield of 100\%. The results show that the approach generally can sort out the scarce OAuth traffic but has room for improvement in detecting subtle differences inside the OAuth network traffic itself.
+OAuth 2.0 is an authorization framework that has rapidly grown in popularity over the last decade. Whenever internet users click a ``Login with...'' button on a webpage, they implicitly engage in the OAuth protocol and allow a webpage to access their often times confidential data stored at another service. Therefore, authorization providers and their consuming clients must provide a robust and secure implementation of the OAuth protocol, as well as network security measures to protect their users' data from attackers. To aid in this responsibility, this thesis presents an overview and classification of common threats and countermeasures when implementing the OAuth 2.0 protocol. This overview shows that flaws in OAuth leading to misuse of the redirection flow of the protocol are among the most impactful threats, and the most sophisticated countermeasures have been established to mitigate them. Based on these observations, this work presents and implements an intrusion detection approach to identify such attacks in a self-generated dataset. The approach utilizes Word2Vec embeddings to encode the HTTP application data of the network traffic into a numerical representation based on their context semantics. These embeddings then get clustered using the k-means and the self-organizing map algorithm to detect anomalies in the network data. The implemented approach resulted in a detection accuracy of 99,3\%, with a precision of 63\% and a yield of 100\%. The results show that the approach generally can sort out the scarce OAuth traffic but has room for improvement in detecting subtle differences inside the OAuth network traffic itself.
 
 \tableofcontents
 
@@ -112,20 +112,15 @@ OAuth 2.0 is an authorization framework that has rapidly grown in popularity ove
 % ===========================Selbstständigkeitserklärung======================
 \chapter*{Eidesstattliche Versicherung} % war: Selbständigkeitserklärung
 \vspace{1cm}
-
-\todo[noline]{Bitte verwenden Sie hier in jedem Fall die offizielle von der Prüfungsbehörde vorgegebene Formulierung der Selbständigkeitserklärung.}
 %
-Hiermit versichere ich an Eides statt, dass ich die vorliegende Arbeit
-selbstständig verfasst und keine anderen als die angegebenen Hilfsmittel –
-insbesondere keine im Quellenverzeichnis nicht benannten Internet-Quellen –
-benutzt habe. Alle Stellen, die wörtlich oder sinngemäß aus Veröffentlichungen
-entnommen wurden, sind als solche kenntlich gemacht. Ich versichere weiterhin,
-dass ich die Arbeit vorher nicht in einem anderen Prüfungsverfahren eingereicht
-habe und die eingereichte schriftliche Fassung der auf dem elektronischen
-Speichermedium entspricht.
-
-Ggf. streichen: Ich bin damit einverstanden, dass meine Abschlussarbeit in den
-Bestand der Fachbereichsbibliothek eingestellt wird.
+Hiermit versichere ich an Eides statt, dass ich die vorliegende Arbeit im
+Masterstudiengang Informatik selbstständig verfasst
+und keine anderen als die angegebenen Hilfsmittel – insbesondere keine
+im Quellenverzeichnis nicht benannten Internet-Quellen – benutzt
+habe. Alle Stellen, die wörtlich oder sinngemäß aus Veröffentlichungen
+entnommen wurden, sind als solche kenntlich gemacht. Ich versichere
+weiterhin, dass ich die Arbeit vorher nicht in einem anderen
+Prüfungsverfahren eingereicht habe.
 
 \makeatletter
 Hamburg, den {\@date}
@@ -151,7 +146,7 @@ Hamburg, den {\@date}
 % \par\textbf{\Large\textsf{Literaturliste}}
 
 % ================================Todo list==============================
-\listoftodos
+% \listoftodos
 % \todototoc
 
 \end{document}
